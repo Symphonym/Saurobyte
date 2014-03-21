@@ -1,0 +1,1662 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"lua_Push",
+				"lua_pushstring"
+			],
+			[
+				"pushL",
+				"pushArgsToLua"
+			],
+			[
+				"m_S",
+				"m_subscribedScriptsByEntity"
+			],
+			[
+				"ms",
+				"m_subscribedScriptsByEntity"
+			],
+			[
+				"m_",
+				"m_subscribedScriptsByEntity"
+			],
+			[
+				"unsu",
+				"unsubscribeEntity"
+			],
+			[
+				"unsubec",
+				"Unsubscribe"
+			],
+			[
+				"mU",
+				"m_subscriptionCentral"
+			],
+			[
+				"m_scri",
+				"m_subscribedScripts"
+			],
+			[
+				"subs",
+				"subscribedTo"
+			],
+			[
+				"Mess",
+				"MessageData"
+			],
+			[
+				"mP",
+				"m_pendingActions"
+			],
+			[
+				"Ki",
+				"KillEntity"
+			],
+			[
+				"Disable",
+				"DisableEntity"
+			],
+			[
+				"GetCOmp",
+				"GetComponentCount"
+			],
+			[
+				"getcomp",
+				"getComponent"
+			],
+			[
+				"luaL_C",
+				"luaL_checkudata"
+			],
+			[
+				"lua_Pus",
+				"lua_pushnil"
+			],
+			[
+				"variabl",
+				"compizVariable"
+			],
+			[
+				"varia",
+				"compizVariable"
+			],
+			[
+				"GetCOmpon",
+				"GetComponentValue"
+			],
+			[
+				"m",
+				"m_luaContext"
+			],
+			[
+				"unord",
+				"unordered_map"
+			],
+			[
+				"enti",
+				"entity"
+			],
+			[
+				"m_p",
+				"m_pendingActions"
+			],
+			[
+				"m_ent",
+				"m_monitoredEntities"
+			],
+			[
+				"entiyPo",
+				"m_entityPool"
+			],
+			[
+				"COmp",
+				"ComponentTypeID"
+			],
+			[
+				"mPe",
+				"m_scenePool"
+			],
+			[
+				"ic",
+				"include"
+			],
+			[
+				"m_pen",
+				"m_pendingUpdates"
+			],
+			[
+				"Comp",
+				"Component"
+			],
+			[
+				"lister",
+				"listeners"
+			],
+			[
+				"sub",
+				"isSubscribed"
+			],
+			[
+				"Eni",
+				"Entity"
+			],
+			[
+				"Com",
+				"Component"
+			],
+			[
+				"Compone",
+				"ComponentBag"
+			],
+			[
+				"GL_TEX",
+				"GL_TEXTURE_2D"
+			],
+			[
+				"m_tri",
+				"m_triangles"
+			],
+			[
+				"m_verte",
+				"m_vertexCount"
+			],
+			[
+				"vertexC",
+				"vertexColors"
+			],
+			[
+				"vertexCO",
+				"vertexColorSize"
+			],
+			[
+				"m_vertex",
+				"m_tmpVertexData"
+			],
+			[
+				"offs",
+				"offsetTag"
+			],
+			[
+				"glBI",
+				"glBindBuffer"
+			],
+			[
+				"getWI",
+				"getWindowWidth"
+			],
+			[
+				"m_cam",
+				"m_cameraTransform"
+			],
+			[
+				"m_cm",
+				"m_cameraTransform"
+			],
+			[
+				"nMO",
+				"nMouseX"
+			],
+			[
+				"nMo",
+				"nMouseX"
+			],
+			[
+				"m_vet",
+				"m_vertexBuffer"
+			],
+			[
+				"GL_ARA",
+				"GL_ARRAY_BUFFER"
+			],
+			[
+				"inde",
+				"indices"
+			],
+			[
+				"getW",
+				"getWindowHeight"
+			],
+			[
+				"insta",
+				"instanceDivisor"
+			],
+			[
+				"GL",
+				"gl_InstanceID"
+			],
+			[
+				"element",
+				"elementBuffer"
+			],
+			[
+				"subro",
+				"subroutineTwoIndex"
+			],
+			[
+				"title",
+				"windowTitle"
+			],
+			[
+				"size",
+				"uniformBlockSize"
+			],
+			[
+				"glUi",
+				"glUniform2f"
+			],
+			[
+				"mousen",
+				"mouseNormalY"
+			],
+			[
+				"mouse",
+				"mouseNormalX"
+			],
+			[
+				"mouseNO",
+				"mouseNormalY"
+			],
+			[
+				"mouseNorm",
+				"mouseNormalX"
+			],
+			[
+				"mose",
+				"mouseX"
+			],
+			[
+				"glBIND",
+				"glBindVertexArray"
+			],
+			[
+				"SDL_GET",
+				"SDL_GetPerformanceCounter"
+			],
+			[
+				"m_last",
+				"m_highPefLastTick"
+			],
+			[
+				"cur",
+				"highPefCurTick"
+			],
+			[
+				"SDL_WI",
+				"SDL_WINDOW_RESIZABLE"
+			],
+			[
+				"fps",
+				"m_fps"
+			],
+			[
+				"Handler",
+				"HandlerA_Stuff"
+			],
+			[
+				"HandlerA",
+				"Handler_A"
+			],
+			[
+				"inc",
+				"include"
+			],
+			[
+				"Eve",
+				"EventCenter"
+			],
+			[
+				"SCre",
+				"SCREEN_HEIGHT"
+			],
+			[
+				"SDLCrea",
+				"SDL_CreateTextureFromSurface"
+			],
+			[
+				"out",
+				"output"
+			],
+			[
+				"ETW_Eas",
+				"ETW_CONTINENT_EASTERN"
+			],
+			[
+				"subzo",
+				"subZoneReq"
+			],
+			[
+				"ETW_CO",
+				"ETW_CONTINENT_KALIMDOR"
+			],
+			[
+				"zoneRequ",
+				"zoneRequirementUnlockHash"
+			],
+			[
+				"ETW_CON",
+				"ETW_CONTINENT_EASTERN"
+			],
+			[
+				"ETW_OPT",
+				"ETW_OptionFrame"
+			],
+			[
+				"Sympho",
+				"SymphonymConfig"
+			],
+			[
+				"Symphonym",
+				"SymphonymConfig_Default"
+			],
+			[
+				"defa",
+				"defaultValues"
+			],
+			[
+				"Symp",
+				"SymphonymConfig"
+			],
+			[
+				"randomIn",
+				"randomQuestionIndex"
+			],
+			[
+				"UIP",
+				"UIPanelButtonTemplate"
+			],
+			[
+				"nega",
+				"negativeScore"
+			],
+			[
+				"status",
+				"goalStatusFrame"
+			],
+			[
+				"play",
+				"players"
+			],
+			[
+				"Broad",
+				"BroadcastData"
+			],
+			[
+				"mes",
+				"messageCount"
+			],
+			[
+				"Static",
+				"StaticPopup_Show"
+			],
+			[
+				"Stati",
+				"StaticPopup_Show"
+			],
+			[
+				"UPdate",
+				"UpdateInfoText"
+			],
+			[
+				"plae",
+				"players"
+			],
+			[
+				"questionBU",
+				"questionButton"
+			],
+			[
+				"cool",
+				"challengeCooldownStarted"
+			],
+			[
+				"update",
+				"updateScrollbarSize"
+			],
+			[
+				"ETW_IsCha",
+				"ETW_IsChallengeQuestion"
+			],
+			[
+				"active",
+				"activeChallenge"
+			],
+			[
+				"ETW_ISCH",
+				"ETW_IsChallengeReady"
+			],
+			[
+				"started",
+				"startedTime"
+			],
+			[
+				"acti",
+				"activeChallenge"
+			],
+			[
+				"ETW_CH",
+				"ETW_ChallengeWindow"
+			],
+			[
+				"ETW_CHalle",
+				"ETW_ChallengeWindow"
+			],
+			[
+				"INe",
+				"InsetFrameTemplate3"
+			],
+			[
+				"ETW_",
+				"ETW_ChallengeWindow"
+			],
+			[
+				"Cha",
+				"challenge"
+			],
+			[
+				"chall",
+				"challengeCooldownStarted"
+			],
+			[
+				"c",
+				"challengeFrameCount"
+			],
+			[
+				"autho",
+				"authorFrame"
+			],
+			[
+				"anse",
+				"answers"
+			],
+			[
+				"ETW_C",
+				"ETW_CONTINENT_NORTHREND"
+			],
+			[
+				"subZO",
+				"subZone"
+			],
+			[
+				"Create",
+				"createHelpPage"
+			],
+			[
+				"ETW_EL",
+				"ETW_HelpFrame"
+			],
+			[
+				"page",
+				"pageFrame"
+			],
+			[
+				"pageI",
+				"pageIndex"
+			],
+			[
+				"ETW_HELp",
+				"ETW_HelpFrame"
+			],
+			[
+				"pageInde",
+				"pageIndexText"
+			],
+			[
+				"ETW_HELP",
+				"ETW_HelpFrame"
+			],
+			[
+				"ETW_HEL",
+				"ETW_HelpFrame"
+			],
+			[
+				"tiT",
+				"titleText"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "src/main.cpp",
+			"settings":
+			{
+				"buffer_size": 13212,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/Game.hpp",
+			"settings":
+			{
+				"buffer_size": 1077,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/SystemPool.hpp",
+			"settings":
+			{
+				"buffer_size": 1563,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/SystemPool.cpp",
+			"settings":
+			{
+				"buffer_size": 2244,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/Message.hpp",
+			"settings":
+			{
+				"buffer_size": 1489,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/MessageCentral.hpp",
+			"settings":
+			{
+				"buffer_size": 1197,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/MessageCentral.cpp",
+			"settings":
+			{
+				"buffer_size": 2427,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/Systems/LuaSystem.hpp",
+			"settings":
+			{
+				"buffer_size": 3383,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/System.hpp",
+			"settings":
+			{
+				"buffer_size": 1721,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/Systems/LuaSystem.cpp",
+			"settings":
+			{
+				"buffer_size": 17352,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/Component.hpp",
+			"settings":
+			{
+				"buffer_size": 1693,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "bin/luaFile.lua",
+			"settings":
+			{
+				"buffer_size": 1041,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "Packages/User/Premake4_CompileRun.sublime-build",
+	"command_palette":
+	{
+		"height": 54.0,
+		"selected_items":
+		[
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: insta",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: re",
+				"Package Control: Remove Package"
+			],
+			[
+				"sub",
+				"Preferences: SublimeGDB Settings – Default"
+			],
+			[
+				"Package Control: in",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: i",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 449.0
+	},
+	"console":
+	{
+		"height": 126.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = '7183a2d3e96f11eeadd761d777e62404' + 'e330c659d4bb41d3bdf022e94cab3cd0'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://sublime.wbond.net/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by) "
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/SystemPool.cpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/System.cpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/inc/SDL2/SDL_types.h",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/System.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/Scene.cpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/EntityPool.cpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/Components/LuaComponent.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/inc/Lua/lapi.h",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/MessageHandler.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/MessageHandler.cpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/MessageCentral.cpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/Mesh.cpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/Game.cpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/Game.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/MessageCentral.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/inc/glm/gtx/associated_min_max.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/inc/Lua/lua.h",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/Systems/LuaSystem.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/MessageCenter.cpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/MessageCenter.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/Entity.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/ScenePool.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/SystemPool.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/IdentifierTypes.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/Systems/LuaSystem.cpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/Logger.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/ArcTutorial_Test.sublime-project",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/IdentifierTypes.cpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/Component.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/Component.cpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/inc/SDL2/SDL_audio.h",
+		"/home/jakob/.config/sublime-text-3/Packages/Default/Default (Linux).sublime-keymap",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/inc/SDL2/SDL_mouse.h",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/ScenePool.cpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/EntityPool.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/inc/glm/gtx/polar_coordinates.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/premake4.lua",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/Entity.cpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/Message.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/LuaContext.cpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/LuaContext.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/LuaBindable.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/inc/Lua/lauxlib.h",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/Components/LuaSystem.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/Components/LuaSystem.cpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/LuaAPI/LuaEntityPool.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/inc/Lua/luaconf.h",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/Scene.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/bin/MyApplication",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/inc/glm/gtx/handed_coordinate_space.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/assets/textures/hello.bmp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/MessageReceiver.cpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/MessageReceiver.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/inc/SDL2/SDL_scancode.h",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/inc/SDL2/SDL_system.h",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/inc/SDL2/SDL_config.h",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/inc/SDL2/SDL_clipboard.h",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/inc/SDL2/SDL_rwops.h",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/bin/Verty.vert",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/bin/Fraggy.frag",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/inc/glm/gtc/matrix_access.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/inc/glm/mat2x2.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/Shader.cpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/inc/glm/gtx/color_space_YCoCg.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/inc/SDL2/SDL_events.h",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/Mesh.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/ShaderProgram.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/OpenGLWindow.cpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/OpenGLWindow.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/ShaderProgram.cpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/Shader.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/FrameCounter.cpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/FrameCounter.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/Camera.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/Camera.cpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/inc/glm/gtx/optimum_pow.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/inc/SDL2/SDL_image.h",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/inc/CImg/CImg.h",
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/inc/SDL2/SDL_surface.h",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/inc/SDL2/SDL_surface.h",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/src/GLContextSettings.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/src/Window.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/src/Window.cpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/bin/Verty.vert",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/src/FrameCounter.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/inc/SDL2/SDL_gamecontroller.h",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/inc/SDL2/SDL_gesture.h",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/build/obj/Debug/EventCenter.d",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/src/ShaderProgram.cpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/src/ShaderProgram.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/premake4.lua",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/bin/MyApplication",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/src/Shader.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/build/MyApplication.make",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/assets/textures/image.bmp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/build/obj/Release/main.d",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/build/Makefile",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/inc/SDL2/SDL_opengl.h",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/src/Shader.cpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/src/FrameCounter.cpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/inc/SDL2/SDL_haptic.h",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/src/main.cpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/bin/Makefile",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/src/EventCenter.cpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/src/EventCenter.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/src/EventHandler.cpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/src/EventHandler.hpp",
+		"/home/jakob/.config/sublime-text-3/Packages/User/Premake4_CompileRun.sublime-build",
+		"/media/750GB Hard Drive/usb backup/backups/Projects/C++/Tests/Premake_Test1/premake4.lua",
+		"/media/750GB Hard Drive/Projects/Premake_Test1/bits/c++config.h",
+		"/home/jakob/.config/sublime-text-3/Packages/SublimeGDB/SublimeGDB.sublime-settings",
+		"/home/jakob/.config/sublime-text-3/Packages/User/Default (Linux).sublime-keymap",
+		"/src/main.cpp",
+		"/main.cpp",
+		"/home/jakob/Desktop/Projects/C++/Tests/Premake_Test1/Makefile",
+		"/home/jakob/Desktop/Projects/C++/Tests/src/main.cpp",
+		"/home/jakob/.config/sublime-text-3/Packages/User/CompileScript.sublime-build",
+		"/home/jakob/Desktop/Projects/C++/Tests/Premake_Test1/MyApplication",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ExploreTheWorld/Questions.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ExploreTheWorld/ChangeLog",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ExploreTheWorld/ExploreTheWorld.toc",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ExploreTheWorld/main.lua",
+		"/media/jakob/750GB Hard Drive/SteamLibrary/SteamApps/common/FORCED/run_steam.sh",
+		"/home/jakob/.cache/.fr-lCTVbL/premake-premake-cookbook-f3bda5e639d1/Recipes/freeimage/premake4.lua",
+		"/home/jakob/.cache/.fr-yGI6fe/premake-premake-cookbook-f3bda5e639d1/Recipes/glew/premake4.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ExploreTheWorld/Constants.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ExploreTheWorld/PopupFrame.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ExploreTheWorld/GroupFrame.lua"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 93.0,
+		"where_history":
+		[
+			"",
+			"TypeID",
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": true,
+		"find_history":
+		[
+			"setglobal",
+			"itr",
+			"m_subscribedScripts",
+			"&& lua_gettop(state) <= 0",
+			"c",
+			"MessageCenter",
+			"MessageHandler",
+			"handleMessage",
+			"creates",
+			"System",
+			"system",
+			"sdl_eve",
+			"TypeIdGrabber::currentTypeId",
+			"identifier",
+			"SDL_LoadWAV_RW",
+			"SDL_LoadWAV",
+			"SDL_LoadWav",
+			"IsMousePressed",
+			"GetMousePos",
+			"left",
+			"GetTotalEntityCount",
+			"DeleteScene",
+			"ChangeScene",
+			"m_pendingDeletes",
+			"EntityActions",
+			"DisableEntity",
+			"HasComponent",
+			"THIS",
+			"**",
+			"pushlightuserdata",
+			"Entity",
+			"JL_ENTITY",
+			"touserdata",
+			"-2",
+			"lua_Number",
+			"luaL_Number",
+			"typedef Number",
+			"a",
+			"m_monitoredEntities",
+			"GetComponentValue",
+			"jl::LuaBindable",
+			";",
+			"../",
+			"Components",
+			"virtual",
+			"Compiz",
+			"jl::LuaBindable",
+			"LuaContext&",
+			";",
+			"this->",
+			"Component",
+			"this->",
+			"omponentBag::iterator",
+			".get",
+			";",
+			"FAG",
+			"MessageHandler",
+			"int",
+			"m_game",
+			";",
+			"getEntityManager",
+			"m_pendingDeletes[i]",
+			"m_pendingActions[i]",
+			"emoveE",
+			";",
+			"m_game",
+			"m_systemPool",
+			"SDL_Event",
+			";",
+			"m_components",
+			"Entity",
+			"system",
+			"ComponentTypeID",
+			";",
+			"hasCompo",
+			";",
+			"getUniqueTypeID",
+			"SDL_GL_MakeCurrent",
+			"m_vertexBuffer",
+			"mesh",
+			"Mesh",
+			"xRot",
+			" = 0",
+			"blend",
+			"da",
+			"Window",
+			"XID Window",
+			"Window",
+			"window",
+			"IMG_Init",
+			"pixelFormat",
+			"SDL_PIXELFORMAT_RGBA8888",
+			"SDL_ConvertPixels",
+			"newda",
+			"1f",
+			"4",
+			"m_",
+			" ",
+			"vertexColorS",
+			"vertexColors",
+			"}",
+			"{",
+			"f,",
+			"vertexColorSize",
+			";",
+			"&uniformName.c_str()",
+			"shaderProgram.getProgram()",
+			"&indices[0]",
+			"NumberOfUniforms",
+			"float",
+			";",
+			"transformMat",
+			" ",
+			";",
+			"0.5",
+			",\n",
+			"transformMat",
+			"0",
+			"depth",
+			"1",
+			"vertColor",
+			"2",
+			"1",
+			"vertices",
+			"1",
+			"error",
+			"gl",
+			"GL_NICEST"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"onMessage",
+			"SWAG",
+			"TypeID",
+			"ET_Data",
+			":GetSubZone",
+			"updateButtonSelection",
+			"ETW_Utility:ConvertBase64",
+			"ETW_Utility:CreateSha2Hash",
+			"ETW_Utility:SplitString",
+			"ETW_Utility:GetCurrentZone",
+			"ETW_Utility:RGBToStringColor",
+			"ETW_Utility:PrintErrorToChat",
+			"ETW_Utility:PrintToChat",
+			"getQuestionRank",
+			"playerReq",
+			"question",
+			"questionFrame:hideFrame()",
+			"questLeaderRealm",
+			"questLeaderName",
+			"--------------------------------------------------------------------------------------------------------------------------------------------------------------------",
+			"ETW_Frame.questionFrame",
+			"ETW_Frame.leftEndPageButton",
+			"ETW_Frame.leftPageButton",
+			"ETW_Frame.pageIndexBox",
+			"ETW_Frame.rightEndPageButton",
+			"ETW_Frame.rightPageButton",
+			"ETW_Frame.rightEndIndexButton",
+			"ETW_Frame.rightIndexButton",
+			"ETW_Frame.questionList",
+			"ETW_Frame.contentFrame",
+			"ETW_Frame.searchBox",
+			"ETW_Frame.scrollBar",
+			"ETW_Frame.scrollFrame",
+			"ETW_getCurrentZone",
+			"decimalToHex",
+			"ETW_convertBase64",
+			"isQuestionDone",
+			"givePortraitFrameIcon",
+			"ETW_createHash",
+			".modelZoom",
+			".modelYOffset",
+			".modelPath",
+			".modelId",
+			".npcModel",
+			"ETW_INVESTIGATION_DROPDOWN_NAME",
+			"ETW_TRACKING_DROPDOWN_NAME",
+			"ETW_EXPLORE_DROPDOWN_NAME",
+			"ETW_TRACKING_CATEGORY",
+			"ETW_INVESTIGATION_CATEGORY",
+			"ETW_EXPLORE_CATEGORY",
+			"createHash",
+			"[tostring($1)]"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 8,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "src/main.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 13212,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2761,
+								2761
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1215.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "src/Game.hpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1077,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "src/SystemPool.hpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1563,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "src/SystemPool.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2244,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								559,
+								559
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": -0.0,
+						"translation.y": 351.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "src/Message.hpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1489,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								321,
+								321
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 39.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "src/MessageCentral.hpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1197,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								272,
+								272
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "src/MessageCentral.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2427,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								519,
+								519
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": -0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 11,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "src/Systems/LuaSystem.hpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3383,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2854,
+								2854
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1132.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "src/System.hpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1721,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1283,
+								1283
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 507.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "src/Systems/LuaSystem.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 17352,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								925,
+								925
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "src/Component.hpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1693,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								486,
+								486
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 156.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 10,
+					"type": "text"
+				},
+				{
+					"buffer": 11,
+					"file": "bin/luaFile.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1041,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								663,
+								663
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua/Lua.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 9,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 21.0
+	},
+	"input":
+	{
+		"height": 33.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 216.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"project": "ArcTutorial_Test.sublime-project",
+	"replace":
+	{
+		"height": 40.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+			[
+				"sytemp",
+				"src/SystemPool.hpp"
+			],
+			[
+				"game",
+				"src/Game.hpp"
+			],
+			[
+				"main",
+				"src/main.cpp"
+			],
+			[
+				"luafi",
+				"bin/luaFile.lua"
+			],
+			[
+				"lafi",
+				"bin/luaFile.lua"
+			],
+			[
+				"handler",
+				"src/MessageHandler.hpp"
+			],
+			[
+				"messagecen",
+				"src/MessageCentral.hpp"
+			],
+			[
+				"message",
+				"src/Message.hpp"
+			],
+			[
+				"luasy",
+				"src/Systems/LuaSystem.hpp"
+			],
+			[
+				"luaf",
+				"bin/luaFile.lua"
+			],
+			[
+				"luasystem",
+				"src/Systems/LuaSystem.hpp"
+			],
+			[
+				"systemp",
+				"src/SystemPool.hpp"
+			],
+			[
+				"system",
+				"src/System.hpp"
+			],
+			[
+				"entity",
+				"src/Entity.hpp"
+			],
+			[
+				"amin",
+				"inc/glm/gtx/associated_min_max.hpp"
+			],
+			[
+				"systempo",
+				"src/SystemPool.hpp"
+			],
+			[
+				"pool",
+				"src/EntityPool.hpp"
+			],
+			[
+				"system.hp",
+				"src/System.hpp"
+			],
+			[
+				"comp",
+				"src/Component.hpp"
+			],
+			[
+				"luaen",
+				"src/LuaAPI/LuaEntityPool.hpp"
+			],
+			[
+				"entitypoo",
+				"src/EntityPool.hpp"
+			],
+			[
+				"entitypo",
+				"src/EntityPool.hpp"
+			],
+			[
+				"entityp",
+				"src/EntityPool.hpp"
+			],
+			[
+				"mai",
+				"src/main.cpp"
+			],
+			[
+				"scnee",
+				"src/Scene.cpp"
+			],
+			[
+				"gmae",
+				"src/Game.hpp"
+			],
+			[
+				"entit",
+				"src/Entity.hpp"
+			],
+			[
+				"enti",
+				"src/Entity.hpp"
+			],
+			[
+				"entiy",
+				"src/Entity.hpp"
+			],
+			[
+				"entity.h",
+				"src/Entity.hpp"
+			],
+			[
+				"opengl",
+				"src/OpenGLWindow.hpp"
+			],
+			[
+				"mesh.p",
+				"src/Mesh.cpp"
+			],
+			[
+				"mesh.cpp",
+				"src/Mesh.cpp"
+			],
+			[
+				"windo",
+				"src/Window.hpp"
+			],
+			[
+				"window",
+				"src/Window.cpp"
+			],
+			[
+				"mia",
+				"src/main.cpp"
+			],
+			[
+				"framec",
+				"src/FrameCounter.cpp"
+			],
+			[
+				"shaderpo",
+				"src/ShaderProgram.cpp"
+			],
+			[
+				"shadepro",
+				"src/ShaderProgram.hpp"
+			],
+			[
+				"shader",
+				"src/Shader.cpp"
+			],
+			[
+				"shaderpro",
+				"src/ShaderProgram.hpp"
+			],
+			[
+				"shaderprog",
+				"src/ShaderProgram.hpp"
+			],
+			[
+				"very",
+				"bin/Verty.vert"
+			],
+			[
+				"shaderpr",
+				"src/ShaderProgram.cpp"
+			],
+			[
+				"shader.cp",
+				"src/Shader.cpp"
+			],
+			[
+				"shaderc",
+				"src/Shader.cpp"
+			],
+			[
+				"w",
+				"src/Window.cpp"
+			],
+			[
+				"shader.hp",
+				"src/Shader.hpp"
+			],
+			[
+				"fram",
+				"src/FrameCounter.hpp"
+			],
+			[
+				"frame",
+				"src/FrameCounter.hpp"
+			],
+			[
+				"",
+				"src/EventCenter.cpp"
+			],
+			[
+				"uti",
+				"Utility.lua"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"selected_items":
+		[
+			[
+				"",
+				"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/Premake_Test1.sublime-project"
+			]
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 392.0,
+		"selected_items":
+		[
+		],
+		"width": 392.0
+	},
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 228.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

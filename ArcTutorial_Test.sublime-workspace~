@@ -1,0 +1,1497 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"getWI",
+				"getWindowHeight"
+			],
+			[
+				"getW",
+				"getWindowHeight"
+			],
+			[
+				"insta",
+				"instanceDivisor"
+			],
+			[
+				"GL",
+				"gl_InstanceID"
+			],
+			[
+				"element",
+				"elementBuffer"
+			],
+			[
+				"subro",
+				"subroutineTwoIndex"
+			],
+			[
+				"title",
+				"windowTitle"
+			],
+			[
+				"size",
+				"uniformBlockSize"
+			],
+			[
+				"glUi",
+				"glUniform2f"
+			],
+			[
+				"mousen",
+				"mouseNormalY"
+			],
+			[
+				"mouse",
+				"mouseNormalX"
+			],
+			[
+				"mouseNO",
+				"mouseNormalY"
+			],
+			[
+				"mouseNorm",
+				"mouseNormalX"
+			],
+			[
+				"mose",
+				"mouseX"
+			],
+			[
+				"glBIND",
+				"glBindVertexArray"
+			],
+			[
+				"SDL_GET",
+				"SDL_GetPerformanceCounter"
+			],
+			[
+				"m_last",
+				"m_highPefLastTick"
+			],
+			[
+				"cur",
+				"highPefCurTick"
+			],
+			[
+				"SDL_WI",
+				"SDL_WINDOW_RESIZABLE"
+			],
+			[
+				"fps",
+				"m_fps"
+			],
+			[
+				"Handler",
+				"HandlerA_Stuff"
+			],
+			[
+				"HandlerA",
+				"Handler_A"
+			],
+			[
+				"inc",
+				"include"
+			],
+			[
+				"Eve",
+				"EventCenter"
+			],
+			[
+				"SCre",
+				"SCREEN_HEIGHT"
+			],
+			[
+				"SDLCrea",
+				"SDL_CreateTextureFromSurface"
+			],
+			[
+				"out",
+				"output"
+			],
+			[
+				"ETW_Eas",
+				"ETW_CONTINENT_EASTERN"
+			],
+			[
+				"subzo",
+				"subZoneReq"
+			],
+			[
+				"ETW_CO",
+				"ETW_CONTINENT_KALIMDOR"
+			],
+			[
+				"zoneRequ",
+				"zoneRequirementUnlockHash"
+			],
+			[
+				"ETW_CON",
+				"ETW_CONTINENT_EASTERN"
+			],
+			[
+				"ETW_OPT",
+				"ETW_OptionFrame"
+			],
+			[
+				"Sympho",
+				"SymphonymConfig"
+			],
+			[
+				"Symphonym",
+				"SymphonymConfig_Default"
+			],
+			[
+				"defa",
+				"defaultValues"
+			],
+			[
+				"Symp",
+				"SymphonymConfig"
+			],
+			[
+				"randomIn",
+				"randomQuestionIndex"
+			],
+			[
+				"UIP",
+				"UIPanelButtonTemplate"
+			],
+			[
+				"nega",
+				"negativeScore"
+			],
+			[
+				"status",
+				"goalStatusFrame"
+			],
+			[
+				"play",
+				"players"
+			],
+			[
+				"Broad",
+				"BroadcastData"
+			],
+			[
+				"mes",
+				"messageCount"
+			],
+			[
+				"Static",
+				"StaticPopup_Show"
+			],
+			[
+				"Stati",
+				"StaticPopup_Show"
+			],
+			[
+				"UPdate",
+				"UpdateInfoText"
+			],
+			[
+				"plae",
+				"players"
+			],
+			[
+				"questionBU",
+				"questionButton"
+			],
+			[
+				"cool",
+				"challengeCooldownStarted"
+			],
+			[
+				"update",
+				"updateScrollbarSize"
+			],
+			[
+				"ETW_IsCha",
+				"ETW_IsChallengeQuestion"
+			],
+			[
+				"active",
+				"activeChallenge"
+			],
+			[
+				"ETW_ISCH",
+				"ETW_IsChallengeReady"
+			],
+			[
+				"started",
+				"startedTime"
+			],
+			[
+				"acti",
+				"activeChallenge"
+			],
+			[
+				"ETW_CH",
+				"ETW_ChallengeWindow"
+			],
+			[
+				"ETW_CHalle",
+				"ETW_ChallengeWindow"
+			],
+			[
+				"INe",
+				"InsetFrameTemplate3"
+			],
+			[
+				"ETW_",
+				"ETW_ChallengeWindow"
+			],
+			[
+				"Cha",
+				"challenge"
+			],
+			[
+				"chall",
+				"challengeCooldownStarted"
+			],
+			[
+				"c",
+				"challengeFrameCount"
+			],
+			[
+				"autho",
+				"authorFrame"
+			],
+			[
+				"anse",
+				"answers"
+			],
+			[
+				"ETW_C",
+				"ETW_CONTINENT_NORTHREND"
+			],
+			[
+				"subZO",
+				"subZone"
+			],
+			[
+				"Create",
+				"createHelpPage"
+			],
+			[
+				"ETW_EL",
+				"ETW_HelpFrame"
+			],
+			[
+				"page",
+				"pageFrame"
+			],
+			[
+				"pageI",
+				"pageIndex"
+			],
+			[
+				"ETW_HELp",
+				"ETW_HelpFrame"
+			],
+			[
+				"pageInde",
+				"pageIndexText"
+			],
+			[
+				"inde",
+				"pageIndex"
+			],
+			[
+				"ETW_HELP",
+				"ETW_HelpFrame"
+			],
+			[
+				"ETW_HEL",
+				"ETW_HelpFrame"
+			],
+			[
+				"tiT",
+				"titleText"
+			],
+			[
+				"ETW_GR",
+				"ETW_ADDONMSG_GROUPQUEST_REPORT"
+			],
+			[
+				"ETW_GRO",
+				"ETW_ADDONMSG_GROUPQUEST_REPLY"
+			],
+			[
+				"mssa",
+				"messageCount"
+			],
+			[
+				"ETW_ADDONMSG",
+				"ETW_ADDONMSG_LINK"
+			],
+			[
+				"ETW",
+				"ETW_Frame"
+			],
+			[
+				"Inspe",
+				"InspectFrameTab1"
+			],
+			[
+				"PLAYER",
+				"PLAYER_LOGIN"
+			],
+			[
+				"questionUn",
+				"questionsUnlocked"
+			],
+			[
+				"questionU",
+				"questionsUnlocked"
+			],
+			[
+				"ETW_CONT",
+				"ETW_CONTINENT_EASTERN"
+			],
+			[
+				"ETW_LIST",
+				"ETW_LISTITEM_WIDTH"
+			],
+			[
+				"displayedQU",
+				"displayedQuestion"
+			],
+			[
+				"qestion",
+				"questionFrame"
+			],
+			[
+				"displayed",
+				"displayedQuestionIsVisible"
+			],
+			[
+				"updateSele",
+				"updateSelectButton"
+			],
+			[
+				"progressU",
+				"progressUnlockHash"
+			],
+			[
+				"npcU",
+				"npcUnlockHash"
+			],
+			[
+				"itemU",
+				"itemUnlockHash"
+			],
+			[
+				"zoneUl",
+				"zoneUnlockHash"
+			],
+			[
+				"textureCro",
+				"textureCropTop"
+			],
+			[
+				"texturec",
+				"textureCropLeft"
+			],
+			[
+				"realZo",
+				"realZoneReq"
+			],
+			[
+				"realZO",
+				"realZoneReq"
+			],
+			[
+				"zoneRequi",
+				"zoneRequirement"
+			],
+			[
+				"aR",
+				"ARTWORK"
+			],
+			[
+				"ic",
+				"iconBorder"
+			],
+			[
+				"modi",
+				"modifyValue"
+			],
+			[
+				"Po",
+				"portraitIcon"
+			],
+			[
+				"med",
+				"mediumLevel"
+			],
+			[
+				"compl",
+				"completedQuest"
+			],
+			[
+				"gruo",
+				"groupQuest"
+			],
+			[
+				"grop",
+				"groupQuest"
+			],
+			[
+				"answ",
+				"answers"
+			],
+			[
+				"groupQ",
+				"groupQuestIndex"
+			],
+			[
+				"zoneRe",
+				"zoneReq"
+			],
+			[
+				"groupQU",
+				"groupQuestion"
+			],
+			[
+				"ETW_IS",
+				"ETW_isQuestionDone"
+			],
+			[
+				"questLead",
+				"questLeaderName"
+			],
+			[
+				"questL",
+				"questLeaderRealm"
+			],
+			[
+				"group",
+				"groupQuestButton"
+			],
+			[
+				"descripti",
+				"descriptionFrame"
+			],
+			[
+				"descrip",
+				"descriptionFrame"
+			],
+			[
+				"ETW_ADDO",
+				"ETW_ADDONMSG_GROUPQUEST"
+			],
+			[
+				"Template",
+				"InputBoxTemplate"
+			],
+			[
+				"dropDo",
+				"dropDownFilter"
+			],
+			[
+				"onIni",
+				"onDropDownInit"
+			],
+			[
+				"ETW_SCroll",
+				"ETW_ScrollFrame"
+			],
+			[
+				"qu",
+				"questionframe"
+			],
+			[
+				"zoneRequirementUnlock",
+				"zoneRequirementUnlockCopy"
+			],
+			[
+				"zoneUnl",
+				"zoneRequirementUnlockHash"
+			],
+			[
+				"zoner",
+				"zoneRequirementUnlockHash"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "/home/jakob/Downloads/SDL2_OpenGL.cpp",
+			"settings":
+			{
+				"buffer_size": 8839,
+				"line_ending": "Unix",
+				"name": "/*This source code copyrighted by Lazy Foo' Produc"
+			}
+		},
+		{
+			"file": "src/Shader.cpp",
+			"settings":
+			{
+				"buffer_size": 2554,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/Shader.hpp",
+			"settings":
+			{
+				"buffer_size": 423,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "bin/Fraggy.frag",
+			"settings":
+			{
+				"buffer_size": 910,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "bin/FragHelp.frag",
+			"settings":
+			{
+				"buffer_size": 18,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "bin/Verty.vert",
+			"settings":
+			{
+				"buffer_size": 854,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/main.cpp",
+			"settings":
+			{
+				"buffer_size": 9041,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/Window.cpp",
+			"settings":
+			{
+				"buffer_size": 3046,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/Window.hpp",
+			"settings":
+			{
+				"buffer_size": 1011,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/FrameCounter.cpp",
+			"settings":
+			{
+				"buffer_size": 1589,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/ShaderProgram.cpp",
+			"settings":
+			{
+				"buffer_size": 1732,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "Packages/User/Premake4_CompileRun.sublime-build",
+	"command_palette":
+	{
+		"height": 54.0,
+		"selected_items":
+		[
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: insta",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: re",
+				"Package Control: Remove Package"
+			],
+			[
+				"sub",
+				"Preferences: SublimeGDB Settings – Default"
+			],
+			[
+				"Package Control: in",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: i",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 449.0
+	},
+	"console":
+	{
+		"height": 126.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = '7183a2d3e96f11eeadd761d777e62404' + 'e330c659d4bb41d3bdf022e94cab3cd0'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://sublime.wbond.net/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by) "
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/inc/SDL2/SDL_surface.h",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/src/GLContextSettings.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/src/Window.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/src/Window.cpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/bin/Verty.vert",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/src/FrameCounter.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/inc/SDL2/SDL_gamecontroller.h",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/inc/SDL2/SDL_gesture.h",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/build/obj/Debug/EventCenter.d",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/src/ShaderProgram.cpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/src/ShaderProgram.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/premake4.lua",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/bin/MyApplication",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/src/Shader.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/build/MyApplication.make",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/assets/textures/image.bmp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/build/obj/Release/main.d",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/build/Makefile",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/inc/SDL2/SDL_opengl.h",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/src/Shader.cpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/src/FrameCounter.cpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/inc/SDL2/SDL_haptic.h",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/src/main.cpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/bin/Makefile",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/src/EventCenter.cpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/src/EventCenter.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/src/EventHandler.cpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/src/EventHandler.hpp",
+		"/home/jakob/.config/sublime-text-3/Packages/User/Premake4_CompileRun.sublime-build",
+		"/media/750GB Hard Drive/usb backup/backups/Projects/C++/Tests/Premake_Test1/premake4.lua",
+		"/media/750GB Hard Drive/Projects/Premake_Test1/bits/c++config.h",
+		"/home/jakob/.config/sublime-text-3/Packages/SublimeGDB/SublimeGDB.sublime-settings",
+		"/home/jakob/.config/sublime-text-3/Packages/User/Default (Linux).sublime-keymap",
+		"/src/main.cpp",
+		"/main.cpp",
+		"/home/jakob/Desktop/Projects/C++/Tests/Premake_Test1/Makefile",
+		"/home/jakob/Desktop/Projects/C++/Tests/src/main.cpp",
+		"/home/jakob/.config/sublime-text-3/Packages/Default/Default (Linux).sublime-keymap",
+		"/home/jakob/.config/sublime-text-3/Packages/User/CompileScript.sublime-build",
+		"/home/jakob/Desktop/Projects/C++/Tests/Premake_Test1/MyApplication",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ExploreTheWorld/Questions.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ExploreTheWorld/ChangeLog",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ExploreTheWorld/ExploreTheWorld.toc",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ExploreTheWorld/main.lua",
+		"/media/jakob/750GB Hard Drive/SteamLibrary/SteamApps/common/FORCED/run_steam.sh",
+		"/home/jakob/.cache/.fr-lCTVbL/premake-premake-cookbook-f3bda5e639d1/Recipes/freeimage/premake4.lua",
+		"/home/jakob/.cache/.fr-yGI6fe/premake-premake-cookbook-f3bda5e639d1/Recipes/glew/premake4.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ExploreTheWorld/Constants.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ExploreTheWorld/PopupFrame.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ExploreTheWorld/GroupFrame.lua",
+		"/home/jakob/Desktop/New File",
+		"/home/jakob/Desktop/Symphonym ExploreTheWorld/Releases/0.3.0b/ExploreTheWorld/Questions.lua",
+		"/home/jakob/.cache/.fr-IpYTm4/ExploreTheWorld/ExploreTheWorld.toc",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ExploreTheWorld/ChallengeFrame.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ExploreTheWorld/InspectFrame.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ExploreTheWorld/Utility.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ExploreTheWorld/OptionFrame.lua",
+		"/home/jakob/.cache/.fr-QqtWNT/ExploreTheWorld/OptionFrame.lua",
+		"/home/jakob/.cache/.fr-tWuley/ExploreTheWorld/ExploreTheWorld.toc",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ExploreTheWorld/ContinentInfoFrame.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ExploreTheWorld/HelpFrame.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/WTF/Account/111811813#1/SavedVariables/ExploreTheWorld.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ShadowedUnitFrames/ShadowedUnitFrames.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ShadowedUnitFrames/ShadowedUnitFrames.toc",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ShadowedUF_Options/config.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ShadowedUF_Options/ShadowedUF_Options.toc",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/SexyMap/Movers.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/SexyMap/Clock.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/SexyMap/Borders.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/SexyMap/Buttons.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/SexyMap/SexyMap.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/SexyMap/SexyMap.toc",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/Dominos/Dominos.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/Dominos_Config/menu.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/Dominos_Config/panel.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/Dominos_Config/Dominos_Config.toc",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/Dominos_Config/general.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/Dominos/Dominos.toc",
+		"/home/jakob/.cache/.fr-XjI4nN/ExploreTheWorld/ExploreTheWorld.toc",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/WTF/Account/401960364#1/SavedVariables/ExploreTheWorld.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ExploreTheWorld/UITemplates.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ExploreTheWorld/.gitignore",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ExploreTheWorld/ExploreTheWorld/ExploreTheWorld.toc",
+		"/home/jakob/.cache/.fr-JfG1fI/BEB/BEB.toc",
+		"/home/jakob/.cache/.fr-oH0ECB/Arh/arh.toc",
+		"/home/jakob/.cache/.fr-f67dYe/BigWigs/BigWigs.toc",
+		"/home/jakob/.conkyrc",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ExploreTheWorld/QuestionCreatingGuide",
+		"//media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ExploreTheWorld_Hasher/main.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/WorldOfWarcraft/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ExploreTheWorld/sha2.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/BattleNet/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ExploreTheWorld/UITemplates.lua",
+		"/home/jakob/Downloads/Questions.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/BattleNet/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/GatherMate2/GatherMate2.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/BattleNet/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/GatherMate2/Display.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/BattleNet/drive_c/Program Files (x86)/World of Warcraft/BlizzardInterfaceCode/Interface/AddOns/Blizzard_InspectUI/Blizzard_InspectUI.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/BattleNet/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ExploreTheWorld/QuestionCreatingGuide",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/BattleNet/drive_c/Program Files (x86)/World of Warcraft/BlizzardInterfaceCode/Interface/AddOns/Blizzard_InspectUI/InspectPaperDollFrame.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/BattleNet/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ExploreTheWorld/GroupFrame.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/BattleNet/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ExploreTheWorld/Constants.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/BattleNet/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ExploreTheWorld/Utility.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/BattleNet/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ExploreTheWorld/PopupFrame.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/BattleNet/drive_c/Program Files (x86)/World of Warcraft/BlizzardInterfaceCode/Interface/AddOns/Blizzard_InspectUI/Blizzard_InspectUI.toc",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/BattleNet/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ExploreTheWorld/OptionFrame.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/BattleNet/drive_c/Program Files (x86)/World of Warcraft/WTF/Account/401960364#1/SavedVariables/ExploreTheWorld.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/BattleNet/drive_c/Program Files (x86)/World of Warcraft/WTF/Account/111811813#1/SavedVariables/ExploreTheWorld.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/BattleNet/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ExploreTheWorld/Questions.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/BattleNet/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ExploreTheWorld/ExploreTheWorld.toc",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/BattleNet/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ExploreTheWorld/main.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/BattleNet/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/Masque/Core/Options.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/BattleNet/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/Masque/Masque.lua",
+		"/home/jakob/.cache/.fr-Nc3Ukq/OpenRaid/OpenRaid.lua",
+		"/home/jakob/.cache/.fr-FrLprz/OpenRaid/OpenRaid.toc",
+		"/home/jakob/.cache/.fr-I9UoMY/oqueue/oqueue.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/BattleNet/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/TidyPlates/TidyPlatesUtility.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/BattleNet/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/TidyPlates/TidyPlatesCore.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/BattleNet/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/TidyPlates/TidyPlatesDefaults.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/BattleNet/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/TidyPlates/TidyPlates.toc",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/BattleNet/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/TidyPlates/TidyPlatesPanel.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/BattleNet/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ExploreTheWorld/LoreRanks.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/BattleNet/drive_c/Program Files (x86)/World of Warcraft/WTF/Account/401929220#1/SavedVariables/ExploreTheWorld.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/BattleNet/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ExploreTheWorld/sha2.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/BattleNet/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ExploreTheWorld_Hasher/ExploreTheWorld_Hasher.toc",
+		"/home/jakob/.cache/.fr-iGtLEa/ExploreTheWorld_Hasher/main.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/BattleNet/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/ExploreTheWorld_Hasher/sha2.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/BattleNet/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/NugComboBarGUI/NugComboBarGUI.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/BattleNet/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/NugComboBar/skin.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/BattleNet/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/NugComboBar/NugComboBar.lua",
+		"/media/jakob/750GB Hard Drive/PlayOnLinux Drives/BattleNet/drive_c/Program Files (x86)/World of Warcraft/Interface/AddOns/Dominos/Dominos.lua"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 93.0,
+		"where_history":
+		[
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"error",
+			"gl",
+			"GL_NICEST",
+			"GL_REPLACE",
+			"clearcolor",
+			"59",
+			"300",
+			"100",
+			"20",
+			"10",
+			"3",
+			"}",
+			"{",
+			"vertexBuffer",
+			"difference",
+			"width",
+			";",
+			"toggleColorLoc",
+			"pueValue",
+			"hueValue",
+			"NULL",
+			"nullptr",
+			"GL_UNIFORM_BUFFER",
+			"hueValue",
+			"typeSizes",
+			"typesizes",
+			"1",
+			"0",
+			"hue",
+			"0",
+			"vertices",
+			"vertexBuffer",
+			"g",
+			"disp",
+			"s",
+			";",
+			"void",
+			");\n",
+			";",
+			"logsdlerr",
+			"m_shader",
+			"curTicks",
+			"glewExperimental",
+			"gcontext",
+			"m_eventHandler",
+			"events",
+			"bW",
+			"ctrl+q",
+			"f6",
+			"ctrl+c",
+			"ctrl+r",
+			"ctrl+b",
+			"progressun",
+			"model",
+			"validateanswer",
+			"dropdown",
+			"table",
+			"print(",
+			"ETW_THANKSTO_STRING",
+			"print",
+			"= {}",
+			"playerreq",
+			"groupQuest.playerReq = ",
+			"showgroupframe",
+			"/",
+			"question.groupQuest",
+			".playerreq",
+			"playerReq",
+			"44d96",
+			"progressunl",
+			"worldobject",
+			"ETW_CheckGroupQuestAnswer",
+			"completechallenge",
+			"addchallenge",
+			"known to",
+			"worldObjectUnlockHash",
+			"print(",
+			"challengewindow",
+			"printInfo",
+			"ETW_OPTIONFRAME",
+			"PLAYER_LOGIN",
+			"rTable",
+			"configTable",
+			"subTable",
+			"player_login",
+			"def",
+			"showCompleted",
+			"showExplore",
+			"conf",
+			"defaults",
+			"ShadowedUFDB",
+			"SexyMap2DB",
+			"DominosDB",
+			"challengecooldown",
+			"printtochat",
+			"print(",
+			"showdata(\"main\")",
+			"showdata",
+			"setup",
+			"questionIndex",
+			"questionIndex =",
+			"questionIndex",
+			"grant",
+			"TE_INVITE",
+			"showchallengeframe",
+			"showleaderframe",
+			"setup",
+			"startte",
+			"showchallengeframe",
+			"startte",
+			"printtochat",
+			"broadcastdata",
+			"broadcast(tr",
+			"invitebutton",
+			"BroadcastData",
+			"timeRemoval",
+			"to remove",
+			"broadcast",
+			"te_data",
+			"printtochat",
+			"broadcastdata",
+			"miscmodel",
+			"broadcast",
+			"broadcast data",
+			"challengeCooldownStarted",
+			"updatequestlist",
+			"filter",
+			"ETW_ChallengeWindow.startedTime"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"ET_Data",
+			":GetSubZone",
+			"updateButtonSelection",
+			"ETW_Utility:ConvertBase64",
+			"ETW_Utility:CreateSha2Hash",
+			"ETW_Utility:SplitString",
+			"ETW_Utility:GetCurrentZone",
+			"ETW_Utility:RGBToStringColor",
+			"ETW_Utility:PrintErrorToChat",
+			"ETW_Utility:PrintToChat",
+			"getQuestionRank",
+			"playerReq",
+			"question",
+			"questionFrame:hideFrame()",
+			"questLeaderRealm",
+			"questLeaderName",
+			"--------------------------------------------------------------------------------------------------------------------------------------------------------------------",
+			"ETW_Frame.questionFrame",
+			"ETW_Frame.leftEndPageButton",
+			"ETW_Frame.leftPageButton",
+			"ETW_Frame.pageIndexBox",
+			"ETW_Frame.rightEndPageButton",
+			"ETW_Frame.rightPageButton",
+			"ETW_Frame.rightEndIndexButton",
+			"ETW_Frame.rightIndexButton",
+			"ETW_Frame.questionList",
+			"ETW_Frame.contentFrame",
+			"ETW_Frame.searchBox",
+			"ETW_Frame.scrollBar",
+			"ETW_Frame.scrollFrame",
+			"ETW_getCurrentZone",
+			"decimalToHex",
+			"ETW_convertBase64",
+			"isQuestionDone",
+			"givePortraitFrameIcon",
+			"ETW_createHash",
+			".modelZoom",
+			".modelYOffset",
+			".modelPath",
+			".modelId",
+			".npcModel",
+			"ETW_INVESTIGATION_DROPDOWN_NAME",
+			"ETW_TRACKING_DROPDOWN_NAME",
+			"ETW_EXPLORE_DROPDOWN_NAME",
+			"ETW_TRACKING_CATEGORY",
+			"ETW_INVESTIGATION_CATEGORY",
+			"ETW_EXPLORE_CATEGORY",
+			"createHash",
+			"[tostring($1)]"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 4,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "/home/jakob/Downloads/SDL2_OpenGL.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 8839,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								6022,
+								6022
+							]
+						],
+						"settings":
+						{
+							"auto_name": "/*This source code copyrighted by Lazy Foo' Produc",
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 2953.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 10,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "src/Shader.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2554,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1005,
+								1005
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 117.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "src/Shader.hpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 423,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "bin/Fraggy.frag",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 910,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								142,
+								142
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/OpenGL Shading Language (GLSL)/GLSL.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "bin/FragHelp.frag",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 18,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								18,
+								18
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/OpenGL Shading Language (GLSL)/GLSL.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "bin/Verty.vert",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 854,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/OpenGL Shading Language (GLSL)/GLSL.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "src/main.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 9041,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								7632,
+								7632
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 3744.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "src/Window.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3046,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2473,
+								2473
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1043.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "src/Window.hpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1011,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								777,
+								777
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "src/FrameCounter.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1589,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								946,
+								946
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 117.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "src/ShaderProgram.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1732,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 31.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 9,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 23.0
+	},
+	"input":
+	{
+		"height": 33.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 222.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"project": "Premake_Test1.sublime-project",
+	"replace":
+	{
+		"height": 42.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+			[
+				"windo",
+				"src/Window.hpp"
+			],
+			[
+				"window",
+				"src/Window.cpp"
+			],
+			[
+				"mia",
+				"src/main.cpp"
+			],
+			[
+				"framec",
+				"src/FrameCounter.cpp"
+			],
+			[
+				"shaderpo",
+				"src/ShaderProgram.cpp"
+			],
+			[
+				"shadepro",
+				"src/ShaderProgram.hpp"
+			],
+			[
+				"shader",
+				"src/Shader.cpp"
+			],
+			[
+				"shaderpro",
+				"src/ShaderProgram.hpp"
+			],
+			[
+				"main",
+				"src/main.cpp"
+			],
+			[
+				"shaderprog",
+				"src/ShaderProgram.hpp"
+			],
+			[
+				"mai",
+				"src/main.cpp"
+			],
+			[
+				"very",
+				"bin/Verty.vert"
+			],
+			[
+				"shaderpr",
+				"src/ShaderProgram.cpp"
+			],
+			[
+				"shader.cp",
+				"src/Shader.cpp"
+			],
+			[
+				"shaderc",
+				"src/Shader.cpp"
+			],
+			[
+				"w",
+				"src/Window.cpp"
+			],
+			[
+				"shader.hp",
+				"src/Shader.hpp"
+			],
+			[
+				"fram",
+				"src/FrameCounter.hpp"
+			],
+			[
+				"frame",
+				"src/FrameCounter.hpp"
+			],
+			[
+				"",
+				"src/EventCenter.cpp"
+			],
+			[
+				"uti",
+				"Utility.lua"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"selected_items":
+		[
+			[
+				"",
+				"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/Premake_Test1.sublime-project"
+			]
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 392.0,
+		"selected_items":
+		[
+		],
+		"width": 392.0
+	},
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 150.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
