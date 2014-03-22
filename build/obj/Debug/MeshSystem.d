@@ -1,38 +1,42 @@
-obj/Debug/EntityPool.o: ../src/EntityPool.cpp ../src/EntityPool.hpp \
- ../src/IdentifierTypes.hpp ../src/Entity.hpp ../src/Component.hpp \
- ../inc/Lua/lua.hpp ../inc/Lua/lua.h ../inc/Lua/luaconf.h \
- ../inc/Lua/lualib.h ../inc/Lua/lauxlib.h ../src/Game.hpp \
- ../src/SystemPool.hpp ../src/System.hpp ../src/MessageHandler.hpp \
+obj/Debug/MeshSystem.o: ../src/Systems/MeshSystem.cpp \
+ ../src/Systems/MeshSystem.hpp ../src/System.hpp \
+ ../src/IdentifierTypes.hpp ../src/MessageHandler.hpp \
+ ../src/IdentifierTypes.hpp ../src/Shader.hpp ../inc/SDL2/SDL_opengl.h \
+ ../inc/SDL2/SDL_config.h ../inc/SDL2/SDL_platform.h \
+ ../inc/SDL2/begin_code.h ../inc/SDL2/close_code.h \
+ ../src/ShaderProgram.hpp ../src/Shader.hpp ../src/Entity.hpp \
+ ../src/Component.hpp ../inc/Lua/lua.hpp ../inc/Lua/lua.h \
+ ../inc/Lua/luaconf.h ../inc/Lua/lualib.h ../inc/Lua/lauxlib.h \
+ ../src/Message.hpp ../src/Game.hpp ../src/EntityPool.hpp \
+ ../src/Entity.hpp ../src/SystemPool.hpp ../src/System.hpp \
  ../src/ScenePool.hpp ../src/Scene.hpp ../src/Camera.hpp \
- ../inc/SDL2/SDL_opengl.h ../inc/SDL2/SDL_config.h \
- ../inc/SDL2/SDL_platform.h ../inc/SDL2/begin_code.h \
- ../inc/SDL2/close_code.h ../inc/glm/glm.hpp ../inc/glm/detail/_fixes.hpp \
- ../inc/glm/fwd.hpp ../inc/glm/detail/type_int.hpp \
- ../inc/glm/detail/setup.hpp ../inc/glm/detail/type_float.hpp \
- ../inc/glm/detail/type_vec.hpp ../inc/glm/detail/precision.hpp \
- ../inc/glm/detail/type_int.hpp ../inc/glm/detail/type_mat.hpp \
- ../inc/glm/vec2.hpp ../inc/glm/detail/type_vec2.hpp \
- ../inc/glm/detail/type_vec.hpp ../inc/glm/detail/type_vec2.inl \
- ../inc/glm/vec3.hpp ../inc/glm/detail/type_vec3.hpp \
- ../inc/glm/detail/type_vec3.inl ../inc/glm/vec4.hpp \
- ../inc/glm/detail/type_vec4.hpp ../inc/glm/detail/type_vec4.inl \
- ../inc/glm/mat2x2.hpp ../inc/glm/detail/type_mat2x2.hpp \
- ../inc/glm/detail/../fwd.hpp ../inc/glm/detail/type_vec2.hpp \
- ../inc/glm/detail/type_mat.hpp ../inc/glm/detail/type_mat2x2.inl \
- ../inc/glm/mat2x3.hpp ../inc/glm/detail/type_mat2x3.hpp \
- ../inc/glm/detail/type_vec3.hpp ../inc/glm/detail/type_mat2x3.inl \
- ../inc/glm/mat2x4.hpp ../inc/glm/detail/type_mat2x4.hpp \
- ../inc/glm/detail/type_vec4.hpp ../inc/glm/detail/type_mat2x4.inl \
- ../inc/glm/mat3x2.hpp ../inc/glm/detail/type_mat3x2.hpp \
- ../inc/glm/detail/type_mat3x2.inl ../inc/glm/mat3x3.hpp \
- ../inc/glm/detail/type_mat3x3.hpp ../inc/glm/detail/type_mat3x3.inl \
- ../inc/glm/mat3x4.hpp ../inc/glm/detail/type_mat3x4.hpp \
- ../inc/glm/detail/type_mat3x4.inl ../inc/glm/mat4x2.hpp \
- ../inc/glm/detail/type_mat4x2.hpp ../inc/glm/detail/type_mat4x2.inl \
- ../inc/glm/mat4x3.hpp ../inc/glm/detail/type_mat4x3.hpp \
- ../inc/glm/detail/type_mat4x3.inl ../inc/glm/mat4x4.hpp \
- ../inc/glm/detail/type_mat4x4.hpp ../inc/glm/detail/type_mat4x4.inl \
- ../inc/glm/trigonometric.hpp ../inc/glm/detail/func_trigonometric.hpp \
+ ../inc/glm/glm.hpp ../inc/glm/detail/_fixes.hpp ../inc/glm/fwd.hpp \
+ ../inc/glm/detail/type_int.hpp ../inc/glm/detail/setup.hpp \
+ ../inc/glm/detail/type_float.hpp ../inc/glm/detail/type_vec.hpp \
+ ../inc/glm/detail/precision.hpp ../inc/glm/detail/type_int.hpp \
+ ../inc/glm/detail/type_mat.hpp ../inc/glm/vec2.hpp \
+ ../inc/glm/detail/type_vec2.hpp ../inc/glm/detail/type_vec.hpp \
+ ../inc/glm/detail/type_vec2.inl ../inc/glm/vec3.hpp \
+ ../inc/glm/detail/type_vec3.hpp ../inc/glm/detail/type_vec3.inl \
+ ../inc/glm/vec4.hpp ../inc/glm/detail/type_vec4.hpp \
+ ../inc/glm/detail/type_vec4.inl ../inc/glm/mat2x2.hpp \
+ ../inc/glm/detail/type_mat2x2.hpp ../inc/glm/detail/../fwd.hpp \
+ ../inc/glm/detail/type_vec2.hpp ../inc/glm/detail/type_mat.hpp \
+ ../inc/glm/detail/type_mat2x2.inl ../inc/glm/mat2x3.hpp \
+ ../inc/glm/detail/type_mat2x3.hpp ../inc/glm/detail/type_vec3.hpp \
+ ../inc/glm/detail/type_mat2x3.inl ../inc/glm/mat2x4.hpp \
+ ../inc/glm/detail/type_mat2x4.hpp ../inc/glm/detail/type_vec4.hpp \
+ ../inc/glm/detail/type_mat2x4.inl ../inc/glm/mat3x2.hpp \
+ ../inc/glm/detail/type_mat3x2.hpp ../inc/glm/detail/type_mat3x2.inl \
+ ../inc/glm/mat3x3.hpp ../inc/glm/detail/type_mat3x3.hpp \
+ ../inc/glm/detail/type_mat3x3.inl ../inc/glm/mat3x4.hpp \
+ ../inc/glm/detail/type_mat3x4.hpp ../inc/glm/detail/type_mat3x4.inl \
+ ../inc/glm/mat4x2.hpp ../inc/glm/detail/type_mat4x2.hpp \
+ ../inc/glm/detail/type_mat4x2.inl ../inc/glm/mat4x3.hpp \
+ ../inc/glm/detail/type_mat4x3.hpp ../inc/glm/detail/type_mat4x3.inl \
+ ../inc/glm/mat4x4.hpp ../inc/glm/detail/type_mat4x4.hpp \
+ ../inc/glm/detail/type_mat4x4.inl ../inc/glm/trigonometric.hpp \
+ ../inc/glm/detail/func_trigonometric.hpp \
  ../inc/glm/detail/func_trigonometric.inl \
  ../inc/glm/detail/_vectorize.hpp ../inc/glm/detail/type_vec1.hpp \
  ../inc/glm/detail/type_vec1.inl ../inc/glm/exponential.hpp \
@@ -84,11 +88,34 @@ obj/Debug/EntityPool.o: ../src/EntityPool.cpp ../src/EntityPool.hpp \
  ../inc/SDL2/SDL_messagebox.h ../inc/SDL2/SDL_power.h \
  ../inc/SDL2/SDL_render.h ../inc/SDL2/SDL_system.h \
  ../inc/SDL2/SDL_timer.h ../inc/SDL2/SDL_version.h \
- ../src/FrameCounter.hpp
+ ../src/FrameCounter.hpp ../src/Components/MeshComponent.hpp \
+ ../src/Component.hpp
 
-../src/EntityPool.hpp:
+../src/Systems/MeshSystem.hpp:
+
+../src/System.hpp:
 
 ../src/IdentifierTypes.hpp:
+
+../src/MessageHandler.hpp:
+
+../src/IdentifierTypes.hpp:
+
+../src/Shader.hpp:
+
+../inc/SDL2/SDL_opengl.h:
+
+../inc/SDL2/SDL_config.h:
+
+../inc/SDL2/SDL_platform.h:
+
+../inc/SDL2/begin_code.h:
+
+../inc/SDL2/close_code.h:
+
+../src/ShaderProgram.hpp:
+
+../src/Shader.hpp:
 
 ../src/Entity.hpp:
 
@@ -104,29 +131,23 @@ obj/Debug/EntityPool.o: ../src/EntityPool.cpp ../src/EntityPool.hpp \
 
 ../inc/Lua/lauxlib.h:
 
+../src/Message.hpp:
+
 ../src/Game.hpp:
+
+../src/EntityPool.hpp:
+
+../src/Entity.hpp:
 
 ../src/SystemPool.hpp:
 
 ../src/System.hpp:
-
-../src/MessageHandler.hpp:
 
 ../src/ScenePool.hpp:
 
 ../src/Scene.hpp:
 
 ../src/Camera.hpp:
-
-../inc/SDL2/SDL_opengl.h:
-
-../inc/SDL2/SDL_config.h:
-
-../inc/SDL2/SDL_platform.h:
-
-../inc/SDL2/begin_code.h:
-
-../inc/SDL2/close_code.h:
 
 ../inc/glm/glm.hpp:
 
@@ -431,3 +452,7 @@ obj/Debug/EntityPool.o: ../src/EntityPool.cpp ../src/EntityPool.hpp \
 ../inc/SDL2/SDL_version.h:
 
 ../src/FrameCounter.hpp:
+
+../src/Components/MeshComponent.hpp:
+
+../src/Component.hpp:

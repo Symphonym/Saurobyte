@@ -26,10 +26,7 @@ namespace jl
 		{
 			m_scenePool[name] = new Scene(name);
 			if(m_activeScene == nullptr)
-			{
 				changeScene(name);
-				changeScene(name);
-			}
 
 			return *m_scenePool[name];
 		}

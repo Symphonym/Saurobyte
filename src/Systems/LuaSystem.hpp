@@ -116,6 +116,7 @@ namespace jl
 			return 1 + pushArgsToLua(args...);
 		};
 
+		void reportLuaError(Entity &entity, int errorIndex);
 		void createLuaEnvironment();
 		void runLuaFile(Entity &entity);
 

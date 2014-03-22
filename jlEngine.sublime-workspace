@@ -571,7 +571,7 @@
 			"file": "bin/luaFile.lua",
 			"settings":
 			{
-				"buffer_size": 905,
+				"buffer_size": 1101,
 				"line_ending": "Unix"
 			}
 		},
@@ -1191,15 +1191,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 905,
+						"buffer_size": 1101,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								172,
-								172
+								362,
+								362
 							]
 						],
 						"settings":
@@ -1208,7 +1208,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 78.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,

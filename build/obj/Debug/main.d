@@ -88,7 +88,8 @@ obj/Debug/main.o: ../src/main.cpp ../inc/SDL2/SDL.h \
  ../src/ScenePool.hpp ../src/Scene.hpp ../src/MessageCentral.hpp \
  ../src/Systems/LuaSystem.hpp ../src/System.hpp \
  ../src/IdentifierTypes.hpp ../src/Components/LuaComponent.hpp \
- ../src/Component.hpp
+ ../src/Component.hpp ../src/Systems/MeshSystem.hpp ../src/Shader.hpp \
+ ../src/ShaderProgram.hpp ../src/Components/MeshComponent.hpp
 
 ../inc/SDL2/SDL.h:
 
@@ -457,3 +458,11 @@ obj/Debug/main.o: ../src/main.cpp ../inc/SDL2/SDL.h \
 ../src/Components/LuaComponent.hpp:
 
 ../src/Component.hpp:
+
+../src/Systems/MeshSystem.hpp:
+
+../src/Shader.hpp:
+
+../src/ShaderProgram.hpp:
+
+../src/Components/MeshComponent.hpp:

@@ -18,14 +18,6 @@ namespace jl
 		updatePerspective();
 	}
 
-		glm::mat4 m_cameraTransform;
-		glm::vec3 m_cameraPosition;
-
-
-		float m_fov;
-		float m_aspectRatio;
-		float m_nearPlane, m_farPlane;
-
 	void Camera::updatePerspective()
 	{
 		m_projectionTransform = glm::perspective(m_fov, m_aspectRatio, m_nearPlane, m_farPlane);

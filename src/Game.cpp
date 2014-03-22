@@ -43,7 +43,8 @@ namespace jl
 
 					if(event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
 						m_glWindow.close();
-					else if(event.key.keysym.scancode == SDL_SCANCODE_W)
+					else if(event.key.keysym.scancode == SDL_SCANCODE_R &&
+						SDL_GetModState() & KMOD_LCTRL)
 						broadcast(createMessage("ReloadLua"));
 
 				}

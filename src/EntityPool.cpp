@@ -69,17 +69,32 @@ namespace jl
 		auto itr = m_entityPool.find(entity.getID());
 		if(itr != m_entityPool.end())
 		{
-			m_pendingActions.push_back({&entity, EntityActions::Kill});
+			// Detach entity from other systems
+			m_game->getSystemPool().removeEntityFromSystems(entity);
+			m_game->getScenePool().detachFromAllScenes(entity);
+
+			// Strip entity of components, deactivate it and push
+			// it into spare pool
+			entity.removeAllComponents(); // This call refreshes the entity as well
+			entity.setActive(false);
+
+
+			m_sparePool.push_back(&entity);
 			m_entityPool.erase(itr);
 		}
 	}
 	void EntityPool::refreshEntity(Entity &entity)
 	{
-		m_pendingActions.push_back({&entity, EntityActions::Refresh});
+		Scene* activeScene = m_game->getScenePool().getActiveScene();
+
+		// Refresh entity monitoring status if it's in the active scene
+		if(activeScene != nullptr && activeScene->contains(entity))
+			m_game->getSystemPool().refreshEntity(entity);
 	}
 	void EntityPool::detachEntity(Entity &entity)
 	{
-		m_pendingActions.push_back({&entity, EntityActions::Detach});
+		// Detach entity from all systems
+		m_game->getSystemPool().removeEntityFromSystems(entity);
 	}
 	void EntityPool::saveEntity(const std::string &templateName, Entity &entity)
 	{
@@ -107,28 +122,11 @@ namespace jl
 
 			if(action == EntityActions::Kill)
 			{
-				// Detach entity from other systems
-				m_game->getSystemPool().removeEntityFromSystems(*entity);
-				m_game->getScenePool().detachFromAllScenes(*entity);
-
-				// Strip entity of components, deactivate it and push
-				// it into spare pool
-				entity->removeAllComponents();
-				entity->setActive(false);
-				m_sparePool.push_back(entity);
-			}
-			else if(action == EntityActions::Refresh)
-			{
-				Scene* activeScene = m_game->getScenePool().getActiveScene();
-
-				// Refresh entity monitoring status if it's in the active scene
-				if(activeScene != nullptr && activeScene->contains(*entity))
-					m_game->getSystemPool().refreshEntity(*entity);
+				
 			}
 			else if(action == EntityActions::Detach)
 			{
-				// Detach entity from other systems
-				m_game->getSystemPool().removeEntityFromSystems(*entity);
+				
 			}
 
 		}

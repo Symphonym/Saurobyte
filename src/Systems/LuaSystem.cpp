@@ -87,7 +87,8 @@ namespace jl
 
 					// Call event function
 					if(!lua_isnil(m_luaContext, eventFuncIndex))
-						lua_call(m_luaContext, argCount, 0);
+						if(lua_pcall(m_luaContext, argCount, 0, 0))
+							reportLuaError(*itr->second[i], -1);
 				}
 			}
 		}
@@ -113,7 +114,10 @@ namespace jl
 			lua_pushnumber(m_luaContext, game->getWindow().getDelta());
 
 			if(!lua_isnil(m_luaContext, -2))
-				lua_call(m_luaContext, 1, 0);
+			{
+				if(lua_pcall(m_luaContext, 1, 0, 0))
+					reportLuaError(entity, -1);;
+			}
 		}
 
 		// Only run Lua file if it's not loaded and has no errors, otherwise a reload is needed
@@ -164,10 +168,7 @@ namespace jl
 		lua_setglobal(m_luaContext, "JL_ENTITY");
 
 		if(luaL_dofile(m_luaContext, luaComp->luaFile.c_str()))
-		{
-			luaComp->runningStatus = LuaComponent::Errors;
-			SDL_Log("LUA ERROR: %s", lua_tostring(m_luaContext, -1));
-		}
+			reportLuaError(entity, -1);
 		else
 			luaComp->runningStatus = LuaComponent::Running;
 
@@ -175,10 +176,17 @@ namespace jl
 		lua_getglobal(m_luaContext, "init");
 
 		if(!lua_isnil(m_luaContext, -1))
-			lua_call(m_luaContext, 0, 0);
+			if(lua_pcall(m_luaContext, 0, 0, 0))
+				reportLuaError(entity, -1);
 	}
 
+	void LuaSystem::reportLuaError(Entity &entity, int errorIndex)
+	{
+		LuaComponent *luaComp = entity.getComponent<LuaComponent>();
+		luaComp->runningStatus = LuaComponent::Errors;
 
+		SDL_Log("LUA ERROR: %s", lua_tostring(m_luaContext, errorIndex));
+	}
 
 
 
