@@ -82,6 +82,8 @@ OBJECTS := \
 	$(OBJDIR)/System.o \
 	$(OBJDIR)/IdentifierTypes.o \
 	$(OBJDIR)/LuaSystem.o \
+	$(OBJDIR)/MeshSystem.o \
+	$(OBJDIR)/MeshComponent.o \
 
 RESOURCES := \
 
@@ -194,6 +196,12 @@ $(OBJDIR)/IdentifierTypes.o: ../src/IdentifierTypes.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 $(OBJDIR)/LuaSystem.o: ../src/Systems/LuaSystem.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+$(OBJDIR)/MeshSystem.o: ../src/Systems/MeshSystem.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+$(OBJDIR)/MeshComponent.o: ../src/Components/MeshComponent.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 

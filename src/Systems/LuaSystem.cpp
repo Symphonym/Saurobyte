@@ -110,7 +110,7 @@ namespace jl
 			lua_getglobal(m_luaContext, "update");
 
 			// Push delta time as argument TODO
-			lua_pushnumber(m_luaContext, 13.37);
+			lua_pushnumber(m_luaContext, game->getWindow().getDelta());
 
 			if(!lua_isnil(m_luaContext, -2))
 				lua_call(m_luaContext, 1, 0);
@@ -511,6 +511,27 @@ namespace jl
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+		// Move scene camera
+		auto MoveCamera = [] (lua_State* state) -> int
+		{
+
+			// 1st arg is X offset, 2nd arg is Y offset, 3rd arg is Z offset
+			float xOff = luaL_checknumber(state, 1);
+			float yOff = luaL_checknumber(state, 2);
+			float zOff = luaL_checknumber(state, 3);
+
+			// Grab game
+			lua_getglobal(state, "JL_GAME");
+			Game* game = convertUserdata<Game>(state, -1, "Game");
+
+			lua_settop(state, 0);
+
+			game->getScenePool().getActiveScene()->getCamera().move(glm::vec3(xOff, yOff, zOff));
+
+			return 0;
+		};
+
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		//
@@ -580,6 +601,8 @@ namespace jl
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+
 		const luaL_Reg funcs[] = 
 		{
 			// Entity specific functions
@@ -599,6 +622,7 @@ namespace jl
 			{ "GetTotalEntityCount", GetTotalEntityCount },
 			{ "SubscribeEvent", SubscribeEvent },
 			{ "UnsubscribeEvent", UnsubscribeEvent },
+			{ "MoveCamera", MoveCamera },
 
 			// Input specific functions
 			{ "GetMousePos", GetMousePos },

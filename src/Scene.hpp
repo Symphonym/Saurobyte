@@ -3,7 +3,9 @@
 
 #include <string>
 #include <unordered_map>
+#include <vector>
 #include "IdentifierTypes.hpp"
+#include "Camera.hpp"
 
 namespace jl
 {
@@ -14,6 +16,7 @@ namespace jl
 
 		std::string m_sceneName;
 		std::unordered_map<EntityID, Entity*> m_entities;
+		Camera m_sceneCamera;
 
 	public:
 
@@ -26,6 +29,7 @@ namespace jl
 
 		const std::unordered_map<EntityID, Entity*>& getEntities();
 		std::string getName() const;
+		Camera& getCamera();
 	};
 };
 

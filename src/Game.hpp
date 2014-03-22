@@ -5,6 +5,7 @@
 #include "SystemPool.hpp"
 #include "ScenePool.hpp"
 #include "MessageCentral.hpp"
+#include "OpenGLWindow.hpp"
 
 namespace jl
 {
@@ -17,13 +18,15 @@ namespace jl
 		ScenePool m_scenePool;
 		MessageCentral m_messageCentral;
 
+		OpenGLWindow &m_glWindow;
+
 	public:
 
 
-		Game();
+		Game(OpenGLWindow &window);
 		~Game();
 
-		void updateGame();
+		void gameLoop();
 
 		// Creating entities and scenes
 		Entity& createEntity();
@@ -49,7 +52,7 @@ namespace jl
 		SystemPool& getSystemPool();
 		ScenePool& getScenePool();
 		MessageCentral& getMessageCentral();
-		// create/delete entity here, this shit controls errything
+		OpenGLWindow& getWindow();
 	};
 };
 

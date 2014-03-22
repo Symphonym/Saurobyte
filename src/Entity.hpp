@@ -37,7 +37,7 @@ namespace jl
 
 		// Sends a request to have the specified component added, it will be processed
 		// at the start of the next frame.
-		template<typename TType, typename ...TArgs> void addComponent(TArgs&... args)
+		template<typename TType, typename ...TArgs> void addComponent(TArgs&&... args)
 		{
 			addComponent(TypeIdGrabber::getUniqueTypeID<TType>(), new TType(args...));
 		};

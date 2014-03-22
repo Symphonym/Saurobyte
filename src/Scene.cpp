@@ -38,4 +38,8 @@ namespace jl
 	{
 		return m_sceneName;
 	}
+	Camera& Scene::getCamera()
+	{
+		return m_sceneCamera;
+	}
 };
