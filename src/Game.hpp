@@ -5,10 +5,19 @@
 #include "SystemPool.hpp"
 #include "ScenePool.hpp"
 #include "MessageCentral.hpp"
+#include "LuaEnvironment.hpp"
 #include "OpenGLWindow.hpp"
 
 namespace jl
 {
+	enum GameLogging
+	{
+		Debug, // Enables ALL logging
+		Warning_Error, // Enables logging for WARNING and ERROR messages
+		Info_Error, // Enables logging for INFO and ERROR messages 		 -- DEFAULT
+		None // Disables ALL logging
+	};
+
 	class Game
 	{
 	private:
@@ -17,13 +26,14 @@ namespace jl
 		SystemPool m_systemPool;
 		ScenePool m_scenePool;
 		MessageCentral m_messageCentral;
+		LuaEnvironment m_luaEnvironment;
 
 		OpenGLWindow &m_glWindow;
 
 	public:
 
 
-		Game(OpenGLWindow &window);
+		Game(OpenGLWindow &window, GameLogging logging = GameLogging::Info_Error);
 		~Game();
 
 		void gameLoop();
@@ -46,12 +56,14 @@ namespace jl
 		// Message broadcasting
 		void broadcast(Message *message);
 
-		void killEntity(Entity& entity);
+		// Running Lua scripts
+		bool runScript(const std::string &filePath);
 
 		EntityPool& getEntityPool();
 		SystemPool& getSystemPool();
 		ScenePool& getScenePool();
 		MessageCentral& getMessageCentral();
+		LuaEnvironment& getLua();
 		OpenGLWindow& getWindow();
 	};
 };

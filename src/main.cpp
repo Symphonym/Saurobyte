@@ -24,8 +24,8 @@
 #include "Game.hpp"
 #include "System.hpp"
 #include "IdentifierTypes.hpp"
+#include "Logger.hpp"
 
-#include "Systems/LuaSystem.hpp"
 #include "Components/LuaComponent.hpp"
 #include "Systems/MeshSystem.hpp"
 #include "Components/MeshComponent.hpp"
@@ -98,6 +98,24 @@ int main(int argc, const char* argv[]){
 	//REPLACE MESSAGING WITH GLOBAL EVENT SYSTEM IN GAME CLASS WHERE SHIT IS PUSHED TO AND
 	//WHICH CAN BE POLLED BY SYSTEMS AND WHATNOT
 
+	/*std::unordered_map<std::string, int*> stuffz;
+	stuffz["AB"] = new int(1337);
+	stuffz["dadad"] = new int(52);
+	stuffz["AfB"] = new int(2344);
+	stuffz["gff"] = new int(65);
+	stuffz["hgh"] = new int(34342);
+	stuffz["fgg"] = new int(42);
+
+	for(auto itr = stuffz.begin(); itr != stuffz.end(); itr++)
+	{
+		int& val = *itr->second;
+		if(*itr->second == 52)
+			stuffz.clear();
+
+		JL_INFO_LOG("VAL %i", val);
+	}*/
+
+
 	SDL_RWops *file = SDL_RWFromFile("text.datus", "w");
 	unsigned char A = 255, B = 10, C = 67, D = 247;
 	SDL_RWwrite(file, &A, sizeof(unsigned char), 1);
@@ -136,68 +154,82 @@ int main(int argc, const char* argv[]){
 		"Missing file",
 		"File is missing. Please reinstall the program.");
 
-	jl::Game game(window);
+	jl::Game game(window, jl::GameLogging::Debug);
 	game.addSystem<Dem>();
-	game.addSystem<jl::LuaSystem>();
 	game.addSystem<jl::MeshSystem>();
 
 	jl::Entity& ent = game.createEntity();
-	ent.addComponent<Compiz>();
+	//ent.addComponent<Compiz>();
 	ent.addComponent<jl::LuaComponent>("luaFile.lua");
-	ent.addComponent<jl::MeshComponent, const std::vector<jl::MeshComponent::Triangle>& >(
-		{
-			{{-1.0f,-1.0f,-1.0f}, {0.583f, 0.771f, 0.014f}, {0.000059f, 1.0f-0.000004f}},
-			{{-1.0f,-1.0f, 1.0f}, {0.609f, 0.115f, 0.436f}, {0.000103f, 1.0f-0.336048f}},
-			{{-1.0f, 1.0f, 1.0f}, {0.327f, 0.483f, 0.844f}, {0.335973f, 1.0f-0.335903}},
-			{{1.0f, 1.0f,-1.0f}, {0.822f, 0.569f, 0.201f}, {1.000023f, 1.0f-0.000013f}},
-			{{-1.0f,-1.0f,-1.0f}, {0.435f, 0.602f, 0.223f}, {0.667979f, 1.0f-0.335851f}},
-			{{-1.0f, 1.0f,-1.0f}, {0.310f, 0.747f, 0.185f}, {0.999958f, 1.0f-0.336064f}},
-			{{1.0f,-1.0f, 1.0f}, {0.597f, 0.770f, 0.761f}, {0.667979f, 1.0f-0.335851f}},
-			{{-1.0f,-1.0f,-1.0f}, {0.559f, 0.436f, 0.730f}, {0.336024f, 1.0f-0.671877f}},
-			{{1.0f,-1.0f,-1.0f}, {0.359f, 0.583f, 0.152f}, {0.667969f, 1.0f-0.671889f}},
-			{{1.0f, 1.0f,-1.0f}, {0.483f, 0.596f, 0.789f}, {1.000023f, 1.0f-0.000013f}},
-			{{1.0f,-1.0f,-1.0f}, {0.559f, 0.861f, 0.639f}, {0.668104f, 1.0f-0.000013f}},
-			{{-1.0f,-1.0f,-1.0f}, {0.195f, 0.548f, 0.859f}, {0.667979f, 1.0f-0.335851f}},
-			{{-1.0f,-1.0f,-1.0f}, {0.014f, 0.184f, 0.576f}, {0.000059f, 1.0f-0.000004f}},
-			{{-1.0f, 1.0f, 1.0f}, {0.771f, 0.328f, 0.970f}, {0.335973f, 1.0f-0.335903f}},
-			{{-1.0f, 1.0f,-1.0f}, {0.406f, 0.615f, 0.116f}, {0.336098f, 1.0f-0.000071f}},
-			{{1.0f,-1.0f, 1.0f}, {0.676f, 0.977f, 0.133f}, {0.667979f, 1.0f-0.335851f}},
-			{{-1.0f,-1.0f, 1.0f}, {0.971f, 0.572f, 0.833f}, {0.335973f, 1.0f-0.335903f}},
-			{{-1.0f,-1.0f,-1.0f}, {0.140f, 0.616f, 0.489f}, {0.336024f, 1.0f-0.671877f}},
-			{{-1.0f, 1.0f, 1.0f}, {0.997f, 0.513f, 0.064f}, {1.000004f, 1.0f-0.671847f}},
-			{{-1.0f,-1.0f, 1.0f}, {0.945f, 0.719f, 0.592f}, {0.999958f, 1.0f-0.336064f}},
-			{{1.0f,-1.0f, 1.0f}, {0.543f, 0.021f, 0.978f}, {0.667979f, 1.0f-0.335851f}},
-			{{1.0f, 1.0f, 1.0f}, {0.279f, 0.317f, 0.505f}, {0.668104f, 1.0f-0.000013f}},
-			{{1.0f,-1.0f,-1.0f}, {0.167f, 0.620f, 0.077f}, {0.335973f, 1.0f-0.335903f}},
-			{{1.0f, 1.0f,-1.0f}, {0.347f, 0.857f, 0.137f}, {0.667979f, 1.0f-0.335851f}},
-			{{1.0f,-1.0f,-1.0f}, {0.055f, 0.953f, 0.042f}, {0.335973f, 1.0f-0.335903f}},
-			{{1.0f, 1.0f, 1.0f}, {0.714f, 0.505f, 0.345f}, {0.668104f, 1.0f-0.000013f}},
-			{{1.0f,-1.0f, 1.0f}, {0.783f, 0.290f, 0.734f}, {0.336098f, 1.0f-0.000071f}},
-			{{1.0f, 1.0f, 1.0f}, {0.722f, 0.645f, 0.174f}, {0.000103f, 1.0f-0.336048f}},
-			{{1.0f, 1.0f,-1.0f}, {0.302f, 0.455f, 0.848f}, {0.000004f, 1.0f-0.671870f}},
-			{{-1.0f, 1.0f,-1.0f}, {0.225f, 0.587f, 0.040f}, {0.336024f, 1.0f-0.671877f}},
-			{{1.0f, 1.0f, 1.0f}, {0.517f, 0.713f, 0.338f}, {0.000103f, 1.0f-0.336048f}},
-			{{-1.0f, 1.0f,-1.0f}, {0.053f, 0.959f, 0.120f}, {0.336024f, 1.0f-0.671877f}},
-			{{-1.0f, 1.0f, 1.0f}, {0.393f, 0.621f, 0.362f}, {0.335973f, 1.0f-0.335903f}},
-			{{1.0f, 1.0f, 1.0f}, {0.673f, 0.211f, 0.457f}, {0.667969f, 1.0f-0.671889f}},
-			{{-1.0f, 1.0f, 1.0f}, {0.820f, 0.883f, 0.371f}, {1.000004f, 1.0f-0.671847f}},
-			{{1.0f,-1.0f, 1.0f}, {0.982f, 0.099f, 0.879f}, {0.667979f, 1.0f-0.335851f}},
-		},
-		"panda.jpg");
+
 	//ent.save("FancyCompiz");
 
 	jl::Entity& ent2 = game.createEntity();
-
+	ent2.addComponent<jl::MeshComponent, const std::vector<jl::MeshComponent::Triangle>& >(
+	{
+		{{-1.0f,-1.0f,-1.0f}, {0.583f, 0.771f, 0.014f}, {0.000059f, 1.0f-0.000004f}},
+		{{-1.0f,-1.0f, 1.0f}, {0.609f, 0.115f, 0.436f}, {0.000103f, 1.0f-0.336048f}},
+		{{-1.0f, 1.0f, 1.0f}, {0.327f, 0.483f, 0.844f}, {0.335973f, 1.0f-0.335903}},
+		{{1.0f, 1.0f,-1.0f}, {0.822f, 0.569f, 0.201f}, {1.000023f, 1.0f-0.000013f}},
+		{{-1.0f,-1.0f,-1.0f}, {0.435f, 0.602f, 0.223f}, {0.667979f, 1.0f-0.335851f}},
+		{{-1.0f, 1.0f,-1.0f}, {0.310f, 0.747f, 0.185f}, {0.999958f, 1.0f-0.336064f}},
+		{{1.0f,-1.0f, 1.0f}, {0.597f, 0.770f, 0.761f}, {0.667979f, 1.0f-0.335851f}},
+		{{-1.0f,-1.0f,-1.0f}, {0.559f, 0.436f, 0.730f}, {0.336024f, 1.0f-0.671877f}},
+		{{1.0f,-1.0f,-1.0f}, {0.359f, 0.583f, 0.152f}, {0.667969f, 1.0f-0.671889f}},
+		{{1.0f, 1.0f,-1.0f}, {0.483f, 0.596f, 0.789f}, {1.000023f, 1.0f-0.000013f}},
+		{{1.0f,-1.0f,-1.0f}, {0.559f, 0.861f, 0.639f}, {0.668104f, 1.0f-0.000013f}},
+		{{-1.0f,-1.0f,-1.0f}, {0.195f, 0.548f, 0.859f}, {0.667979f, 1.0f-0.335851f}},
+		{{-1.0f,-1.0f,-1.0f}, {0.014f, 0.184f, 0.576f}, {0.000059f, 1.0f-0.000004f}},
+		{{-1.0f, 1.0f, 1.0f}, {0.771f, 0.328f, 0.970f}, {0.335973f, 1.0f-0.335903f}},
+		{{-1.0f, 1.0f,-1.0f}, {0.406f, 0.615f, 0.116f}, {0.336098f, 1.0f-0.000071f}},
+		{{1.0f,-1.0f, 1.0f}, {0.676f, 0.977f, 0.133f}, {0.667979f, 1.0f-0.335851f}},
+		{{-1.0f,-1.0f, 1.0f}, {0.971f, 0.572f, 0.833f}, {0.335973f, 1.0f-0.335903f}},
+		{{-1.0f,-1.0f,-1.0f}, {0.140f, 0.616f, 0.489f}, {0.336024f, 1.0f-0.671877f}},
+		{{-1.0f, 1.0f, 1.0f}, {0.997f, 0.513f, 0.064f}, {1.000004f, 1.0f-0.671847f}},
+		{{-1.0f,-1.0f, 1.0f}, {0.945f, 0.719f, 0.592f}, {0.999958f, 1.0f-0.336064f}},
+		{{1.0f,-1.0f, 1.0f}, {0.543f, 0.021f, 0.978f}, {0.667979f, 1.0f-0.335851f}},
+		{{1.0f, 1.0f, 1.0f}, {0.279f, 0.317f, 0.505f}, {0.668104f, 1.0f-0.000013f}},
+		{{1.0f,-1.0f,-1.0f}, {0.167f, 0.620f, 0.077f}, {0.335973f, 1.0f-0.335903f}},
+		{{1.0f, 1.0f,-1.0f}, {0.347f, 0.857f, 0.137f}, {0.667979f, 1.0f-0.335851f}},
+		{{1.0f,-1.0f,-1.0f}, {0.055f, 0.953f, 0.042f}, {0.335973f, 1.0f-0.335903f}},
+		{{1.0f, 1.0f, 1.0f}, {0.714f, 0.505f, 0.345f}, {0.668104f, 1.0f-0.000013f}},
+		{{1.0f,-1.0f, 1.0f}, {0.783f, 0.290f, 0.734f}, {0.336098f, 1.0f-0.000071f}},
+		{{1.0f, 1.0f, 1.0f}, {0.722f, 0.645f, 0.174f}, {0.000103f, 1.0f-0.336048f}},
+		{{1.0f, 1.0f,-1.0f}, {0.302f, 0.455f, 0.848f}, {0.000004f, 1.0f-0.671870f}},
+		{{-1.0f, 1.0f,-1.0f}, {0.225f, 0.587f, 0.040f}, {0.336024f, 1.0f-0.671877f}},
+		{{1.0f, 1.0f, 1.0f}, {0.517f, 0.713f, 0.338f}, {0.000103f, 1.0f-0.336048f}},
+		{{-1.0f, 1.0f,-1.0f}, {0.053f, 0.959f, 0.120f}, {0.336024f, 1.0f-0.671877f}},
+		{{-1.0f, 1.0f, 1.0f}, {0.393f, 0.621f, 0.362f}, {0.335973f, 1.0f-0.335903f}},
+		{{1.0f, 1.0f, 1.0f}, {0.673f, 0.211f, 0.457f}, {0.667969f, 1.0f-0.671889f}},
+		{{-1.0f, 1.0f, 1.0f}, {0.820f, 0.883f, 0.371f}, {1.000004f, 1.0f-0.671847f}},
+		{{1.0f,-1.0f, 1.0f}, {0.982f, 0.099f, 0.879f}, {0.667979f, 1.0f-0.335851f}},
+	},
+	"panda.jpg");
+	ent2.addComponent<jl::LuaComponent>("luaFile.lua");
 	jl::Scene& sc = game.createScene("HUE");
+
+	jl::Scene& sc2 = game.createScene("H");
+	sc2.getCamera().setAspectRatio((float)window.getWindowWidth()/(float)window.getWindowHeight());
+	sc2.getCamera().setPosition(glm::vec3(0,0,7));
+	sc2.attach(ent2);
 	sc.attach(ent);
-	sc.attach(ent2);
 
 	sc.getCamera().setAspectRatio((float)window.getWindowWidth()/(float)window.getWindowHeight());
 	sc.getCamera().setPosition(glm::vec3(0,0,7));
-
+	JL_INFO_LOG("SIZE %i", sizeof(jl::MeshComponent));
+	game.changeScene("H");
 
 	// Background color
 	glClearColor(0,1,0,1);
+
+	std::unordered_map<std::string, jl::BaseComponent*> mapz;
+	Uint64 ticks = SDL_GetPerformanceCounter();
+	for(int i = 0; i < 10000; i++)
+	{
+		jl::BaseComponent *b = new jl::LuaComponent("");
+	}
+	float secs = (float)(SDL_GetPerformanceCounter() - ticks) * (1.0f/SDL_GetPerformanceFrequency());
+	JL_INFO_LOG("TIME %f", secs);
 
 
 	glEnable(GL_DEPTH_TEST);

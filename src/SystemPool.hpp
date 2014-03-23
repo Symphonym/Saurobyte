@@ -39,7 +39,7 @@ namespace jl
 
 		// Attempts to retrieve the specified component from the entity, returns 'nullptr'
 		// if the component wasen't found. The return value is read-write enabled.
-		template<typename TType> const TType* getSystem()
+		template<typename TType> TType* getSystem()
 		{
 			BaseSystem *sys = getSystem(TypeIdGrabber::getUniqueTypeID<TType>());
 

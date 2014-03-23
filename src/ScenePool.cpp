@@ -1,6 +1,6 @@
 #include "ScenePool.hpp"
 #include "Game.hpp"
-#include "SDL2/SDL.h"
+#include "Logger.hpp"
 
 namespace jl
 {
@@ -25,6 +25,8 @@ namespace jl
 		if(itr == m_scenePool.end())
 		{
 			m_scenePool[name] = new Scene(name);
+			JL_DEBUG_LOG("Created new scene '%s'", name.c_str());
+			
 			if(m_activeScene == nullptr)
 				changeScene(name);
 
@@ -62,19 +64,20 @@ namespace jl
 				if(scene == m_activeScene)
 					m_game->getSystemPool().emptySystems();
 
+				JL_DEBUG_LOG("Deleting scene '%s'", scene->getName().c_str());
 				delete scene;
 			}
 			else if(action == SceneActions::Change)
 			{
+
 				// Clear systems from entities
 				m_game->getSystemPool().emptySystems();
 
+				JL_DEBUG_LOG("Filling Systems with entities from scene '%s'", scene->getName().c_str());
+
 				// Refresh entities of new Scene
-				for(auto itr = m_activeScene->getEntities().begin(); itr != m_activeScene->getEntities().end(); itr++)
-				{
-					SDL_Log("Refresh  %i", itr->second->getID());
+				for(auto itr = scene->getEntities().begin(); itr != scene->getEntities().end(); itr++)
 					itr->second->refresh();
-				}
 			}
 		}
 
@@ -83,13 +86,14 @@ namespace jl
 
 	void ScenePool::changeScene(const std::string &name)
 	{
+		// Scene changes must be done at start of frame because otherwise Systems
+		// might clear their own entity map while iterating it: Not Good.
 		auto itr = m_scenePool.find(name);
 		if(itr != m_scenePool.end())
 		{
+			JL_DEBUG_LOG("Changing to scene '%s'", name.c_str());
 			m_pendingActions.push_back({itr->second, SceneActions::Change});
 			m_activeScene = itr->second;
-			SDL_Log("ACTIVE SCENE %s", name.c_str());
-			SDL_Log("SIZE %i", m_activeScene->getEntities().size());
 		}
 	}
 	Scene* ScenePool::getActiveScene()

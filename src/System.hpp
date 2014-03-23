@@ -50,19 +50,25 @@ namespace jl
 
 		void setActive(bool active);
 
+		// pre and postProcess allows for setup/cleanup before or
+		// after entities are processed by the system.
 		virtual void preProcess() {};
 		virtual void processEntity(Entity &entity) = 0;
 		virtual void postProcess() {};
 
+		// Called when entities are added/removed to the system, allowing for
+		// setup or cleanup
 		virtual void onEntityAdded(Entity &entity) {};
 		virtual void onEntityRemoved(Entity &entity) {};
+		// Called when a system is completely cleared of Entities, used mostly for
+		// cleanup
 		virtual void onSystemCleared() {};
 
 		void clearSystem();
 
 		TypeID getTypeID() const;
 		bool isActive() const;
-		const std::unordered_map<EntityID, Entity*>& getEntities();
+		const std::unordered_map<EntityID, Entity*>& getEntities() const;
 
 	};
 

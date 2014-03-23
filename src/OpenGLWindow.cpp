@@ -1,6 +1,7 @@
 #include "OpenGLWindow.hpp"
 #include <GL/glew.h>
 #include <SDL2/SDL_opengl.h>
+#include "Logger.hpp"
 
 namespace jl
 {
@@ -37,15 +38,15 @@ namespace jl
 			centerY = displayRect.h/2 - height/2;
 		}
 		else
-			SDL_Log("Could not find a default display to center window on. SDL_Error: %s", SDL_GetError());
+			JL_WARNING_LOG("Could not find a default display to center window on. SDL_Error: %s", SDL_GetError());
 
 		m_window = SDL_CreateWindow(windowTitle.c_str(), centerX, centerY, width, height, windowFlags);
 
 		// Failed to create SDL window
 		if(m_window == nullptr)
-			SDL_Log("SDL_CreateWindow failed. SDL_Error: %s", SDL_GetError());
+			JL_ERROR_LOG("SDL_CreateWindow failed. SDL_Error: %s", SDL_GetError());
 		else
-			SDL_Log("SDL window created: %s", windowTitle.c_str());
+			JL_INFO_LOG("SDL window created: %s", windowTitle.c_str());
 
 		m_frameCounter.limitFps(maxFps);
 
@@ -56,11 +57,11 @@ namespace jl
 		glewExperimental = GL_TRUE;
 		GLenum loadedGlew = glewInit();
 		if(loadedGlew != GLEW_OK)
-			SDL_Log("GLEW initialization error: %s", glewGetErrorString(loadedGlew));
+			JL_ERROR_LOG("GLEW initialization error: %s", glewGetErrorString(loadedGlew));
 
-		SDL_Log("OpenGL: %s", glGetString(GL_VERSION));
-		SDL_Log("OpenGL vendor: %s", glGetString(GL_VENDOR));
-		SDL_Log("GLSL: %s", glGetString(GL_SHADING_LANGUAGE_VERSION));
+		JL_INFO_LOG("OpenGL: %s", glGetString(GL_VERSION));
+		JL_INFO_LOG("OpenGL vendor: %s", glGetString(GL_VENDOR));
+		JL_INFO_LOG("GLSL: %s", glGetString(GL_SHADING_LANGUAGE_VERSION));
 
 		// Make the most recent window the globally accessible one
 		makeGlobal();
@@ -111,7 +112,7 @@ namespace jl
 	void OpenGLWindow::setVsync(bool enabled)
 	{
 		if(SDL_GL_SetSwapInterval(enabled ? 1 : 0) < 0)
-			SDL_Log("Vsync could not be enabled on this system. SDL_Error: %s", SDL_GetError());
+			JL_WARNING_LOG("Vsync could not be enabled on this system. SDL_Error: %s", SDL_GetError());
 	}
 
 	void OpenGLWindow::showPopup(Uint32 popupFlags, const std::string &title, const std::string &message)

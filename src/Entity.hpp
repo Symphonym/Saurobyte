@@ -87,6 +87,7 @@ namespace jl
 
 		// Returns a read-write enabled map of all the internal components
 		ComponentBag& getComponents();
+		LuaComponentBag& getLuaComponents();
 
 		EntityID getID() const;
 		// Whether or not the Entity is active, inactive entities do not

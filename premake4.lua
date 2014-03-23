@@ -35,7 +35,8 @@ solution "MyApplication"
 		includedirs({"src"})
 		files({"src/*.hpp", "src/*.cpp",
 			"src/Systems/*.hpp", "src/Systems/*.cpp",
-			"src/Components/*.hpp", "src/Components/*.cpp"})
+			"src/Components/*.hpp", "src/Components/*.cpp",
+			"src/Lua/*.hpp", "src/Lua/*.cpp"})
 		links({"SDL2", "SDL2_image", "lua", "dl"})
 		targetdir("bin")
 

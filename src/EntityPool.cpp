@@ -69,7 +69,8 @@ namespace jl
 		auto itr = m_entityPool.find(entity.getID());
 		if(itr != m_entityPool.end())
 		{
-			// Detach entity from other systems
+			// Detach entity from other systems first since we might
+			// want to do use data from the components just before they are removed.
 			m_game->getSystemPool().removeEntityFromSystems(entity);
 			m_game->getScenePool().detachFromAllScenes(entity);
 

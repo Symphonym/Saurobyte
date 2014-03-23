@@ -1,7 +1,7 @@
 #include "Shader.hpp"
 #include <fstream>
-#include <SDL2/SDL.h>
 #include <vector>
+#include "Logger.hpp"
 
 namespace jl
 {
@@ -87,16 +87,16 @@ namespace jl
 				std::vector<char> logMessage(logLength);
 				glGetShaderInfoLog(m_shaderHandle, logLength, &logLength, &logMessage[0]);
 
-				SDL_Log("Shader compilation error:\n%s shader: \"%s\"\n%s", shaderTypeStr.c_str(), filePath.c_str(), &logMessage[0]);
+				JL_ERROR_LOG("Shader compilation error:\n%s shader: \"%s\"\n%s", shaderTypeStr.c_str(), filePath.c_str(), &logMessage[0]);
 
 				// Shader wasen't compiled correctly, delete it to avoid leaks
 				glDeleteShader(m_shaderHandle);
 			}
 			else
-				SDL_Log("Compiled shader (%s): \"%s\"", shaderTypeStr.c_str(), filePath.c_str());
+				JL_DEBUG_LOG("Compiled shader (%s): \"%s\"", shaderTypeStr.c_str(), filePath.c_str());
 		}
 		else
-			SDL_Log("Could not open shader file: %s", filePath.c_str());
+			JL_ERROR_LOG("Could not open shader file: %s", filePath.c_str());
 
 		reader.close();
 

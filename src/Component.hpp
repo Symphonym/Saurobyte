@@ -3,7 +3,10 @@
 
 #include <string>
 #include <Lua/lua.hpp>
+#include <unordered_map>
 #include "IdentifierTypes.hpp"
+
+
 
 namespace jl
 {
@@ -32,14 +35,23 @@ namespace jl
 		{};
 
 	public:
+
 		virtual ~BaseComponent() {};
 
 		// Functions called by Lua if a LuaComponent is attached
-		virtual void onLuaSet(const std::string& valueName, lua_State *context) {};
-		virtual int onLuaGet(const std::string& valueName, lua_State *context) {};
+		virtual void onLuaSet(const std::string& valueName, lua_State *state) {};
+		virtual int onLuaGet(const std::string& valueName, lua_State *state) {};
+		virtual BaseComponent* onLuaConstruct(lua_State *state)
+		{
+			std::string compName = luaL_checkstring(state, 1);
+			luaL_error(state, "The component '%s' does not allow for creation through Lua", compName.c_str());
+			return nullptr;
+		};
 
 		// Cloning function that must be overridden by deriving classes
 		virtual BaseComponent* clone()  = 0;
+
+		
 
 
 		TypeID getTypeID()  const

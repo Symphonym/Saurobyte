@@ -1,14 +1,20 @@
 
-function init()
+function init(self)
 	print("INIT")
-	SubscribeEvent("KeyDown")
+	self:SubscribeEvent("KeyDown")
+	self:SubscribeEvent("KeyUp")
 end
 
 local r, g, b = 1,1,1
-function update(delta)
-	local x, y = GetMousePos()
+function update(self, delta)
+	--local x, y = GetMousePos()
 
-	if (IsMousePressed("left")) then
+	--print("Comp count " .. self:GetComponentCount())
+
+	--local comp = self:GetComponent("MeshComponent")
+	--comp:SetValue("color", 1, 0, 0)
+
+	--[[if (IsMousePressed("left")) then
 		r = r - 10*delta
 	elseif (IsMousePressed("right")) then
 		r = r + 10*delta
@@ -29,6 +35,7 @@ function update(delta)
 		MoveCamera(0, -delta*10, 0)
 	end
 
+
 	if(IsKeyPressed("B")) then
 		SubscribeEvent("KeyDown")
 	end
@@ -42,20 +49,25 @@ function update(delta)
 		SetComponentValue(comp, "color", 1, 1, 1)
 
 
-	end
+	end]]
 
 end
 
-function events(eventName, ...)
+function events(self, eventName, ...)
+	print("Event " .. eventName)
+	print("Total entity count: " .. game:GetTotalEntityCount())
+	--[[print("NAME " .. self:GetComponent("MeshComponent"):GetName())
+
 	if(eventName == "KeyDown") then
 		local keyName, keyRepeat = ...
 
 		if(keyName == "H" and not keyRepeat) then
-			print("UNSUBSCRIBE")
-			UnsubscribeEvent("KeyDown")
-		elseif(keyName == "R" and not keyRepeat) then
-			RemoveComponent("LuaComponent")
+			self:KillEntity()
+		elseif(keyName == "C" and not keyRepeat) then
+			game:ChangeScene("HUE")
+		elseif(keyName == "V" and not keyRepeat) then
+			game:ChangeScene("H")
 		end
-	end
+	end]]
 end
 

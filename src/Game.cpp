@@ -2,18 +2,51 @@
 #include "Message.hpp"
 #include <GL/glew.h>
 #include <SDL2/SDL_opengl.h>
+#include <SDL2/SDL_log.h>
+
+#include "Systems/LuaSystem.hpp"
+
+#include "Lua/LuaEnv_Game.hpp"
+#include "Lua/LuaEnv_Entity.hpp"
 
 namespace jl
 {
-	Game::Game(OpenGLWindow &window)
+	Game::Game(OpenGLWindow &window, GameLogging logging)
 		:
 		m_entityPool(this),
 		m_systemPool(this),
 		m_scenePool(this),
 		m_messageCentral(),
+		m_luaEnvironment(),
 		m_glWindow(window)
 	{
+		// Start by disabling all logging
+		SDL_LogSetAllPriority(SDL_LOG_PRIORITY_CRITICAL);
 
+		// Then enable specific logging features
+		switch(logging)
+		{
+			case GameLogging::Debug:
+				SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
+			break;
+			case GameLogging::Warning_Error:
+				SDL_LogSetPriority(SDL_LOG_CATEGORY_ERROR, SDL_LOG_PRIORITY_WARN);
+			break;
+			case GameLogging::Info_Error:
+			SDL_LogSetPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_INFO);
+				SDL_LogSetPriority(SDL_LOG_CATEGORY_ERROR, SDL_LOG_PRIORITY_ERROR);
+			break;
+			case GameLogging::None:
+				SDL_LogSetAllPriority(SDL_LOG_PRIORITY_CRITICAL);
+			break;
+		}
+
+		// Add the built in systems
+		addSystem<LuaSystem>();
+
+		// Expose Lua API
+		LuaEnv_Game::exposeToLua(this);
+		LuaEnv_Entity::exposeToLua(this);
 	}
 	Game::~Game()
 	{
@@ -30,7 +63,6 @@ namespace jl
 			// Process frame start entity cleanup
 			m_scenePool.frameCleanup();
 			m_entityPool.frameCleanup();
-
 
 			// Poll events
 			while(m_glWindow.pollEvent(event))
@@ -100,12 +132,10 @@ namespace jl
 		m_messageCentral.broadcast(message);
 	}
 
-	void Game::killEntity(Entity& entity)
+	bool Game::runScript(const std::string &filePath)
 	{
-		m_entityPool.killEntity(entity);
+		m_luaEnvironment.runScript(filePath);
 	}
-
-
 
 
 	EntityPool& Game::getEntityPool()
@@ -123,6 +153,10 @@ namespace jl
 	MessageCentral& Game::getMessageCentral()
 	{
 		return m_messageCentral;
+	}
+	LuaEnvironment& Game::getLua()
+	{
+		return m_luaEnvironment;
 	}
 	OpenGLWindow& Game::getWindow()
 	{

@@ -1,7 +1,7 @@
 #include "ShaderProgram.hpp"
 #include <vector>
-#include <SDL2/SDL.h>
 #include <cstring>
+#include "Logger.hpp"
 
 namespace jl
 {
@@ -40,7 +40,7 @@ namespace jl
 			std::vector<char> logMessage(infoLogLength);
 
 			glGetProgramInfoLog(m_shaderProgram, infoLogLength, NULL, &logMessage[0]);
-			SDL_Log("Shader linker error:\n%s", &logMessage[0]);
+			JL_ERROR_LOG("Shader linker error:\n%s", &logMessage[0]);
 		}
 
 		// Detach all shaders post-linking so it doesn't hold any future delete requests

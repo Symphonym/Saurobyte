@@ -158,9 +158,6 @@ namespace jl
 				readFormat = GL_BGR;
 		}
 			
-		if(surface->format->Rmask)
-		SDL_Log("Bytes/Pixel: %i", surface->format->BytesPerPixel);
-
 		GLfloat texDat[] =
 		{
 			1.f,1.f,1.f,1.f,

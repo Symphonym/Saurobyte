@@ -125,6 +125,10 @@ namespace jl
 	{
 		return m_components;
 	}
+	LuaComponentBag& Entity::getLuaComponents()
+	{
+		return m_luaComponents;
+	}
 	EntityID Entity::getID() const
 	{
 		return m_id;

@@ -83,6 +83,7 @@ namespace jl
 
 	void BaseSystem::clearSystem()
 	{
+		onSystemCleared();
 		m_monitoredEntities.clear();
 	}
 
@@ -90,7 +91,7 @@ namespace jl
 	{
 		return m_systemType;
 	}
-	const std::unordered_map<EntityID, Entity*>& BaseSystem::getEntities()
+	const std::unordered_map<EntityID, Entity*>& BaseSystem::getEntities() const
 	{
 		return m_monitoredEntities;
 	}

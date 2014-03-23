@@ -120,6 +120,27 @@ namespace jl
 		void createLuaEnvironment();
 		void runLuaFile(Entity &entity);
 
+		// Pushes an object onto the Lua stack with the metatable specfied by 'className'
+		template<typename TType> static void pushObjectToLua(lua_State *state, TType *newData, const std::string &className)
+		{
+			luaL_getmetatable(state, className.c_str());
+			int metaTable = lua_gettop(state);
+
+			// Create userdata
+			void *data = lua_newuserdata(state, sizeof(TType*));
+			TType **dataPtr = static_cast<TType**>(data);
+			*dataPtr = newData;
+			lua_pushvalue(state, -1);
+
+			// Associate self with C++ object
+			lua_setfield(state, metaTable, "__self");
+			lua_remove(state, metaTable);
+
+			luaL_setmetatable(state, className.c_str());
+		}
+		// Registers a number of functions in a metatable with the name specified by 'className'
+		void registerClassToLua(const std::string &className, const luaL_Reg *funcs);
+
 		lua_State *m_luaContext;
 
 		// Scripts subscribed to events
@@ -131,6 +152,10 @@ namespace jl
 		LuaSystem(Game *game);
 		~LuaSystem();
 
+		// Subscribes the entity to the specified event, so its scripts receives them
+		void subscribeEntity(Entity &entity, const std::string &eventName);
+		void unsubscribeEntity(Entity &entity, const std::string &eventName);
+
 		virtual void onMessage(jl::Message *message);
 
 		virtual void processEntity(Entity &entity);
@@ -139,6 +164,8 @@ namespace jl
 		virtual void onEntityAdded(Entity &entity);
 		virtual void onEntityRemoved(Entity &entity);
 		virtual void onSystemCleared();
+
+		std::size_t getMemoryUsage() const;
 	};
 };
 
