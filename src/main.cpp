@@ -159,7 +159,7 @@ int main(int argc, const char* argv[]){
 	game.addSystem<jl::MeshSystem>();
 
 	jl::Entity& ent = game.createEntity();
-	//ent.addComponent<Compiz>();
+	ent.addComponent<Compiz>();
 	ent.addComponent<jl::LuaComponent>("luaFile.lua");
 
 	//ent.save("FancyCompiz");

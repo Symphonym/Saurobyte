@@ -6,16 +6,19 @@
 
 namespace jl
 {
+
+	// Used when pushing multiple args to avoid ambiguity
+	template<typename TType> struct LuaArg
+	{
+		const TType &data;
+	};
+
 	class LuaEnvironment
 	{
 
 	private:
 
-		// Stop condition for arg pusher
-		int pushArgsToLua()
-		{
-			return 0;
-		};
+
 
 		lua_State *m_luaContext;
 
@@ -32,14 +35,11 @@ namespace jl
 
 			return *data;
 		};
-
-
-		// Used when pushing multiple args to avoid ambiguity
-		template<typename TType> struct LuaArg
+				// Stop condition for arg pusher
+		int pushArgsToLua()
 		{
-			const TType &data;
+			return 0;
 		};
-
 		// Pushes a variable amount of values onto the Lua stack
 		template<typename ...TArgs> int pushArgsToLua(const LuaArg<bool> &arg, TArgs... args)
 		{
@@ -80,6 +80,7 @@ namespace jl
 
 		// Runs a given script and returns false if errors occurred
 		bool runScript(const std::string &filePath);
+		void reportError();
 
 		std::size_t getMemoryUsage() const;
 		lua_State* getRaw();

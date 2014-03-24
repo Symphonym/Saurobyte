@@ -33,11 +33,15 @@ namespace jl
 	{
 		if(luaL_dofile(m_luaContext, filePath.c_str()))
 		{
-			JL_ERROR_LOG("LUA ERROR: %s", lua_tostring(m_luaContext, -1));
+			reportError();
 			return false;
 		}
 		else
 			return true;
+	}
+	void LuaEnvironment::reportError()
+	{
+		JL_ERROR_LOG("LUA ERROR: %s", lua_tostring(m_luaContext, -1));
 	}
 
 	std::size_t LuaEnvironment::getMemoryUsage() const

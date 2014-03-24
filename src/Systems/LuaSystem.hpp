@@ -8,28 +8,10 @@
 #include <SDL2/SDL.h>
 namespace jl
 {
+	class LuaEnvironment;
 	class LuaSystem : public System<LuaSystem>
 	{
 	private:
-
-		// Lua utility functions
-		template<typename TType> static TType* convertUserdata(lua_State *state, int index, const std::string &metatableName)
-		{
-			TType **data = static_cast<TType**>(
-				luaL_checkudata (state, index, metatableName.c_str()));
-
-			return *data;
-		};
-		template<typename TType> static void pushUserdataPointer(lua_State *state, TType *newData, const std::string &metatableName)
-		{
-			// Associate userdata with empty metatable, this is done to more easily
-			// accomplish type safety
-			void *data = lua_newuserdata(state, sizeof(TType*));
-			TType **dataPtr = static_cast<TType**>(data);
-			*dataPtr = newData;
-			luaL_newmetatable(state, metatableName.c_str());
-			lua_setmetatable(state, -2);
-		};
 
 	/*		struct Tester
 			{
@@ -91,61 +73,14 @@ namespace jl
 			}
 		};*/
 
-		template<typename TType> struct LuaArg
-		{
-			const TType &data;
-		};
-		
-		int pushArgsToLua()
-		{
-			return 0;
-		}
-		template<typename ...TArgs> int pushArgsToLua(const LuaArg<bool> &arg, TArgs... args)
-		{
-			lua_pushboolean(m_luaContext, arg.data);
-			return 1 + pushArgsToLua(args...);
-		};
-		template<typename ...TArgs> int pushArgsToLua(const LuaArg<std::string> &arg, TArgs... args)
-		{
-			lua_pushstring(m_luaContext, arg.data.c_str());
-			return 1 + pushArgsToLua(args...);
-		};
-		template<typename ...TArgs> int pushArgsToLua(const LuaArg<float> &arg, TArgs... args)
-		{
-			lua_pushnumber(m_luaContext, arg.data);
-			return 1 + pushArgsToLua(args...);
-		};
-
-		void reportLuaError(Entity &entity, int errorIndex);
-		void createLuaEnvironment();
-		void runLuaFile(Entity &entity);
-
-		// Pushes an object onto the Lua stack with the metatable specfied by 'className'
-		template<typename TType> static void pushObjectToLua(lua_State *state, TType *newData, const std::string &className)
-		{
-			luaL_getmetatable(state, className.c_str());
-			int metaTable = lua_gettop(state);
-
-			// Create userdata
-			void *data = lua_newuserdata(state, sizeof(TType*));
-			TType **dataPtr = static_cast<TType**>(data);
-			*dataPtr = newData;
-			lua_pushvalue(state, -1);
-
-			// Associate self with C++ object
-			lua_setfield(state, metaTable, "__self");
-			lua_remove(state, metaTable);
-
-			luaL_setmetatable(state, className.c_str());
-		}
-		// Registers a number of functions in a metatable with the name specified by 'className'
-		void registerClassToLua(const std::string &className, const luaL_Reg *funcs);
 
 		lua_State *m_luaContext;
+		LuaEnvironment &m_luaEnv;
 
 		// Scripts subscribed to events
 		std::unordered_map<std::string, std::vector<Entity*> > m_subscribedScripts;
 
+		void runScript(Entity &entity);
 
 	public:
 
@@ -164,8 +99,6 @@ namespace jl
 		virtual void onEntityAdded(Entity &entity);
 		virtual void onEntityRemoved(Entity &entity);
 		virtual void onSystemCleared();
-
-		std::size_t getMemoryUsage() const;
 	};
 };
 

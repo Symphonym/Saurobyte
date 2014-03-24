@@ -3,6 +3,8 @@ function init(self)
 	print("INIT")
 	self:SubscribeEvent("KeyDown")
 	self:SubscribeEvent("KeyUp")
+
+	print("Comp count " .. self:GetComponentCount())
 end
 
 local r, g, b = 1,1,1

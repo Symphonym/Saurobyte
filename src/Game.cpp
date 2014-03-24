@@ -8,6 +8,8 @@
 
 #include "Lua/LuaEnv_Game.hpp"
 #include "Lua/LuaEnv_Entity.hpp"
+#include "Lua/LuaEnv_Input.hpp"
+#include "Lua/LuaEnv_Component.hpp"
 
 namespace jl
 {
@@ -47,6 +49,8 @@ namespace jl
 		// Expose Lua API
 		LuaEnv_Game::exposeToLua(this);
 		LuaEnv_Entity::exposeToLua(this);
+		LuaEnv_Input::exposeToLua(this);
+		LuaEnv_Component::exposeToLua(this);
 	}
 	Game::~Game()
 	{

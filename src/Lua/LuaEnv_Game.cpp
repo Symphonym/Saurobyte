@@ -71,5 +71,10 @@ namespace jl
 			{ NULL, NULL }
 		};
 		game->getLua().registerClassToLua("jl.Game", gameFuncs);
+
+		// Create global game object in Lua environment
+		lua_State *state = game->getLua().getRaw();
+		LuaEnvironment::pushObjectToLua<Game>(state, game, "jl.Game");
+		lua_setglobal(state, "game");
 	 }
 };
