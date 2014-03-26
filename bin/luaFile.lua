@@ -4,11 +4,27 @@ function init(self)
 	self:SubscribeEvent("KeyDown")
 	self:SubscribeEvent("KeyUp")
 
+
 	print("Comp count " .. self:GetComponentCount())
+	print("WINDOW " .. game:GetWindowWidth() .. " X " .. game:GetWindowHeight())
 end
 
 local r, g, b = 1,1,1
 function update(self, delta)
+
+	if(IsKeyPressed("Left")) then
+		game:MoveCamera(0,0,-delta*10)
+	end
+	if(IsKeyPressed("Right")) then
+		game:MoveCamera(0,0,delta*10)
+	end
+	if(IsKeyPressed("Up")) then
+		game:MoveCamera(0, delta*10, 0)
+	end
+	if(IsKeyPressed("Down")) then
+		game:MoveCamera(0, -delta*10, 0)
+	end
+
 	--local x, y = GetMousePos()
 
 	--print("Comp count " .. self:GetComponentCount())
@@ -24,18 +40,7 @@ function update(self, delta)
 		print(1.0/delta)
 	end
 
-	if(IsKeyPressed("Left")) then
-		MoveCamera(0,0,-delta*10)
-	end
-	if(IsKeyPressed("Right")) then
-		MoveCamera(0,0,delta*10)
-	end
-	if(IsKeyPressed("Up")) then
-		MoveCamera(0, delta*10, 0)
-	end
-	if(IsKeyPressed("Down")) then
-		MoveCamera(0, -delta*10, 0)
-	end
+
 
 
 	if(IsKeyPressed("B")) then
@@ -56,8 +61,14 @@ function update(self, delta)
 end
 
 function events(self, eventName, ...)
-	print("Event " .. eventName)
-	print("Total entity count: " .. game:GetTotalEntityCount())
+
+	if(eventName == "KeyDown" or eventName == "KeyUp") then
+		local keyName, keyRepeat = ...
+		
+		if(keyName == "K" and not keyRepeat) then
+			self:Kill()
+		end
+	end
 	--[[print("NAME " .. self:GetComponent("MeshComponent"):GetName())
 
 	if(eventName == "KeyDown") then
@@ -71,5 +82,9 @@ function events(self, eventName, ...)
 			game:ChangeScene("H")
 		end
 	end]]
+end
+
+function killed(self)
+	print("Killed entity " .. self:GetID())
 end
 

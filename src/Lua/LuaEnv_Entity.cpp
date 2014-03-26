@@ -1,6 +1,7 @@
 #include "LuaEnv_Entity.hpp"
 #include "Game.hpp"
 #include "Systems/LuaSystem.hpp"
+#include "Components/LuaComponent.hpp"
 
 namespace jl
 {
@@ -130,6 +131,14 @@ namespace jl
 
 		return 0;
 	}
+	int LuaEnv_Entity::GetID(lua_State *state)
+	{
+		// First arg is self
+		Entity* entity = LuaEnvironment::convertUserdata<Entity>(state, 1, "jl.Entity");
+
+		lua_pushnumber(state, entity->getID());
+		return 1;
+	}
 	int LuaEnv_Entity::SubscribeEvent(lua_State *state)
 	{
 		// Lua system is upvalue
@@ -141,6 +150,8 @@ namespace jl
 		// Second arg is event name
 		std::string eventName = luaL_checkstring(state, 2);
 
+		//LuaComponent *comp = entity->getComponent<LuaComponent>();
+		//comp->requestEvent(eventName);
 		sys->subscribeEntity(*entity, eventName);
 
 		lua_settop(state, 0);
@@ -158,6 +169,8 @@ namespace jl
 		// Second arg is event name
 		std::string eventName = luaL_checkstring(state, 2);
 
+		//LuaComponent *comp = entity->getComponent<LuaComponent>();
+		//comp->ignoreEvent(eventName);
 		sys->unsubscribeEntity(*entity, eventName);
 
 		lua_settop(state, 0);
@@ -174,9 +187,10 @@ namespace jl
 			{ "GetComponentCount", GetComponentCount },
 			{ "RemoveComponent", RemoveComponent },
 			{ "HasComponent", HasComponent },
-			{ "EnableEntity", EnableEntity },
-			{ "DisableEntity", DisableEntity },
-			{ "KillEntity", KillEntity },
+			{ "Enable", EnableEntity },
+			{ "Disable", DisableEntity },
+			{ "Kill", KillEntity },
+			{ "GetID", GetID },
 			{ NULL, NULL }
 		};
 		game->getLua().registerClassToLua("jl.Entity", entityFuncs);

@@ -38,7 +38,6 @@ namespace jl
 	}
 	LuaSystem::~LuaSystem()
 	{
-		//lua_close(m_luaContext);
 	}
 
 	void LuaSystem::onMessage(jl::Message *message)
@@ -104,6 +103,7 @@ namespace jl
 		// Call lua script as usual
 		if(luaComp->runningStatus == LuaComponent::Running)
 		{
+
 			lua_State *state = m_luaEnv.getRaw();
 
 			// Call update function
@@ -130,15 +130,21 @@ namespace jl
 	void LuaSystem::postProcess()
 	{
 	}
-	void LuaSystem::onEntityAdded(Entity &entity)
+	void LuaSystem::onAttach(Entity &entity)
 	{
 		runScript(entity);
 	}
-	void LuaSystem::onEntityRemoved(Entity &entity)
+	void LuaSystem::onDetach(Entity &entity)
 	{
 		// Iterate subscriptions
-		for(auto itr = m_subscribedScripts.begin(); itr != m_subscribedScripts.end(); itr++)
+		LuaComponent *comp = entity.getComponent<LuaComponent>();
+		JL_INFO_LOG("onDetach %i", comp->subscribedEvents.size());
+		for(auto eventItr = comp->subscribedEvents.begin(); eventItr != comp->subscribedEvents.end(); eventItr++)
 		{
+			auto itr = m_subscribedScripts.find(*eventItr);
+			if(itr == m_subscribedScripts.end())
+				continue;
+
 			// Iterate entities associated with subscriptions
 			for(std::size_t i = 0; i < itr->second.size(); i++)
 			{
@@ -147,15 +153,33 @@ namespace jl
 				{
 					itr->second.erase(itr->second.begin() + i);
 
-					// Unsubscribe from it entirely if none wants it
+					// Unsubscribe from it entirely if none wants it, except the Reload event
 					if(itr->first != "ReloadLua" && itr->second.empty())
+					{
 						unsubscribe(itr->first);
-					return;
+						m_subscribedScripts.erase(itr);
+					}
+					break;
 				}
 			}
 		}
 	}
-	void LuaSystem::onSystemCleared()
+	void LuaSystem::onKill(Entity &entity)
+	{
+		lua_State *state = m_luaEnv.getRaw();
+
+		// Call kill function
+		lua_getglobal(state, "killed");
+		int killFuncIndex = lua_gettop(state);
+
+		// Push self
+		LuaEnvironment::pushObjectToLua<Entity>(state, &entity, "jl.Entity");
+
+		if(!lua_isnil(state, killFuncIndex))
+			if(lua_pcall(state, 1, 0, 0))
+				m_luaEnv.reportError();
+	}
+	void LuaSystem::onClear()
 	{
 		m_subscribedScripts.clear();
 	}
@@ -165,7 +189,7 @@ namespace jl
 	{
 		LuaComponent *luaComp = entity.getComponent<LuaComponent>();
 
-		if(!m_luaEnv.runScript(luaComp->luaFile.c_str()))
+		if(m_luaEnv.runScript(luaComp->luaFile.c_str()))
 			luaComp->runningStatus = LuaComponent::Running;
 		else
 			luaComp->runningStatus = LuaComponent::Errors;
@@ -189,22 +213,15 @@ namespace jl
 	{
 		// Subscribe the LuaSystem to the specified event, and tell that the
 		// entity that's related to this script is interested in such events.
-		subscribe(eventName);
-		std::vector<Entity*>& scripts = m_subscribedScripts[eventName];
+		LuaComponent *comp = entity.getComponent<LuaComponent>();
 
-		// Make sure we're not already subscribed
-		bool notSubscribed = true;
-		for(std::size_t i = 0; i < scripts.size(); i++)
+		if(comp->subscribedEvents.find(eventName) == comp->subscribedEvents.end())
 		{
-			if(scripts[i] == &entity)
-			{
-				notSubscribed = false;
-				break;
-			}
+			subscribe(eventName);
+			comp->subscribedEvents.insert(eventName);
+			m_subscribedScripts[eventName].push_back(&entity);
 		}
 
-		if(notSubscribed)
-			scripts.push_back(&entity);
 	}
 	void LuaSystem::unsubscribeEntity(Entity &entity, const std::string &eventName)
 	{
@@ -213,6 +230,11 @@ namespace jl
 		{
 			if(scripts[i] == &entity)
 			{
+				LuaComponent *comp = entity.getComponent<LuaComponent>();
+				auto itr = comp->subscribedEvents.find(eventName);
+				if(itr != comp->subscribedEvents.end())
+					comp->subscribedEvents.erase(itr);
+
 				scripts.erase(scripts.begin() + i);
 				break;
 			}

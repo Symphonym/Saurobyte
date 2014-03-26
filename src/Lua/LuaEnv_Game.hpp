@@ -22,6 +22,12 @@ namespace jl
 		// Move scene camera
 		static int MoveCamera(lua_State *state);
 
+		// Get game window width
+		static int GetWindowWidth(lua_State *state);
+
+		// Get game window height
+		static int GetWindowHeight(lua_State *state);
+
 
 	public:
 		

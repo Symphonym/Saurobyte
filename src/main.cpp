@@ -154,7 +154,7 @@ int main(int argc, const char* argv[]){
 		"Missing file",
 		"File is missing. Please reinstall the program.");
 
-	jl::Game game(window, jl::GameLogging::Debug);
+	jl::Game game(window, jl::GameLogging::Info_Error);
 	game.addSystem<Dem>();
 	game.addSystem<jl::MeshSystem>();
 
@@ -212,7 +212,8 @@ int main(int argc, const char* argv[]){
 	sc2.getCamera().setAspectRatio((float)window.getWindowWidth()/(float)window.getWindowHeight());
 	sc2.getCamera().setPosition(glm::vec3(0,0,7));
 	sc2.attach(ent2);
-	sc.attach(ent);
+	sc2.attach(ent);
+	//sc.attach(ent);
 
 	sc.getCamera().setAspectRatio((float)window.getWindowWidth()/(float)window.getWindowHeight());
 	sc.getCamera().setPosition(glm::vec3(0,0,7));
@@ -221,16 +222,6 @@ int main(int argc, const char* argv[]){
 
 	// Background color
 	glClearColor(0,1,0,1);
-
-	std::unordered_map<std::string, jl::BaseComponent*> mapz;
-	Uint64 ticks = SDL_GetPerformanceCounter();
-	for(int i = 0; i < 10000; i++)
-	{
-		jl::BaseComponent *b = new jl::LuaComponent("");
-	}
-	float secs = (float)(SDL_GetPerformanceCounter() - ticks) * (1.0f/SDL_GetPerformanceFrequency());
-	JL_INFO_LOG("TIME %f", secs);
-
 
 	glEnable(GL_DEPTH_TEST);
 

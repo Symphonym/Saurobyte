@@ -38,6 +38,9 @@ namespace jl
 		// Kill entity
 		static int KillEntity(lua_State *state);
 
+		// Get ID of entity
+		static int GetID(lua_State *state);
+
 
 		// Subscribe entity to an event
 		static int SubscribeEvent(lua_State *state);

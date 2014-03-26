@@ -41,8 +41,9 @@ namespace jl
 		void addRequirement(const std::vector<TypeID> &componentIDs);
 
 		// Remove an entity from the System, making the System no longer
-		// monitor it
-		void removeEntity(Entity &entity);
+		// monitor it. The bool indicates whether or not the cause of removal
+		// was the entity being killed/shutdown.
+		void removeEntity(Entity &entity, bool wasKilled);
 
 		// Updates an already monitored entity if components have changed to
 		// whether or not the requirements still hold
@@ -56,13 +57,16 @@ namespace jl
 		virtual void processEntity(Entity &entity) = 0;
 		virtual void postProcess() {};
 
+
 		// Called when entities are added/removed to the system, allowing for
 		// setup or cleanup
-		virtual void onEntityAdded(Entity &entity) {};
-		virtual void onEntityRemoved(Entity &entity) {};
+		virtual void onAttach(Entity &entity) {};
+		virtual void onDetach(Entity &entity) {};
 		// Called when a system is completely cleared of Entities, used mostly for
 		// cleanup
-		virtual void onSystemCleared() {};
+		virtual void onClear() {};
+		// Called when an entity in the System is killed as its being detached
+		virtual void onKill(Entity &entity) {};
 
 		void clearSystem();
 

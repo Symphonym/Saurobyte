@@ -58,6 +58,28 @@ namespace jl
 
 		return 0;
 	 }
+ 	int LuaEnv_Game::GetWindowWidth(lua_State *state)
+ 	{
+ 		// First arg is self
+		Game* game = LuaEnvironment::convertUserdata<Game>(state, 1, "jl.Game");
+
+		lua_settop(state, 0);
+
+		lua_pushnumber(state, game->getWindow().getWindowWidth());
+
+		return 1;
+ 	}
+	int LuaEnv_Game::GetWindowHeight(lua_State *state)
+	{
+		// First arg is self
+		Game* game = LuaEnvironment::convertUserdata<Game>(state, 1, "jl.Game");
+
+		lua_settop(state, 0);
+
+		lua_pushnumber(state, game->getWindow().getWindowHeight());
+
+		return 1;
+	}
 
 
 	 void LuaEnv_Game::exposeToLua(Game *game)
@@ -68,6 +90,8 @@ namespace jl
 			{ "DeleteScene", DeleteScene },
 			{ "GetTotalEntityCount", GetTotalEntityCount },
 			{ "MoveCamera", MoveCamera },
+			{ "GetWindowWidth", GetWindowWidth },
+			{ "GetWindowHeight", GetWindowHeight },
 			{ NULL, NULL }
 		};
 		game->getLua().registerClassToLua("jl.Game", gameFuncs);

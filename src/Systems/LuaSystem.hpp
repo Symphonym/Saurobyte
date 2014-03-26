@@ -3,9 +3,10 @@
 
 #include <string>
 #include <Lua/lua.hpp>
+#include <SDL2/SDL.h>
 #include "System.hpp"
 #include "IdentifierTypes.hpp"
-#include <SDL2/SDL.h>
+
 namespace jl
 {
 	class LuaEnvironment;
@@ -96,9 +97,10 @@ namespace jl
 		virtual void processEntity(Entity &entity);
 		virtual void postProcess();
 
-		virtual void onEntityAdded(Entity &entity);
-		virtual void onEntityRemoved(Entity &entity);
-		virtual void onSystemCleared();
+		virtual void onAttach(Entity &entity);
+		virtual void onDetach(Entity &entity);
+		virtual void onKill(Entity &entity);
+		virtual void onClear();
 	};
 };
 

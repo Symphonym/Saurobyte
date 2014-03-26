@@ -76,10 +76,10 @@ namespace jl
 		}
 	}
 
-	void SystemPool::removeEntityFromSystems(Entity &entity)
+	void SystemPool::removeEntityFromSystems(Entity &entity, bool wasKilled)
 	{
 		for(auto itr = m_systemPool.begin(); itr != m_systemPool.end(); itr++)
-			itr->second->removeEntity(entity);
+			itr->second->removeEntity(entity, wasKilled);
 	}
 	void SystemPool::refreshEntity(Entity &entity)
 	{

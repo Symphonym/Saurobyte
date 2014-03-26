@@ -54,7 +54,7 @@ namespace jl
 		}
 		bool hasSystem(TypeID id);
 
-		void removeEntityFromSystems(Entity &entity);
+		void removeEntityFromSystems(Entity &entity, bool wasKilled = false);
 		void refreshEntity(Entity &entity);
 
 		void emptySystems();

@@ -20,13 +20,21 @@ namespace jl
 		m_wantedEntities.push_back(componentIDs);
 	}
 
-	void BaseSystem::removeEntity(Entity &entity)
+
+
+	void BaseSystem::removeEntity(Entity &entity, bool wasKilled)
 	{
 		auto itr = m_monitoredEntities.find(entity.getID());
 		if(itr != m_monitoredEntities.end())
 		{
 			m_monitoredEntities.erase(itr);
-			onEntityRemoved(entity);
+
+			if(wasKilled)
+				onKill(entity);
+
+			onDetach(entity);
+
+
 		}
 	}
 	void BaseSystem::refreshEntity(Entity &entity)
@@ -53,7 +61,7 @@ namespace jl
 				if(itr == m_monitoredEntities.end())
 				{
 					m_monitoredEntities[entity.getID()] = &entity;
-					onEntityAdded(entity);
+					onAttach(entity);
 					return;
 				}
 			}
@@ -63,7 +71,7 @@ namespace jl
 		if(itr != m_monitoredEntities.end() && !atleastOneMatch)
 		{
 			m_monitoredEntities.erase(itr);
-			onEntityRemoved(entity);
+			onDetach(entity);
 		}
 	}
 
@@ -83,7 +91,7 @@ namespace jl
 
 	void BaseSystem::clearSystem()
 	{
-		onSystemCleared();
+		onClear();
 		m_monitoredEntities.clear();
 	}
 

@@ -66,36 +66,18 @@ namespace jl
 	}
 	void EntityPool::killEntity(Entity &entity)
 	{
-		auto itr = m_entityPool.find(entity.getID());
-		if(itr != m_entityPool.end())
-		{
-			// Detach entity from other systems first since we might
-			// want to do use data from the components just before they are removed.
-			m_game->getSystemPool().removeEntityFromSystems(entity);
-			m_game->getScenePool().detachFromAllScenes(entity);
-
-			// Strip entity of components, deactivate it and push
-			// it into spare pool
-			entity.removeAllComponents(); // This call refreshes the entity as well
-			entity.setActive(false);
-
-
-			m_sparePool.push_back(&entity);
-			m_entityPool.erase(itr);
-		}
+		// Push kill request
+		m_pendingActions.push_back({&entity, EntityActions::Kill});
 	}
 	void EntityPool::refreshEntity(Entity &entity)
 	{
-		Scene* activeScene = m_game->getScenePool().getActiveScene();
-
-		// Refresh entity monitoring status if it's in the active scene
-		if(activeScene != nullptr && activeScene->contains(entity))
-			m_game->getSystemPool().refreshEntity(entity);
+		// Push refresh request
+		m_pendingActions.push_back({&entity, EntityActions::Refresh});
 	}
 	void EntityPool::detachEntity(Entity &entity)
 	{
-		// Detach entity from all systems
-		m_game->getSystemPool().removeEntityFromSystems(entity);
+		// Push detach request
+		m_pendingActions.push_back({&entity, EntityActions::Detach});
 	}
 	void EntityPool::saveEntity(const std::string &templateName, Entity &entity)
 	{
@@ -123,12 +105,38 @@ namespace jl
 
 			if(action == EntityActions::Kill)
 			{
-				
+				auto itr = m_entityPool.find(entity->getID());
+				if(itr != m_entityPool.end())
+				{
+					// Detach entity from other systems first since we might
+					// want to do use data from the components just before they are removed.
+					m_game->getSystemPool().removeEntityFromSystems(*entity, true);
+					m_game->getScenePool().detachFromAllScenes(*entity);
+
+					// Strip entity of components, deactivate it and push
+					// it into spare pool
+					entity->removeAllComponents(); // This call refreshes the entity as well
+					entity->setActive(false);
+
+
+					m_sparePool.push_back(entity);
+					m_entityPool.erase(itr);
+				}
+			}
+			else if(action == EntityActions::Refresh)
+			{
+				Scene* activeScene = m_game->getScenePool().getActiveScene();
+
+				// Refresh entity monitoring status if it's in the active scene
+				if(activeScene != nullptr && activeScene->contains(*entity))
+					m_game->getSystemPool().refreshEntity(*entity);
 			}
 			else if(action == EntityActions::Detach)
 			{
-				
+				// Detach entity from all systems
+				m_game->getSystemPool().removeEntityFromSystems(*entity, false);
 			}
+
 
 		}
 		m_pendingActions.clear();
