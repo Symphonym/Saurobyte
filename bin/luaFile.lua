@@ -25,6 +25,11 @@ function update(self, delta)
 		game:MoveCamera(0, -delta*10, 0)
 	end
 
+
+	if(IsKeyPressed("T")) then
+		print(game:GetWindowWidth() .. " X " .. game:GetWindowHeight())
+	end
+
 	--local x, y = GetMousePos()
 
 	--print("Comp count " .. self:GetComponentCount())

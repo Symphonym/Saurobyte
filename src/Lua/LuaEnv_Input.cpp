@@ -23,11 +23,11 @@ namespace jl
 		lua_settop(state, 0);
 
 		Uint32 mouseState = SDL_GetMouseState(nullptr, nullptr);
-		if(mouseKeyName == "left")
+		if(mouseKeyName == "Left")
 			lua_pushboolean(state, mouseState & SDL_BUTTON(SDL_BUTTON_LEFT));
-		else if(mouseKeyName == "right")
+		else if(mouseKeyName == "Right")
 			lua_pushboolean(state, mouseState & SDL_BUTTON(SDL_BUTTON_RIGHT));
-		else if(mouseKeyName == "middle")
+		else if(mouseKeyName == "Middle")
 			lua_pushboolean(state, mouseState & SDL_BUTTON(SDL_BUTTON_MIDDLE));
 
 

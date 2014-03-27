@@ -44,7 +44,7 @@ namespace jl
 		SDL_GetMouseState(&mouseX, &mouseY);
 
 		// Give mousepos to shader
-		glUniform2f(mousePosLoc, mouseX, game->getWindow().getWindowHeight()-mouseY);
+		glUniform2f(mousePosLoc, mouseX, game->getWindow().getHeight()-mouseY);
 
 		glm::mat4 transform = glm::mat4(1) * game->getScenePool().getActiveScene()->getCamera().getTransform();
 		glUniformMatrix4fv(transforMatLoc, 1, GL_FALSE, &transform[0][0]);

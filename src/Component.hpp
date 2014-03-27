@@ -41,12 +41,7 @@ namespace jl
 		// Functions called by Lua if a LuaComponent is attached
 		virtual void onLuaSet(const std::string& valueName, lua_State *state) {};
 		virtual int onLuaGet(const std::string& valueName, lua_State *state) {};
-		virtual BaseComponent* onLuaConstruct(lua_State *state)
-		{
-			std::string compName = luaL_checkstring(state, 1);
-			luaL_error(state, "The component '%s' does not allow for creation through Lua", compName.c_str());
-			return nullptr;
-		};
+
 
 		// Cloning function that must be overridden by deriving classes
 		virtual BaseComponent* clone()  = 0;
@@ -83,35 +78,6 @@ namespace jl
 			return new TType(static_cast<TType const&>(*this));
 		};
 	};
-
-	/*
-		Component
-
-		Base class for all types of sub components which is what makes
-		up entities.
-
-	*/
-	/*class Component
-	{
-	private:
-
-		friend class Entity;
-		TypeID m_typeID;
-
-	public:
-
-		Component() 
-			:
-			m_typeID(0)
-		{};
-		virtual ~Component() {};
-
-
-		TypeID getTypeID()  const
-		{
-			return m_typeID;
-		};
-	};*/
 
 };
 

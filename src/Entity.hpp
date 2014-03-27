@@ -78,7 +78,7 @@ namespace jl
 		void save(const std::string &templateName);
 		void setActive(bool active);
 
-		// Clones the components the target entity into this entity. Existing
+		// Clones the components of the target entity into this entity. Existing
 		// components that conflicts will be overwritten, others will remain
 		// untouched.
 		void cloneFrom(Entity &entity);
@@ -87,7 +87,6 @@ namespace jl
 
 		// Returns a read-write enabled map of all the internal components
 		ComponentBag& getComponents();
-		LuaComponentBag& getLuaComponents();
 
 		EntityID getID() const;
 		// Whether or not the Entity is active, inactive entities do not

@@ -4,6 +4,46 @@
 		"selected_items":
 		[
 			[
+				"GetWId",
+				"GetWindowHeight"
+			],
+			[
+				"event",
+				"eventName"
+			],
+			[
+				"ent",
+				"Entity"
+			],
+			[
+				"subscr",
+				"subscribedEvents"
+			],
+			[
+				"script",
+				"scripts"
+			],
+			[
+				"LuaEve",
+				"LuaEventRequests"
+			],
+			[
+				"eve",
+				"eventName"
+			],
+			[
+				"req",
+				"requestEvent"
+			],
+			[
+				"res",
+				"requestsChanged"
+			],
+			[
+				"subs",
+				"subscribtionsChanged"
+			],
+			[
 				"m_l",
 				"m_luaEnv"
 			],
@@ -90,10 +130,6 @@
 			[
 				"m_scri",
 				"m_subscribedScripts"
-			],
-			[
-				"subs",
-				"subscribedTo"
 			],
 			[
 				"Mess",
@@ -478,42 +514,6 @@
 			[
 				"ETW_ISCH",
 				"ETW_IsChallengeReady"
-			],
-			[
-				"started",
-				"startedTime"
-			],
-			[
-				"acti",
-				"activeChallenge"
-			],
-			[
-				"ETW_CH",
-				"ETW_ChallengeWindow"
-			],
-			[
-				"ETW_CHalle",
-				"ETW_ChallengeWindow"
-			],
-			[
-				"INe",
-				"InsetFrameTemplate3"
-			],
-			[
-				"ETW_",
-				"ETW_ChallengeWindow"
-			],
-			[
-				"Cha",
-				"challenge"
-			],
-			[
-				"chall",
-				"challengeCooldownStarted"
-			],
-			[
-				"c",
-				"challengeFrameCount"
 			]
 		]
 	},
@@ -523,7 +523,23 @@
 			"file": "src/main.cpp",
 			"settings":
 			{
-				"buffer_size": 10878,
+				"buffer_size": 10554,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/VideoMode.hpp",
+			"settings":
+			{
+				"buffer_size": 218,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/Lua/LuaEnv_Game.cpp",
+			"settings":
+			{
+				"buffer_size": 2585,
 				"line_ending": "Unix"
 			}
 		},
@@ -536,34 +552,36 @@
 			}
 		},
 		{
-			"file": "src/Lua/LuaEnv_Input.cpp",
-			"settings":
-			{
-				"buffer_size": 1724,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "src/Lua/LuaEnv_Component.cpp",
-			"settings":
-			{
-				"buffer_size": 1628,
-				"line_ending": "Unix"
-			}
-		},
-		{
 			"file": "src/Game.hpp",
 			"settings":
 			{
-				"buffer_size": 1528,
+				"buffer_size": 1981,
 				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/Entity.hpp",
+			"settings":
+			{
+				"buffer_size": 2747,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "Searching 469 files for \"getLuaComponents\" (case sensitive)\n\n/media/jakob/750GB Hard Drive/Projects/C++/jlEngine/src/Entity.cpp:\n  126  		return m_components;\n  127  	}\n  128: 	LuaComponentBag& Entity::getLuaComponents()\n  129  	{\n  130  		return m_luaComponents;\n\n/media/jakob/750GB Hard Drive/Projects/C++/jlEngine/src/Entity.hpp:\n   88  		// Returns a read-write enabled map of all the internal components\n   89  		ComponentBag& getComponents();\n   90: 		LuaComponentBag& getLuaComponents();\n   91  \n   92  		EntityID getID() const;\n\n2 matches across 2 files\n",
+			"settings":
+			{
+				"buffer_size": 562,
+				"line_ending": "Unix",
+				"name": "Find Results",
+				"scratch": true
 			}
 		},
 		{
 			"file": "src/Systems/LuaSystem.hpp",
 			"settings":
 			{
-				"buffer_size": 2228,
+				"buffer_size": 2248,
 				"line_ending": "Unix"
 			}
 		},
@@ -571,7 +589,79 @@
 			"file": "src/Systems/LuaSystem.cpp",
 			"settings":
 			{
-				"buffer_size": 5536,
+				"buffer_size": 6225,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/System.cpp",
+			"settings":
+			{
+				"buffer_size": 2178,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/System.hpp",
+			"settings":
+			{
+				"buffer_size": 2231,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/SystemPool.cpp",
+			"settings":
+			{
+				"buffer_size": 2271,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/SystemPool.hpp",
+			"settings":
+			{
+				"buffer_size": 1581,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/OpenGLWindow.hpp",
+			"settings":
+			{
+				"buffer_size": 1210,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/OpenGLWindow.cpp",
+			"settings":
+			{
+				"buffer_size": 3581,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/Component.hpp",
+			"settings":
+			{
+				"buffer_size": 1400,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/Entity.cpp",
+			"settings":
+			{
+				"buffer_size": 3185,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/EntityPool.hpp",
+			"settings":
+			{
+				"buffer_size": 1604,
 				"line_ending": "Unix"
 			}
 		},
@@ -579,31 +669,7 @@
 			"file": "bin/luaFile.lua",
 			"settings":
 			{
-				"buffer_size": 1673,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "src/Lua/LuaEnv_Game.cpp",
-			"settings":
-			{
-				"buffer_size": 1997,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "src/LuaEnvironment.hpp",
-			"settings":
-			{
-				"buffer_size": 2371,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "src/LuaEnvironment.cpp",
-			"settings":
-			{
-				"buffer_size": 1079,
+				"buffer_size": 2017,
 				"line_ending": "Unix"
 			}
 		}
@@ -660,22 +726,24 @@
 	},
 	"file_history":
 	[
+		"/media/jakob/750GB Hard Drive/Projects/C++/jlEngine/src/Systems/MeshSystem.cpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/jlEngine/src/EntityPool.cpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/jlEngine/src/Lua/LuaEnv_Input.cpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/jlEngine/src/Components/LuaComponent.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/jlEngine/src/LuaEnvironment.cpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/jlEngine/src/Lua/LuaEnv_Game.cpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/jlEngine/src/Lua/LuaEnv_Game.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/jlEngine/src/LuaEnvironment.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/jlEngine/src/Lua/LuaEnv_Entity.hpp",
+		"/media/jakob/750GB Hard Drive/Projects/C++/jlEngine/src/Lua/LuaEnv_Entity.cpp",
 		"/media/jakob/750GB Hard Drive/Projects/C++/jlEngine/src/Lua/LuaEnv_Component.cpp",
 		"/media/jakob/750GB Hard Drive/Projects/C++/jlEngine/src/Lua/LuaEnv_Input.hpp",
 		"/media/jakob/750GB Hard Drive/Projects/C++/jlEngine/src/Lua/LuaEnv_Component.hpp",
-		"/media/jakob/750GB Hard Drive/Projects/C++/jlEngine/src/Lua/LuaEnv_Input.cpp",
-		"/media/jakob/750GB Hard Drive/Projects/C++/jlEngine/src/Lua/LuaEnv_Entity.hpp",
-		"/media/jakob/750GB Hard Drive/Projects/C++/jlEngine/src/Lua/LuaEnv_Entity.cpp",
 		"/media/jakob/750GB Hard Drive/Projects/C++/jlEngine/src/Mesh.cpp",
 		"/media/jakob/750GB Hard Drive/Projects/C++/jlEngine/src/SystemPool.hpp",
 		"/media/jakob/750GB Hard Drive/Projects/C++/jlEngine/premake4.lua",
-		"/media/jakob/750GB Hard Drive/Projects/C++/jlEngine/src/LuaEnvironment.hpp",
-		"/media/jakob/750GB Hard Drive/Projects/C++/jlEngine/src/Lua/LuaEnv_Game.hpp",
-		"/media/jakob/750GB Hard Drive/Projects/C++/jlEngine/src/Lua/LuaEnv_Game.cpp",
 		"/media/jakob/750GB Hard Drive/Projects/C++/jlEngine/src/Systems/LuaSystem.hpp",
 		"/media/jakob/750GB Hard Drive/Projects/C++/jlEngine/inc/glm/gtx/associated_min_max.hpp",
-		"/media/jakob/750GB Hard Drive/Projects/C++/jlEngine/src/LuaEnvironment.cpp",
-		"/media/jakob/750GB Hard Drive/Projects/C++/jlEngine/src/EntityPool.cpp",
 		"/media/jakob/750GB Hard Drive/Projects/C++/jlEngine/src/Camera.cpp",
 		"/media/jakob/750GB Hard Drive/Projects/C++/jlEngine/src/Component.hpp",
 		"/media/jakob/750GB Hard Drive/Projects/C++/jlEngine/src/Entity.hpp",
@@ -705,7 +773,6 @@
 		"/media/jakob/750GB Hard Drive/Projects/C++/jlEngine/bin/luaFile.lua",
 		"/media/jakob/750GB Hard Drive/Projects/C++/jlEngine/src/Components/MeshComponent.hpp",
 		"/media/jakob/750GB Hard Drive/Projects/C++/jlEngine/.gitignore",
-		"/media/jakob/750GB Hard Drive/Projects/C++/jlEngine/src/Systems/MeshSystem.cpp",
 		"/media/jakob/750GB Hard Drive/Projects/C++/jlEngine/src/Systems/MeshSystem.hpp",
 		"/media/jakob/750GB Hard Drive/Projects/C++/jlEngine/src/Scene.hpp",
 		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/src/SystemPool.cpp",
@@ -786,8 +853,7 @@
 		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/inc/glm/gtx/optimum_pow.hpp",
 		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/inc/SDL2/SDL_image.h",
 		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/inc/CImg/CImg.h",
-		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/inc/SDL2/SDL_surface.h",
-		"/media/jakob/750GB Hard Drive/Projects/C++/Premake_Test1/inc/SDL2/SDL_surface.h"
+		"/media/jakob/750GB Hard Drive/Projects/C++/ArcTutorial_Test/inc/SDL2/SDL_surface.h"
 	],
 	"find":
 	{
@@ -808,6 +874,24 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"Window",
+			"getLuaComponents",
+			"getLuaComponentBag",
+			"MoveCamera",
+			"	 	",
+			";",
+			"static",
+			"MoveCamera",
+			"initFuncIndex",
+			"onEntityRemoved",
+			"itr",
+			"entity.",
+			".",
+			"entity",
+			"subscribe(",
+			"subscribe",
+			"ignoreRequests",
+			"requestedEvents",
 			"reportLuaError(*itr->second[i], -1);",
 			"runLuaFile",
 			"pushObjectToLua",
@@ -917,25 +1001,7 @@
 			"TypeIdGrabber::currentTypeId",
 			"identifier",
 			"SDL_LoadWAV_RW",
-			"SDL_LoadWAV",
-			"SDL_LoadWav",
-			"IsMousePressed",
-			"GetMousePos",
-			"left",
-			"GetTotalEntityCount",
-			"DeleteScene",
-			"ChangeScene",
-			"m_pendingDeletes",
-			"EntityActions",
-			"DisableEntity",
-			"HasComponent",
-			"THIS",
-			"**",
-			"pushlightuserdata",
-			"Entity",
-			"JL_ENTITY",
-			"touserdata",
-			"-2"
+			"SDL_LoadWAV"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1008,7 +1074,7 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 1,
 			"sheets":
 			[
 				{
@@ -1017,15 +1083,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 10878,
+						"buffer_size": 10554,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2878,
-								2878
+								3829,
+								3829
 							]
 						],
 						"settings":
@@ -1034,14 +1100,71 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1463.0,
+						"translation.y": 1743.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "src/VideoMode.hpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 218,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								124,
+								124
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
 					"type": "text"
 				},
 				{
-					"buffer": 1,
+					"buffer": 2,
+					"file": "src/Lua/LuaEnv_Game.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2585,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2239,
+								2239
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 502.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
 					"file": "src/Game.cpp",
 					"semi_transient": false,
 					"settings":
@@ -1066,73 +1189,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 9,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "src/Lua/LuaEnv_Input.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1724,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								107,
-								107
-							],
-							[
-								340,
-								340
-							],
-							[
-								895,
-								895
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 10,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "src/Lua/LuaEnv_Component.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1628,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1625,
-								1625
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": -0.0,
-						"translation.y": 385.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 7,
+					"stack_index": 18,
 					"type": "text"
 				},
 				{
@@ -1141,15 +1198,152 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1528,
+						"buffer_size": 1981,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								776,
-								776
+								777,
+								777
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 346.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "src/Entity.hpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2747,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2587,
+								2587
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 62.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 562,
+						"regions":
+						{
+							"match":
+							{
+								"flags": 112,
+								"regions":
+								[
+									[
+										202,
+										218
+									],
+									[
+										475,
+										491
+									]
+								],
+								"scope": ""
+							}
+						},
+						"selection":
+						[
+							[
+								474,
+								474
+							]
+						],
+						"settings":
+						{
+							"detect_indentation": false,
+							"line_numbers": false,
+							"output_tag": 1,
+							"result_base_dir": "",
+							"result_file_regex": "^([A-Za-z\\\\/<].*):$",
+							"result_line_regex": "^ +([0-9]+):",
+							"scroll_past_end": true,
+							"syntax": "Packages/Default/Find Results.hidden-tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 9,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "src/Systems/LuaSystem.hpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2248,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2207,
+								2207
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 627.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 17,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "src/Systems/LuaSystem.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 6225,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								129,
+								129
 							]
 						],
 						"settings":
@@ -1161,24 +1355,24 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 8,
+					"stack_index": 12,
 					"type": "text"
 				},
 				{
-					"buffer": 5,
-					"file": "src/Systems/LuaSystem.hpp",
+					"buffer": 9,
+					"file": "src/System.cpp",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2228,
+						"buffer_size": 2178,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1683,
-								1683
+								657,
+								657
 							]
 						],
 						"settings":
@@ -1187,27 +1381,172 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 838.0,
+						"translation.y": 833.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 16,
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "src/System.hpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2231,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1898,
+								1898
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 292.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 13,
+					"type": "text"
+				},
+				{
+					"buffer": 11,
+					"file": "src/SystemPool.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2271,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1899,
+								1899
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 15,
+					"type": "text"
+				},
+				{
+					"buffer": 12,
+					"file": "src/SystemPool.hpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1581,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1454,
+								1454
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 156.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 13,
+					"file": "src/OpenGLWindow.hpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1210,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1185,
+								1185
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": -0.0,
+						"translation.y": 234.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 5,
 					"type": "text"
 				},
 				{
-					"buffer": 6,
-					"file": "src/Systems/LuaSystem.cpp",
+					"buffer": 14,
+					"file": "src/OpenGLWindow.cpp",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 5536,
+						"buffer_size": 3581,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								4644,
-								4644
+								3484,
+								3484
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": -0.0,
+						"translation.y": 1386.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 15,
+					"file": "src/Component.hpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1400,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1389,
+								1389
 							]
 						],
 						"settings":
@@ -1216,27 +1555,85 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1926.0,
+						"translation.y": 390.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 10,
 					"type": "text"
 				},
 				{
-					"buffer": 7,
-					"file": "bin/luaFile.lua",
+					"buffer": 16,
+					"file": "src/Entity.cpp",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1673,
+						"buffer_size": 3185,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								98,
-								98
+								3071,
+								3071
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 964.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 17,
+					"file": "src/EntityPool.hpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1604,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 14,
+					"type": "text"
+				},
+				{
+					"buffer": 18,
+					"file": "bin/luaFile.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2017,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1379,
+								1379
 							]
 						],
 						"settings":
@@ -1248,94 +1645,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 8,
-					"file": "src/Lua/LuaEnv_Game.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1997,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1828,
-								1828
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": -0.0,
-						"translation.y": 390.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 6,
-					"type": "text"
-				},
-				{
-					"buffer": 9,
-					"file": "src/LuaEnvironment.hpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2371,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2274,
-								2274
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 624.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 10,
-					"file": "src/LuaEnvironment.cpp",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1079,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								748,
-								748
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
+					"stack_index": 11,
 					"type": "text"
 				}
 			]
@@ -1392,12 +1702,36 @@
 		"selected_items":
 		[
 			[
-				"main",
-				"src/main.cpp"
+				"luafi",
+				"bin/luaFile.lua"
+			],
+			[
+				"luaenv",
+				"src/Lua/LuaEnv_Game.cpp"
+			],
+			[
+				"luaf",
+				"bin/luaFile.lua"
+			],
+			[
+				"laf",
+				"bin/luaFile.lua"
+			],
+			[
+				"luasy",
+				"src/Systems/LuaSystem.cpp"
+			],
+			[
+				"las",
+				"src/Systems/LuaSystem.cpp"
 			],
 			[
 				"luasys",
 				"src/Systems/LuaSystem.cpp"
+			],
+			[
+				"main",
+				"src/main.cpp"
 			],
 			[
 				"luas",
@@ -1424,20 +1758,8 @@
 				"src/Component.hpp"
 			],
 			[
-				"luaf",
-				"bin/luaFile.lua"
-			],
-			[
-				"luasy",
-				"src/Systems/LuaSystem.hpp"
-			],
-			[
 				"basecomp",
 				"build/obj/Release/Component.d"
-			],
-			[
-				"luafi",
-				"bin/luaFile.lua"
 			],
 			[
 				"sdl_log",

@@ -58,6 +58,30 @@ namespace jl
 
 		// Running Lua scripts
 		bool runScript(const std::string &filePath);
+		/*template<typename TType> void exposeComponentToLua()
+		{
+			auto func = [] (lua_State *state) -> int
+			{
+
+			};
+
+			const luaL_Reg funcs[] = 
+			{
+				{ "addcomp", func },
+				{ NULL, NULL }
+			};
+
+			lua_State *state = m_luaEnvironment.getRaw();
+
+			// Grab entity metatable
+			luaL_getmetatable(state, "jl.Entity");
+			int metaTable = lua_gettop(state);
+
+			luaL_setfuncs(state, funcs, 0);
+
+			// Pop metatable value
+			lua_pop(state, 1);
+		};*/
 
 		EntityPool& getEntityPool();
 		SystemPool& getSystemPool();

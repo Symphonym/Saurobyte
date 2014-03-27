@@ -57,8 +57,8 @@ namespace jl
 		std::size_t getFps() const;
 		float getDelta() const;
 
-		std::size_t getWindowWidth() const;
-		std::size_t getWindowHeight() const;
+		std::size_t getWidth() const;
+		std::size_t getHeight() const;
 
 	};
 };

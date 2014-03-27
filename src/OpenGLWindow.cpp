@@ -129,13 +129,13 @@ namespace jl
 		return m_frameCounter.getDelta();
 	}
 
-	std::size_t OpenGLWindow::getWindowWidth() const
+	std::size_t OpenGLWindow::getWidth() const
 	{
 		int width = 0;
 		SDL_GetWindowSize(m_window, &width, NULL);
 		return width;
 	}
-	std::size_t OpenGLWindow::getWindowHeight() const
+	std::size_t OpenGLWindow::getHeight() const
 	{
 		int height = 0;
 		SDL_GetWindowSize(m_window, NULL, &height);

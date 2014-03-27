@@ -209,13 +209,13 @@ int main(int argc, const char* argv[]){
 	jl::Scene& sc = game.createScene("HUE");
 
 	jl::Scene& sc2 = game.createScene("H");
-	sc2.getCamera().setAspectRatio((float)window.getWindowWidth()/(float)window.getWindowHeight());
+	sc2.getCamera().setAspectRatio((float)window.getWidth()/(float)window.getHeight());
 	sc2.getCamera().setPosition(glm::vec3(0,0,7));
 	sc2.attach(ent2);
 	sc2.attach(ent);
 	//sc.attach(ent);
 
-	sc.getCamera().setAspectRatio((float)window.getWindowWidth()/(float)window.getWindowHeight());
+	sc.getCamera().setAspectRatio((float)window.getWidth()/(float)window.getHeight());
 	sc.getCamera().setPosition(glm::vec3(0,0,7));
 	JL_INFO_LOG("SIZE %i", sizeof(jl::MeshComponent));
 	game.changeScene("H");

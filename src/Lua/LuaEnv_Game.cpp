@@ -65,7 +65,7 @@ namespace jl
 
 		lua_settop(state, 0);
 
-		lua_pushnumber(state, game->getWindow().getWindowWidth());
+		lua_pushnumber(state, game->getWindow().getWidth());
 
 		return 1;
  	}
@@ -76,7 +76,7 @@ namespace jl
 
 		lua_settop(state, 0);
 
-		lua_pushnumber(state, game->getWindow().getWindowHeight());
+		lua_pushnumber(state, game->getWindow().getHeight());
 
 		return 1;
 	}

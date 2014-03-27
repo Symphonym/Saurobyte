@@ -3,7 +3,6 @@
 #include "Entity.hpp"
 #include "Message.hpp"
 #include "Game.hpp"
-#include "Logger.hpp"
 
 namespace jl
 {
@@ -138,7 +137,6 @@ namespace jl
 	{
 		// Iterate subscriptions
 		LuaComponent *comp = entity.getComponent<LuaComponent>();
-		JL_INFO_LOG("onDetach %i", comp->subscribedEvents.size());
 		for(auto eventItr = comp->subscribedEvents.begin(); eventItr != comp->subscribedEvents.end(); eventItr++)
 		{
 			auto itr = m_subscribedScripts.find(*eventItr);
