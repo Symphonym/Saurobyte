@@ -28,6 +28,9 @@ namespace jl
 		// Get game window height
 		static int GetWindowHeight(lua_State *state);
 
+		// Set game window gamma
+		static int SetWindowGamma(lua_State *state);
+
 
 	public:
 		

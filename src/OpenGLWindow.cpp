@@ -6,14 +6,12 @@
 namespace jl
 {
 
-	OpenGLWindow* OpenGLWindow::activeWindow = nullptr;
-
 	OpenGLWindow::OpenGLWindow(
 			const std::string &windowTitle,
 			std::size_t width,
 			std::size_t height,
 			Uint32 windowFlags,
-			std::vector<GLAttribute> openGLAttributes,
+			std::vector<OpenGLAttribute> openGLAttributes,
 			std::size_t maxFps)
 		:
 		m_frameCounter(),
@@ -21,26 +19,14 @@ namespace jl
 		m_glContext(),
 		m_isRunning(true)
 	{
-		windowFlags |= SDL_WINDOW_OPENGL; // Allow for OpenGL in the Window
+		windowFlags |= SDL_WINDOW_OPENGL; // Make sure OpenGL is allowed in the Window
 
 		// Set all desired OpenGL attributes for the context
 		for(std::size_t i = 0; i < openGLAttributes.size(); i++)
 			SDL_GL_SetAttribute(openGLAttributes[i].attribute, openGLAttributes[i].value);
 
-		// Get center of screen
-		int centerX = 100;
-		int centerY = 100;
-
-		SDL_Rect displayRect;
-		if(!SDL_GetDisplayBounds(0, &displayRect))
-		{
-			centerX = displayRect.w/2 - width/2;
-			centerY = displayRect.h/2 - height/2;
-		}
-		else
-			JL_WARNING_LOG("Could not find a default display to center window on. SDL_Error: %s", SDL_GetError());
-
-		m_window = SDL_CreateWindow(windowTitle.c_str(), centerX, centerY, width, height, windowFlags);
+		m_window = SDL_CreateWindow(
+			windowTitle.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, windowFlags);
 
 		// Failed to create SDL window
 		if(m_window == nullptr)
@@ -62,9 +48,6 @@ namespace jl
 		JL_INFO_LOG("OpenGL: %s", glGetString(GL_VERSION));
 		JL_INFO_LOG("OpenGL vendor: %s", glGetString(GL_VENDOR));
 		JL_INFO_LOG("GLSL: %s", glGetString(GL_SHADING_LANGUAGE_VERSION));
-
-		// Make the most recent window the globally accessible one
-		makeGlobal();
 	}
 	OpenGLWindow::~OpenGLWindow()
 	{
@@ -91,12 +74,6 @@ namespace jl
 		SDL_GL_SwapWindow(m_window);
 	}
 
-	void OpenGLWindow::makeGlobal()
-	{
-		OpenGLWindow::activeWindow = this;
-		SDL_GL_MakeCurrent(m_window, m_glContext);
-	}
-
 	void OpenGLWindow::setPosition(int x, int y)
 	{
 		SDL_SetWindowPosition(m_window, x, y);
@@ -113,6 +90,12 @@ namespace jl
 	{
 		if(SDL_GL_SetSwapInterval(enabled ? 1 : 0) < 0)
 			JL_WARNING_LOG("Vsync could not be enabled on this system. SDL_Error: %s", SDL_GetError());
+	}
+	void OpenGLWindow::setGamma(float gamma)
+	{
+		if(SDL_SetWindowBrightness(m_window, gamma))
+			JL_ERROR_LOG("Couldn't set gamme value. SDL_Error: %s", SDL_GetError());
+
 	}
 
 	void OpenGLWindow::showPopup(Uint32 popupFlags, const std::string &title, const std::string &message)

@@ -1,5 +1,6 @@
 #include "LuaEnv_Game.hpp"
 #include "Game.hpp"
+#include "Logger.hpp"
 
 namespace jl
 {

@@ -84,6 +84,13 @@ namespace jl
 						}
 					}
 
+					else if(message->isType<std::string>())
+					{
+						const std::string& strData = static_cast<MessageData<std::string>*>(message)->data;
+						lua_pushstring(state, strData.c_str());
+						++argCount;
+					}
+
 					// Call event function
 					if(!lua_isnil(state, eventFuncIndex))
 						if(lua_pcall(state, argCount, 0, 0))
@@ -178,7 +185,7 @@ namespace jl
 				m_luaEnv.reportError();
 	}
 	void LuaSystem::onClear()
-	{
+	{		
 		m_subscribedScripts.clear();
 	}
 

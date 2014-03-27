@@ -138,7 +138,7 @@ int main(int argc, const char* argv[]){
 
 	SDL_Log("%i %i %i %i", A, B, C, D);
 
-	jl::OpenGLWindow window(
+	/*jl::OpenGLWindow window(
 		"OpenGL Application",
 		800, 600,
 		SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE,
@@ -153,10 +153,11 @@ int main(int argc, const char* argv[]){
 	window.showPopup(SDL_MESSAGEBOX_WARNING,
 		"Missing file",
 		"File is missing. Please reinstall the program.");
-
-	jl::Game game(window, jl::GameLogging::Info_Error);
+	*/
+	jl::Game game("HERRO", 800, 600);
 	game.addSystem<Dem>();
 	game.addSystem<jl::MeshSystem>();
+	game.setLogging(jl::GameLogging::Debug);
 
 	jl::Entity& ent = game.createEntity();
 	ent.addComponent<Compiz>();
@@ -209,13 +210,13 @@ int main(int argc, const char* argv[]){
 	jl::Scene& sc = game.createScene("HUE");
 
 	jl::Scene& sc2 = game.createScene("H");
-	sc2.getCamera().setAspectRatio((float)window.getWidth()/(float)window.getHeight());
+	sc2.getCamera().setAspectRatio((float)game.getWindow().getWidth()/(float)game.getWindow().getHeight());
 	sc2.getCamera().setPosition(glm::vec3(0,0,7));
 	sc2.attach(ent2);
 	sc2.attach(ent);
 	//sc.attach(ent);
 
-	sc.getCamera().setAspectRatio((float)window.getWidth()/(float)window.getHeight());
+	sc.getCamera().setAspectRatio((float)game.getWindow().getWidth()/(float)game.getWindow().getHeight());
 	sc.getCamera().setPosition(glm::vec3(0,0,7));
 	JL_INFO_LOG("SIZE %i", sizeof(jl::MeshComponent));
 	game.changeScene("H");

@@ -21,6 +21,10 @@ namespace jl
 				}
 			}
 			m_subscriptionCentral.clear();
+
+			for(std::size_t i = 0; i < m_messageQueue.size(); i++)
+				delete m_messageQueue[i];
+			m_messageQueue.clear();
 		}
 
 		void MessageCentral::subscribe(const std::string &messageName, MessageHandler *handler)
@@ -67,7 +71,15 @@ namespace jl
 			handler->m_subscriptions.clear();
 		}
 
-		void MessageCentral::broadcast(Message *message)
+		void MessageCentral::sendQueuedMessages()
+		{
+			for(std::size_t i = 0; i < m_messageQueue.size(); i++)
+				sendMessage(m_messageQueue[i]);
+
+			m_messageQueue.clear();
+		}
+
+		void MessageCentral::sendMessage(Message *message)
 		{
 			auto iter = m_subscriptionCentral.find(message->name);
 			if(iter != m_subscriptionCentral.end())
@@ -76,6 +88,10 @@ namespace jl
 					iter->second[i]->onMessage(message);
 			}
 			delete message;
+		}
+		void MessageCentral::queueMessage(Message *message)
+		{
+			m_messageQueue.push_back(message);
 		}
 
 		bool MessageCentral::subscribedTo(const std::string &messageName, const MessageHandler *handler) const

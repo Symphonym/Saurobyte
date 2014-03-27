@@ -19,8 +19,79 @@ namespace jl
 		m_systemPool(this),
 		m_scenePool(this),
 		m_messageCentral(),
-		m_luaEnvironment(),
-		m_glWindow(window)
+		m_luaEnvironment()
+		//m_glWindow(window)
+	{
+		// Set default logging
+		setLogging(GameLogging::Info_Error);
+
+		// Add the built in systems
+		addSystem<LuaSystem>();
+
+		// Expose Lua API
+		LuaEnv_Game::exposeToLua(this);
+		LuaEnv_Entity::exposeToLua(this);
+		LuaEnv_Input::exposeToLua(this);
+		LuaEnv_Component::exposeToLua(this);
+	}
+	Game::Game(
+		const std::string &name,
+		int width,
+		int height,
+		std::vector<OpenGLWindow::OpenGLAttribute> glAttributes,
+		OpenGLVersions glVersion)
+		:
+		m_entityPool(this),
+		m_systemPool(this),
+		m_scenePool(this),
+		m_messageCentral(),
+		m_luaEnvironment()
+	{
+		switch(glVersion)
+		{
+			case OpenGLVersions::Core_3_3:
+				glAttributes.push_back({SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE});
+				glAttributes.push_back({SDL_GL_CONTEXT_MAJOR_VERSION, 3});
+				glAttributes.push_back({SDL_GL_CONTEXT_MINOR_VERSION, 3});
+			break;
+			case OpenGLVersions::Core_4_3:
+				glAttributes.push_back({SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE});
+				glAttributes.push_back({SDL_GL_CONTEXT_MAJOR_VERSION, 4});
+				glAttributes.push_back({SDL_GL_CONTEXT_MINOR_VERSION, 3});
+			break;
+			case OpenGLVersions::ES_3_3:
+				glAttributes.push_back({SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES});
+				glAttributes.push_back({SDL_GL_CONTEXT_MAJOR_VERSION, 3});
+				glAttributes.push_back({SDL_GL_CONTEXT_MINOR_VERSION, 3});
+			break;
+			case OpenGLVersions::ES_4_3:
+				glAttributes.push_back({SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES});
+				glAttributes.push_back({SDL_GL_CONTEXT_MAJOR_VERSION, 4});
+				glAttributes.push_back({SDL_GL_CONTEXT_MINOR_VERSION, 3});
+			break;
+		};
+
+		m_glWindow = new OpenGLWindow(name, width, height, SDL_WINDOW_SHOWN, glAttributes, 300);
+
+		// Set default logging
+		setLogging(GameLogging::Info_Error);
+
+		// Add the built in systems
+		addSystem<LuaSystem>();
+
+		// Expose Lua API
+		LuaEnv_Game::exposeToLua(this);
+		LuaEnv_Entity::exposeToLua(this);
+		LuaEnv_Input::exposeToLua(this);
+		LuaEnv_Component::exposeToLua(this);
+	}
+
+	Game::~Game()
+	{
+		delete m_glWindow;
+	}
+
+	void Game::setLogging(GameLogging logging)
 	{
 		// Start by disabling all logging
 		SDL_LogSetAllPriority(SDL_LOG_PRIORITY_CRITICAL);
@@ -42,19 +113,6 @@ namespace jl
 				SDL_LogSetAllPriority(SDL_LOG_PRIORITY_CRITICAL);
 			break;
 		}
-
-		// Add the built in systems
-		addSystem<LuaSystem>();
-
-		// Expose Lua API
-		LuaEnv_Game::exposeToLua(this);
-		LuaEnv_Entity::exposeToLua(this);
-		LuaEnv_Input::exposeToLua(this);
-		LuaEnv_Component::exposeToLua(this);
-	}
-	Game::~Game()
-	{
-
 	}
 
 	void Game::gameLoop()
@@ -62,30 +120,31 @@ namespace jl
 
 		SDL_Event event;
 
-		while(m_glWindow.running())
+		while(m_glWindow->running())
 		{
 			// Process frame start entity cleanup
 			m_scenePool.frameCleanup();
 			m_entityPool.frameCleanup();
+			m_messageCentral.sendQueuedMessages();
 
 			// Poll events
-			while(m_glWindow.pollEvent(event))
+			while(m_glWindow->pollEvent(event))
 			{
 				if(event.type == SDL_QUIT)
-					m_glWindow.close();
+					m_glWindow->close();
 				else if(event.type == SDL_KEYDOWN)
 				{
-					broadcast(createMessage<SDL_Event>("KeyDown", event));
+					sendMessage(createMessage<SDL_Event>("KeyDown", event));
 
 					if(event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
-						m_glWindow.close();
+						m_glWindow->close();
 					else if(event.key.keysym.scancode == SDL_SCANCODE_R &&
 						SDL_GetModState() & KMOD_LCTRL)
-						broadcast(createMessage("ReloadLua"));
+						sendMessage(createMessage("ReloadLua"));
 
 				}
 				else if(event.type == SDL_KEYUP)
-					broadcast(createMessage<SDL_Event>("KeyUp", event));
+					sendMessage(createMessage<SDL_Event>("KeyUp", event));
 				else if(event.type == SDL_WINDOWEVENT)
 				{
 					if(event.window.event == SDL_WINDOWEVENT_RESIZED)
@@ -105,7 +164,7 @@ namespace jl
 			
 			glFlush();
 
-			m_glWindow.swapBuffers();
+			m_glWindow->swapBuffers();
 		}
 	}
 
@@ -131,9 +190,13 @@ namespace jl
 		m_scenePool.changeScene(sceneName);
 	}
 
-	void Game::broadcast(Message *message)
+	void Game::sendMessage(Message *message)
 	{
-		m_messageCentral.broadcast(message);
+		m_messageCentral.sendMessage(message);
+	}
+	void Game::queueMessage(Message *message)
+	{
+		m_messageCentral.queueMessage(message);
 	}
 
 	bool Game::runScript(const std::string &filePath)
@@ -164,6 +227,6 @@ namespace jl
 	}
 	OpenGLWindow& Game::getWindow()
 	{
-		return m_glWindow;
+		return *m_glWindow;
 	}
 };

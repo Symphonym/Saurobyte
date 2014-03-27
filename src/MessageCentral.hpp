@@ -1,8 +1,8 @@
 #ifndef JL_MESSAGECENTER_HPP
 #define JL_MESSAGECENTER_HPP
 
-#include <unordered_map>
 #include <unordered_set>
+#include <unordered_map>
 #include <vector>
 
 namespace jl
@@ -14,8 +14,10 @@ namespace jl
 		private:
 
 		typedef std::unordered_map<std::string, std::vector<MessageHandler*> > MessageSubscriptions;
+		typedef std::vector<Message*> MessageQueue;
 
 		MessageSubscriptions m_subscriptionCentral;
+		MessageQueue m_messageQueue;
 
 	public:
 
@@ -31,8 +33,12 @@ namespace jl
 		// , used primarily for cleanup.
 		void unsubscribeAll(MessageHandler *handler);
 
-		// Broadcast message, sending it to those who subscribes to messages of its type
-		void broadcast(Message *message);
+		void sendQueuedMessages();
+
+		// Broadcast message instantly, sending it to those who subscribes to messages of its type
+		void sendMessage(Message *message);
+		// Queue message, broadcasting it whenever the message queue is sent
+		void queueMessage(Message *message);
 
 		// Checks whether or not the specified handler is subscribed to the specified message
 		bool subscribedTo(const std::string &messageName, const MessageHandler *handler) const;

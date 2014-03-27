@@ -27,10 +27,15 @@ namespace jl
 				m_center->unsubscribe(messageName, this);
 		}
 
-		void MessageHandler::broadcast(Message *message)
+		void MessageHandler::sendMessage(Message *message)
 		{
 			if(m_center != nullptr)
-				m_center->broadcast(message);
+				m_center->sendMessage(message);
+		}
+		void MessageHandler::queueMessage(Message *message)
+		{
+			if(m_center != nullptr)
+				m_center->queueMessage(message);
 		}
 
 		bool MessageHandler::subscribedTo(const std::string &messageName) const

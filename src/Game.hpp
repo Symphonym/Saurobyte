@@ -10,12 +10,20 @@
 
 namespace jl
 {
-	enum GameLogging
+	enum class GameLogging
 	{
 		Debug, // Enables ALL logging
 		Warning_Error, // Enables logging for WARNING and ERROR messages
 		Info_Error, // Enables logging for INFO and ERROR messages 		 -- DEFAULT
 		None // Disables ALL logging
+	};
+
+	enum class OpenGLVersions
+	{
+		Core_3_3,
+		Core_4_3,
+		ES_3_3,
+		ES_4_3
 	};
 
 	class Game
@@ -28,13 +36,21 @@ namespace jl
 		MessageCentral m_messageCentral;
 		LuaEnvironment m_luaEnvironment;
 
-		OpenGLWindow &m_glWindow;
+		OpenGLWindow *m_glWindow;
 
 	public:
 
 
+		explicit Game(
+			const std::string &name,
+			int width,
+			int height,
+			std::vector<OpenGLWindow::OpenGLAttribute> glAttributes = std::vector<OpenGLWindow::OpenGLAttribute>(),
+			OpenGLVersions glVersion = OpenGLVersions::Core_3_3);
 		Game(OpenGLWindow &window, GameLogging logging = GameLogging::Info_Error);
 		~Game();
+
+		void setLogging(GameLogging logging);
 
 		void gameLoop();
 
@@ -53,8 +69,9 @@ namespace jl
 		Scene* getActiveScene();
 		void changeScene(const std::string &sceneName);
 
-		// Message broadcasting
-		void broadcast(Message *message);
+		// Message sending
+		void sendMessage(Message *message);
+		void queueMessage(Message *message);
 
 		// Running Lua scripts
 		bool runScript(const std::string &filePath);

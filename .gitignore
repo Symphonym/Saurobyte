@@ -1,3 +1,7 @@
 
 # Ignore build files
 build/
+
+# Ignore sublime text files
+*.sublime-project
+*.sublime-workspace

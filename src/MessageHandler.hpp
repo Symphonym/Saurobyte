@@ -3,8 +3,6 @@
 
 #include <string>
 #include <unordered_set>
-#include <unordered_map>
-#include <vector>
 
 namespace jl
 {
@@ -37,7 +35,8 @@ namespace jl
 		virtual void onMessage(Message *message) {};
 
 		// Broadcast message to all subscribers
-		void broadcast(Message *message);
+		void sendMessage(Message *message);
+		void queueMessage(Message *message);
 
 		// Checks whether or not you're subscribed to the specified message
 		bool subscribedTo(const std::string &messageName) const;

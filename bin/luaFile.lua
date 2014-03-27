@@ -3,6 +3,7 @@ function init(self)
 	print("INIT")
 	self:SubscribeEvent("KeyDown")
 	self:SubscribeEvent("KeyUp")
+	self:SubscribeEvent("SceneLoad")
 
 
 	print("Comp count " .. self:GetComponentCount())
@@ -10,6 +11,8 @@ function init(self)
 end
 
 local r, g, b = 1,1,1
+gamma = 1.0
+
 function update(self, delta)
 
 	if(IsKeyPressed("Left")) then
@@ -28,6 +31,15 @@ function update(self, delta)
 
 	if(IsKeyPressed("T")) then
 		print(game:GetWindowWidth() .. " X " .. game:GetWindowHeight())
+		print(tostring(gamma))
+	end
+
+	if(IsKeyPressed("1")) then
+		gamma = gamma - 10*delta
+		game:SetWindowGamma(tonumber(gamma))
+	elseif(IsKeyPressed("2")) then
+		gamma = gamma + 10*delta
+		game:SetWindowGamma(tonumber(gamma))
 	end
 
 	--local x, y = GetMousePos()
@@ -66,10 +78,9 @@ function update(self, delta)
 end
 
 function events(self, eventName, ...)
-
+	--print(self:GetID() .. " " .. eventName)
 	if(eventName == "KeyDown" or eventName == "KeyUp") then
 		local keyName, keyRepeat = ...
-		
 		if(keyName == "K" and not keyRepeat) then
 			self:Kill()
 		end

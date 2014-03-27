@@ -36,7 +36,7 @@ namespace jl
 		if(!component->getName().empty())
 			m_luaComponents[component->getName()] = component;
 
-		m_game->getEntityPool().refreshEntity(*this);
+		refresh();
 	}
 	void Entity::removeComponent(TypeID id)
 	{
@@ -52,7 +52,7 @@ namespace jl
 
 			delete iter->second;
 			m_components.erase(iter);
-			m_game->getEntityPool().refreshEntity(*this);
+			refresh();
 		}
 
 	}
@@ -84,7 +84,7 @@ namespace jl
 		m_components.clear();
 		m_luaComponents.clear();
 
-		m_game->getEntityPool().refreshEntity(*this);
+		refresh();
 	}
 
 	void Entity::refresh()
@@ -114,7 +114,7 @@ namespace jl
 		for(auto iter = entity.m_components.begin(); iter != entity.m_components.end(); iter++)
 			this->addComponent(iter->second->getTypeID(), iter->second->clone());
 
-		m_game->getEntityPool().refreshEntity(*this);
+		refresh();
 	}
 
 	std::size_t Entity::getComponentCount() const

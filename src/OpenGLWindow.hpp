@@ -20,22 +20,20 @@ namespace jl
 		bool m_isRunning;
 
 
-		struct GLAttribute
+	public:
+
+		struct OpenGLAttribute
 		{
 			SDL_GLattr attribute;
 			int value;
 		};
-
-	public:
-
-		static OpenGLWindow* activeWindow;
 
 		explicit OpenGLWindow(
 			const std::string &windowTitle,
 			std::size_t width,
 			std::size_t height,
 			Uint32 windowFlags,
-			std::vector<GLAttribute> openGLAttributes,
+			std::vector<OpenGLAttribute> openGLAttributes,
 			std::size_t maxFps = 60);
 		~OpenGLWindow();
 		void close();
@@ -44,13 +42,11 @@ namespace jl
 		void setSize(std::size_t width, std::size_t height);
 		void setFpsLimit(std::size_t fps);
 		void setVsync(bool enabled);
+		void setGamma(float gamma);
 
 		bool running();
 		bool pollEvent(SDL_Event &event);
 		void swapBuffers();
-
-		// Utility function to quickly make this Window the globally accessible one
-		void makeGlobal();
 
 		void showPopup(Uint32 popupFlags, const std::string &title, const std::string &message);
 

@@ -1,5 +1,6 @@
 #include "ScenePool.hpp"
 #include "Game.hpp"
+#include "Message.hpp"
 #include "Logger.hpp"
 
 namespace jl
@@ -69,15 +70,16 @@ namespace jl
 			}
 			else if(action == SceneActions::Change)
 			{
-
 				// Clear systems from entities
 				m_game->getSystemPool().emptySystems();
 
-				JL_DEBUG_LOG("Filling Systems with entities from scene '%s'", scene->getName().c_str());
+				JL_DEBUG_LOG("Changing to scene '%s'", scene->getName().c_str());
 
-				// Refresh entities of new Scene
+				// Refresh entities of new Scene, instantly
 				for(auto itr = scene->getEntities().begin(); itr != scene->getEntities().end(); itr++)
 					itr->second->refresh();
+
+				m_game->queueMessage(createMessage<std::string>("SceneLoad", scene->getName()));
 			}
 		}
 
@@ -91,9 +93,8 @@ namespace jl
 		auto itr = m_scenePool.find(name);
 		if(itr != m_scenePool.end())
 		{
-			JL_DEBUG_LOG("Changing to scene '%s'", name.c_str());
-			m_pendingActions.push_back({itr->second, SceneActions::Change});
 			m_activeScene = itr->second;
+			m_pendingActions.push_back({itr->second, SceneActions::Change});
 		}
 	}
 	Scene* ScenePool::getActiveScene()
