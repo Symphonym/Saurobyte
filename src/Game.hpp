@@ -41,17 +41,17 @@ namespace jl
 	public:
 
 
+		// Initialize new game instance.
+		// Creating a new OpenGL window available for rendering and initializing the entity system.
 		explicit Game(
 			const std::string &name,
 			int width,
 			int height,
 			std::vector<OpenGLWindow::OpenGLAttribute> glAttributes = std::vector<OpenGLWindow::OpenGLAttribute>(),
 			OpenGLVersions glVersion = OpenGLVersions::Core_3_3);
-		Game(OpenGLWindow &window, GameLogging logging = GameLogging::Info_Error);
 		~Game();
 
 		void setLogging(GameLogging logging);
-
 		void gameLoop();
 
 		// Creating entities and scenes
@@ -66,8 +66,8 @@ namespace jl
 		};
 
 		// Scene managing
-		Scene* getActiveScene();
 		void changeScene(const std::string &sceneName);
+		Scene* getActiveScene();
 
 		// Message sending
 		void sendMessage(Message *message);

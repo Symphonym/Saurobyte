@@ -11,7 +11,6 @@ function init(self)
 end
 
 local r, g, b = 1,1,1
-gamma = 1.0
 
 function update(self, delta)
 
@@ -30,16 +29,8 @@ function update(self, delta)
 
 
 	if(IsKeyPressed("T")) then
+		print("FPS " .. 1.0/delta)
 		print(game:GetWindowWidth() .. " X " .. game:GetWindowHeight())
-		print(tostring(gamma))
-	end
-
-	if(IsKeyPressed("1")) then
-		gamma = gamma - 10*delta
-		game:SetWindowGamma(tonumber(gamma))
-	elseif(IsKeyPressed("2")) then
-		gamma = gamma + 10*delta
-		game:SetWindowGamma(tonumber(gamma))
 	end
 
 	--local x, y = GetMousePos()

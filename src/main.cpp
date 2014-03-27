@@ -157,7 +157,6 @@ int main(int argc, const char* argv[]){
 	jl::Game game("HERRO", 800, 600);
 	game.addSystem<Dem>();
 	game.addSystem<jl::MeshSystem>();
-	game.setLogging(jl::GameLogging::Debug);
 
 	jl::Entity& ent = game.createEntity();
 	ent.addComponent<Compiz>();

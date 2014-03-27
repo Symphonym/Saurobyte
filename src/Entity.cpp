@@ -1,5 +1,4 @@
 #include "Entity.hpp"
-#include "EntityPool.hpp"
 #include "Game.hpp"
 
 namespace jl
@@ -24,17 +23,17 @@ namespace jl
 	void Entity::addComponent(TypeID id, BaseComponent *component)
 	{
 		// Make sure the component doesn't exist, then add it
-		auto iter = m_components.find(component->getTypeID());
+		auto iter = m_components.find(component->typeID);
 
 		// Overwrite existing component, make sure it's not the same
 		if(iter != m_components.end() && component != iter->second)
 			delete iter->second;
 
-		m_components[component->getTypeID()] = component;
+		m_components[component->typeID] = component;
 
 		// Save component by name as well if it has one, used by Lua
-		if(!component->getName().empty())
-			m_luaComponents[component->getName()] = component;
+		if(!component->name.empty())
+			m_luaComponents[component->name] = component;
 
 		refresh();
 	}
@@ -42,11 +41,12 @@ namespace jl
 	{
 		auto iter = m_components.find(id);
 
+		// Remove component if it exists
 		if(iter != m_components.end())
 		{
 
 			// Remove from name map as well
-			auto nameItr = m_luaComponents.find(iter->second->getName());
+			auto nameItr = m_luaComponents.find(iter->second->name);
 			if(nameItr != m_luaComponents.end())
 				m_luaComponents.erase(nameItr);
 
@@ -112,7 +112,7 @@ namespace jl
 	{
 		// Clone the entity copy's components
 		for(auto iter = entity.m_components.begin(); iter != entity.m_components.end(); iter++)
-			this->addComponent(iter->second->getTypeID(), iter->second->clone());
+			this->addComponent(iter->second->typeID, iter->second->clone());
 
 		refresh();
 	}

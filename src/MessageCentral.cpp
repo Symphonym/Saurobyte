@@ -10,7 +10,7 @@ namespace jl
 		}
 		MessageCentral::~MessageCentral()
 		{
-			// Nullify center pointers of all handlers, so they don't get null error when center is destroyed
+			// Nullify center pointers of all handlers, so they don't get null exceptions when center is destroyed
 			for(auto itr = m_subscriptionCentral.begin(); itr != m_subscriptionCentral.end(); itr++)
 			{
 				std::vector<MessageHandler*>& listeners = itr->second;

@@ -31,10 +31,15 @@ namespace jl
 		BaseComponent(TypeID typeID, const std::string &name) 
 			:
 			m_typeID(typeID),
-			m_name(name)
+			m_name(name),
+			typeID(typeID),
+			name(name)
 		{};
 
 	public:
+
+		const TypeID typeID;
+		const std::string name;
 
 		virtual ~BaseComponent() {};
 
@@ -45,19 +50,6 @@ namespace jl
 
 		// Cloning function that must be overridden by deriving classes
 		virtual BaseComponent* clone()  = 0;
-
-		
-
-
-		TypeID getTypeID()  const
-		{
-			return m_typeID;
-		};
-		std::string getName() const
-		{
-			return m_name;
-		};
-
 	};
 
 	template<typename TType> class Component : public BaseComponent
@@ -65,6 +57,7 @@ namespace jl
 
 	public:
 
+		// Component names are optional, but they won't be accessable through Lua then
 		Component(const std::string &name = "") 
 			:
 			BaseComponent(TypeIdGrabber::getUniqueTypeID<TType>(), name)

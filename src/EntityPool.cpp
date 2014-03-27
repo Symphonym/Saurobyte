@@ -59,7 +59,7 @@ namespace jl
 		if(itr != m_entityTemplates.end())
 		{
 			for(std::size_t i = 0; i < itr->second.size(); i++)
-				ent.addComponent(itr->second[i]->getTypeID(), itr->second[i]->clone());
+				ent.addComponent(itr->second[i]->typeID, itr->second[i]->clone());
 		}
 
 		return ent;

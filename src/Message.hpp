@@ -15,7 +15,7 @@ namespace jl
 	struct Message
 	{
 		// String identifying the type of the message
-		std::string name;
+		const std::string name;
 
 		// Optional entity argument is part of all messages
 		Entity *entity;

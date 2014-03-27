@@ -18,7 +18,7 @@ namespace jl
 		std::unordered_map<EntityID, Entity*> m_entityPool;
 		std::unordered_map<std::string, std::vector<BaseComponent*> > m_entityTemplates;
 
-		// Entities no longer in use
+		// Killed entities, that will be recycled whenever a new entity is wanted
 		std::vector<Entity*> m_sparePool;
 
 		enum EntityActions
@@ -34,13 +34,14 @@ namespace jl
 		};
 		std::vector<EntityAction> m_pendingActions;
 
-		Game *m_game;
+		Game *const m_game;
 
 	public:
 
 		EntityPool(Game *game);
 		~EntityPool();
 
+		// Create empty entity or create by template
 		Entity& createEntity();
 		Entity& createEntity(const std::string &templateName);
 
@@ -53,7 +54,7 @@ namespace jl
 		// Saves the component setup of an entity and stores it by a string name
 		void saveEntity(const std::string &templateName, Entity &entity);
 
-		// Retrieves an element by id, returns null if it could not be found
+		// Retrieves an entity by id, returns null if it could not be found
 		Entity* getEntity(EntityID id);
 		std::size_t getEntityCount() const;
 

@@ -1,8 +1,5 @@
 #include "Game.hpp"
 #include "Message.hpp"
-#include <GL/glew.h>
-#include <SDL2/SDL_opengl.h>
-#include <SDL2/SDL_log.h>
 
 #include "Systems/LuaSystem.hpp"
 
@@ -13,27 +10,6 @@
 
 namespace jl
 {
-	Game::Game(OpenGLWindow &window, GameLogging logging)
-		:
-		m_entityPool(this),
-		m_systemPool(this),
-		m_scenePool(this),
-		m_messageCentral(),
-		m_luaEnvironment()
-		//m_glWindow(window)
-	{
-		// Set default logging
-		setLogging(GameLogging::Info_Error);
-
-		// Add the built in systems
-		addSystem<LuaSystem>();
-
-		// Expose Lua API
-		LuaEnv_Game::exposeToLua(this);
-		LuaEnv_Entity::exposeToLua(this);
-		LuaEnv_Input::exposeToLua(this);
-		LuaEnv_Component::exposeToLua(this);
-	}
 	Game::Game(
 		const std::string &name,
 		int width,
@@ -49,6 +25,8 @@ namespace jl
 	{
 		switch(glVersion)
 		{
+			// Core 3.3 is default
+			default:
 			case OpenGLVersions::Core_3_3:
 				glAttributes.push_back({SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE});
 				glAttributes.push_back({SDL_GL_CONTEXT_MAJOR_VERSION, 3});
@@ -59,7 +37,7 @@ namespace jl
 				glAttributes.push_back({SDL_GL_CONTEXT_MAJOR_VERSION, 4});
 				glAttributes.push_back({SDL_GL_CONTEXT_MINOR_VERSION, 3});
 			break;
-			case OpenGLVersions::ES_3_3:
+			/*case OpenGLVersions::ES_3_3:
 				glAttributes.push_back({SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES});
 				glAttributes.push_back({SDL_GL_CONTEXT_MAJOR_VERSION, 3});
 				glAttributes.push_back({SDL_GL_CONTEXT_MINOR_VERSION, 3});
@@ -68,10 +46,11 @@ namespace jl
 				glAttributes.push_back({SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES});
 				glAttributes.push_back({SDL_GL_CONTEXT_MAJOR_VERSION, 4});
 				glAttributes.push_back({SDL_GL_CONTEXT_MINOR_VERSION, 3});
-			break;
+			break;*/
 		};
 
 		m_glWindow = new OpenGLWindow(name, width, height, SDL_WINDOW_SHOWN, glAttributes, 300);
+		m_glWindow->setVsync(false);
 
 		// Set default logging
 		setLogging(GameLogging::Info_Error);
@@ -106,7 +85,7 @@ namespace jl
 				SDL_LogSetPriority(SDL_LOG_CATEGORY_ERROR, SDL_LOG_PRIORITY_WARN);
 			break;
 			case GameLogging::Info_Error:
-			SDL_LogSetPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_INFO);
+				SDL_LogSetPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_INFO);
 				SDL_LogSetPriority(SDL_LOG_CATEGORY_ERROR, SDL_LOG_PRIORITY_ERROR);
 			break;
 			case GameLogging::None:

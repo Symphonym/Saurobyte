@@ -37,7 +37,7 @@ namespace jl
 
 		// Last argument is always the component to add
 		BaseComponent *comp = LuaEnvironment::convertUserdata<BaseComponent>(state, -1, "Component");
-		entity->addComponent(comp->getTypeID(), comp);
+		entity->addComponent(comp->typeID, comp);
 
 
 		lua_settop(state, 0);
@@ -52,7 +52,7 @@ namespace jl
 
 		// Last argument is always the component to add
 		//BaseComponent *comp = LuaEnvironment::convertUserdata<BaseComponent>(state, -1, "Component");
-		//entity->addComponent(comp->getTypeID(), comp);
+		//entity->addComponent(comp->typeID, comp);
 
 
 		lua_settop(state, 0);
@@ -72,7 +72,7 @@ namespace jl
 		BaseComponent *comp = entity->getComponent(valueName);
 		if(comp != nullptr)
 		{
-			entity->removeComponent(comp->getTypeID());
+			entity->removeComponent(comp->typeID);
 			lua_pushboolean(state, 1);
 		}
 		else

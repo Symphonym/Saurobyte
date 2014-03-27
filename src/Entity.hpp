@@ -2,7 +2,6 @@
 #define JL_ENTITY_HPP
 
 #include <unordered_map>
-#include <vector>
 #include "IdentifierTypes.hpp"
 #include "Component.hpp"
 
@@ -23,8 +22,8 @@ namespace jl
 
 		bool m_isActive;
 
-		EntityID m_id;
-		Game *m_game;
+		const EntityID m_id;
+		Game *const m_game;
 
 	public:
 
@@ -61,7 +60,7 @@ namespace jl
 		};
 		BaseComponent* const getComponent(TypeID id);
 
-		// Used by Lua
+		// Used by Lua to get components
 		BaseComponent* const getComponent(const std::string &componentName);
 
 		// Returns whether or not the specified component exists within the entity
@@ -72,10 +71,13 @@ namespace jl
 		bool hasComponent(TypeID id);
 		void removeAllComponents();
 
+		// Calls the corresponding action in the entity pool
 		void refresh();
 		void kill();
 		void detach();
 		void save(const std::string &templateName);
+
+		// Activates/deactives the entity for processing
 		void setActive(bool active);
 
 		// Clones the components of the target entity into this entity. Existing
