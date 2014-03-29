@@ -21,17 +21,10 @@ namespace jl
 	class BaseComponent
 	{
 
-	private:
-
-		TypeID m_typeID;
-		std::string m_name;
-
 	protected:
 
 		BaseComponent(TypeID typeID, const std::string &name) 
 			:
-			m_typeID(typeID),
-			m_name(name),
 			typeID(typeID),
 			name(name)
 		{};

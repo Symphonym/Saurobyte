@@ -8,6 +8,14 @@ function init(self)
 
 	print("Comp count " .. self:GetComponentCount())
 	print("WINDOW " .. game:GetWindowWidth() .. " X " .. game:GetWindowHeight())
+
+	local scene = game:GetActiveScene()
+	print("SCENE NAME " .. scene:GetName())
+	local ents = scene:GetEntities()
+
+	for index, value in ipairs(ents) do
+		print("Entity " .. value:GetID() .. " inside (" .. scene:GetName() .. ") = " .. tostring(scene:Contains(value)))
+	end
 end
 
 local r, g, b = 1,1,1

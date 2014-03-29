@@ -7,6 +7,7 @@
 #include "Lua/LuaEnv_Entity.hpp"
 #include "Lua/LuaEnv_Input.hpp"
 #include "Lua/LuaEnv_Component.hpp"
+#include "Lua/LuaEnv_Scene.hpp"
 
 namespace jl
 {
@@ -63,6 +64,7 @@ namespace jl
 		LuaEnv_Entity::exposeToLua(this);
 		LuaEnv_Input::exposeToLua(this);
 		LuaEnv_Component::exposeToLua(this);
+		LuaEnv_Scene::exposeToLua(this);
 	}
 
 	Game::~Game()

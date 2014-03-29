@@ -19,13 +19,13 @@ solution "MyApplication"
 	configurations { "Debug", "Release" }
 		location("build")
 		includedirs({"inc"})
-		libdirs("lib")
+		libdirs("lib/linux")
 		defines(osDefines)
 
 	-- Set rpath and C++11 for GCC
 	configuration({"linux", "gmake"})
 		buildoptions({"-std=c++0x"})
-		linkoptions("-Wl,-R\\$$ORIGIN/lib")
+		linkoptions("-Wl,-R\\$$ORIGIN/lib/linux")
 
 
 	-- A project defines one build target
@@ -37,7 +37,7 @@ solution "MyApplication"
 			"src/Systems/*.hpp", "src/Systems/*.cpp",
 			"src/Components/*.hpp", "src/Components/*.cpp",
 			"src/Lua/*.hpp", "src/Lua/*.cpp"})
-		links({"SDL2", "SDL2_image", "lua", "dl"})
+		links({"SDL2", "SDL2_image", "lua", "dl", "alure", "openal", "sndfile"})
 		targetdir("bin")
 
 

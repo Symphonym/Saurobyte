@@ -1,12 +1,11 @@
 #include "LuaEnv_Game.hpp"
 #include "Game.hpp"
-#include "Logger.hpp"
 
 namespace jl
 {
-	 int LuaEnv_Game::ChangeScene(lua_State *state)
-	 {
-	 	// First arg is self
+	int LuaEnv_Game::ChangeScene(lua_State *state)
+	{
+		// First arg is self
 		Game* game = LuaEnvironment::convertUserdata<Game>(state, 1, "jl.Game");
 
 		// Second argument is scene name
@@ -17,9 +16,9 @@ namespace jl
 		game->changeScene(sceneName.c_str());
 
 		return 0;
-	 }
-	 int LuaEnv_Game::DeleteScene(lua_State *state)
-	 {
+	}
+	int LuaEnv_Game::DeleteScene(lua_State *state)
+	{
  		// First arg is self
 		Game* game = LuaEnvironment::convertUserdata<Game>(state, 1, "jl.Game");
 
@@ -31,10 +30,24 @@ namespace jl
 		game->getScenePool().deleteScene(sceneName.c_str());
 
 		return 0;
-	 }
-	 int LuaEnv_Game::GetTotalEntityCount(lua_State *state)
-	 {
-	 	// First arg is self
+	}
+	int LuaEnv_Game::GetActiveScene(lua_State *state)
+	{
+		// First arg is self
+		Game* game = LuaEnvironment::convertUserdata<Game>(state, 1, "jl.Game");
+
+		Scene *activeScene = game->getScenePool().getActiveScene();
+
+		if(activeScene == nullptr)
+			lua_pushnil(state);
+		else
+			LuaEnvironment::pushObjectToLua<Scene>(state, activeScene, "jl.Scene");
+
+		return 1;
+	}
+	int LuaEnv_Game::GetTotalEntityCount(lua_State *state)
+	{
+		// First arg is self
 		Game* game = LuaEnvironment::convertUserdata<Game>(state, 1, "jl.Game");
 
 		lua_settop(state, 0);
@@ -42,9 +55,9 @@ namespace jl
 		lua_pushnumber(state, game->getEntityPool().getEntityCount());
 
 		return 1;
-	 }
-	 int LuaEnv_Game::MoveCamera(lua_State *state)
-	 {
+	}
+	int LuaEnv_Game::MoveCamera(lua_State *state)
+	{
 		// First arg is self
 		Game* game = LuaEnvironment::convertUserdata<Game>(state, 1, "jl.Game");
 
@@ -58,7 +71,7 @@ namespace jl
 		game->getScenePool().getActiveScene()->getCamera().move(glm::vec3(xOff, yOff, zOff));
 
 		return 0;
-	 }
+	}
  	int LuaEnv_Game::GetWindowWidth(lua_State *state)
  	{
  		// First arg is self
@@ -83,12 +96,13 @@ namespace jl
 	}
 
 
-	 void LuaEnv_Game::exposeToLua(Game *game)
-	 {
-	 	const luaL_Reg gameFuncs[] = 
+	void LuaEnv_Game::exposeToLua(Game *game)
+	{
+		const luaL_Reg gameFuncs[] = 
 		{
 			{ "ChangeScene", ChangeScene },
 			{ "DeleteScene", DeleteScene },
+			{ "GetActiveScene", GetActiveScene },
 			{ "GetTotalEntityCount", GetTotalEntityCount },
 			{ "MoveCamera", MoveCamera },
 			{ "GetWindowWidth", GetWindowWidth },
@@ -101,5 +115,5 @@ namespace jl
 		lua_State *state = game->getLua().getRaw();
 		LuaEnvironment::pushObjectToLua<Game>(state, game, "jl.Game");
 		lua_setglobal(state, "game");
-	 }
+	}
 };

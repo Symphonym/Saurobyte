@@ -16,6 +16,9 @@ namespace jl
 		// Delete scene
 		static int DeleteScene(lua_State *state);
 
+		// Gets the currently active scene
+		static int GetActiveScene(lua_State *state);
+
 		// Get total entity count
 		static int GetTotalEntityCount(lua_State *state);
 
@@ -28,8 +31,6 @@ namespace jl
 		// Get game window height
 		static int GetWindowHeight(lua_State *state);
 
-		// Set game window gamma
-		static int SetWindowGamma(lua_State *state);
 
 
 	public:

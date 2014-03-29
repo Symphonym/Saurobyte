@@ -13,6 +13,10 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <AL/al.h>
+#include <AL/alc.h>
+#include <SndFile/sndfile.h>
+
 #include "Shader.hpp"
 #include "ShaderProgram.hpp"
 #include "OpenGLWindow.hpp"
@@ -85,6 +89,7 @@ struct Dem : public jl::System<Dem>
 	};
 };
 
+bool audioRunner = true;
 int main(int argc, const char* argv[]){
 	
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
@@ -116,27 +121,41 @@ int main(int argc, const char* argv[]){
 	}*/
 
 
-	SDL_RWops *file = SDL_RWFromFile("text.datus", "w");
-	unsigned char A = 255, B = 10, C = 67, D = 247;
-	SDL_RWwrite(file, &A, sizeof(unsigned char), 1);
-	SDL_RWwrite(file, &B, sizeof(unsigned char), 1);
-	SDL_RWwrite(file, &C, sizeof(unsigned char), 1);
-	SDL_RWwrite(file, &D, sizeof(unsigned char), 1);
+
+	unsigned char A = 0, B = 0, C = 0, D = 0;
+	std::vector<char> pageString(4);
+	unsigned char versionByte = 0;
+	unsigned char bitFlags = 0;
+	unsigned int serialNumb = 0;
+	unsigned int pageIndex = 0;
+	unsigned char segmentCount = 0;
+
+
+	SDL_RWops *file = SDL_RWFromFile("forest.ogg", "r");
+	//SDL_RWread(file, &A, sizeof(GLubyte), 1);
+	//SDL_RWread(file, &B, sizeof(GLubyte), 1);
+	//SDL_RWread(file, &C, sizeof(GLubyte), 1);
+	SDL_RWread(file, &pageString[0], sizeof(GLubyte)*4, 1);
+	SDL_RWread(file, &versionByte, sizeof(GLubyte), 1);
+	SDL_RWread(file, &bitFlags, sizeof(GLubyte), 1);
+	SDL_RWseek(file, sizeof(GLubyte)*8, RW_SEEK_CUR); // Ignore timestamp
+	SDL_RWread(file, &serialNumb, sizeof(GLubyte)*4, 1);
+	SDL_RWread(file, &pageIndex, sizeof(GLubyte)*4, 1);
+	SDL_RWseek(file, sizeof(GLubyte), RW_SEEK_CUR); // Ignore CRC checksum
+	SDL_RWread(file, &segmentCount, sizeof(GLubyte)*4, 1);
 	SDL_RWclose(file);
 
-	A = 0;
-	B = 0;
-	C = 0;
-	D = 0;
+	if(bitFlags & 0x1)
+		SDL_Log("OGG_continuation %i", 0x1);
+	if(bitFlags & 0x2)
+		SDL_Log("OGG_bos %i", 0x4);
+	if(bitFlags & 0x4)
+		SDL_Log("OGG_eos %i", 0x2);
 
-	file = SDL_RWFromFile("text.datus", "r");
-	SDL_RWread(file, &A, sizeof(unsigned char), 1);
-	SDL_RWread(file, &B, sizeof(unsigned char), 1);
-	SDL_RWread(file, &C, sizeof(unsigned char), 1);
-	SDL_RWread(file, &D, sizeof(unsigned char), 1);
-	SDL_RWclose(file);
-
-	SDL_Log("%i %i %i %i", A, B, C, D);
+	SDL_Log("%s Version: %i", &pageString[0], versionByte);
+	SDL_Log("Serial numb %i", serialNumb);
+	SDL_Log("Page index %i", pageIndex);
+	SDL_Log("Segment count %i", segmentCount);
 
 	/*jl::OpenGLWindow window(
 		"OpenGL Application",
@@ -229,6 +248,112 @@ int main(int argc, const char* argv[]){
 	glCullFace(GL_BACK);
 	glDepthFunc(GL_LESS);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+
+
+
+
+	auto getFormat = [] (unsigned int channelCount) -> int
+	{
+
+		// Find the good format according to the number of channels
+		int format = 0;
+		switch (channelCount)
+		{
+			case 1 : format = AL_FORMAT_MONO16; break;
+			case 2 : format = AL_FORMAT_STEREO16; break;
+			case 4 : format = alGetEnumValue("AL_FORMAT_QUAD16"); break;
+			case 6 : format = alGetEnumValue("AL_FORMAT_51CHN16"); break;
+			case 7 : format = alGetEnumValue("AL_FORMAT_61CHN16"); break;
+			case 8 : format = alGetEnumValue("AL_FORMAT_71CHN16"); break;
+			default : format = 0; break;
+		}
+
+		// Fixes a bug on OS X
+		if (format == -1)
+			format = 0;
+
+		return format;
+	};
+
+
+
+
+
+
+
+	/*ALCdevice *openalDevice;
+	ALCcontext *openalContext;
+
+	// Open device with default settings
+	openalDevice = alcOpenDevice(NULL);
+	openalContext = alcCreateContext(openalDevice, NULL);
+	alcMakeContextCurrent(openalContext);
+
+	ALuint openalBuffer, openalSource;
+	alGenBuffers(1, &openalBuffer);
+	alGenSources(1, &openalSource);
+
+	alSource3i(openalSource, AL_POSITION, 0,0,-1);
+	alSourcei(openalSource, AL_SOURCE_RELATIVE, AL_TRUE);
+	alSourcei(openalSource, AL_ROLLOFF_FACTOR, 0);
+
+	SF_INFO info;
+	SNDFILE *sndFile = sf_open("forest.ogg", SFM_READ, &info);
+	int sampleNumber = info.channels*info.frames;
+	JL_INFO_LOG("Channels: %i", info.channels);
+	JL_INFO_LOG("Samplerate: %i", info.samplerate);
+	JL_INFO_LOG("Frames: %i", info.frames);
+
+	std::vector<ALshort> samples(sampleNumber);
+	sf_read_short(sndFile, &samples[0], sampleNumber);
+	alSourceRewind(openalSource);
+	alSourcei(openalSource, AL_BUFFER, 0);
+
+	// wong
+	alBufferData(openalBuffer, getFormat(info.channels), &samples[0], sampleNumber*sizeof(ALushort), info.samplerate);
+
+	alSourceQueueBuffers(openalSource, 1, &openalBuffer);
+	alSourcePlay(openalSource);
+
+	sf_close(sndFile);*/
+
+	/*alDeleteSources(1, &openalSource);
+	alDeleteBuffers(1, &openalBuffer);
+
+	alcMakeContextCurrent(NULL);
+	alcDestroyContext(openalContext);
+	alcCloseDevice(openalDevice);*/
+
+	/*
+	ALuint soundSource, soundBuffer;
+	if(!alureInitDevice(NULL, NULL))
+		JL_ERROR_LOG("Failed to open OpenAL device: %s", alureGetErrorString());
+
+	alGenSources(1, &soundSource);
+	soundBuffer = alureCreateBufferFromFile("forest.ogg");
+	if(!soundBuffer)
+		JL_ERROR_LOG("Failed to load audio file!");
+
+	alSourcei(soundSource, AL_BUFFER, soundBuffer);
+	auto callback = [] (void *unused, ALuint unused2) -> void
+	{	
+		audioRunner = false;
+	};
+	if(alurePlaySource(soundSource, callback, NULL) == AL_FALSE)
+		JL_ERROR_LOG("Failed to start OpenAL source!");
+
+
+	while(audioRunner)
+	{
+		alureSleep(0.125);
+		alureUpdate();
+	}
+	alDeleteSources(1, &soundSource);
+	alDeleteBuffers(1, &soundBuffer);
+
+	alureShutdownDevice();*/
+
 
 	game.gameLoop();
 
