@@ -22,7 +22,9 @@ namespace jl
 		m_systemPool(this),
 		m_scenePool(this),
 		m_messageCentral(),
-		m_luaEnvironment()
+		m_luaEnvironment(),
+		m_glWindow(nullptr),
+		m_audioDevice()
 	{
 		switch(glVersion)
 		{

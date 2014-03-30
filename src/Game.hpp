@@ -7,6 +7,7 @@
 #include "MessageCentral.hpp"
 #include "LuaEnvironment.hpp"
 #include "OpenGLWindow.hpp"
+#include "AudioDevice.hpp"
 
 namespace jl
 {
@@ -37,6 +38,7 @@ namespace jl
 		LuaEnvironment m_luaEnvironment;
 
 		OpenGLWindow *m_glWindow;
+		AudioDevice m_audioDevice;
 
 	public:
 

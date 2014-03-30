@@ -29,6 +29,7 @@
 #include "System.hpp"
 #include "IdentifierTypes.hpp"
 #include "Logger.hpp"
+#include "AudioListener.hpp"
 
 #include "Components/LuaComponent.hpp"
 #include "Systems/MeshSystem.hpp"
@@ -129,6 +130,7 @@ int main(int argc, const char* argv[]){
 	unsigned int serialNumb = 0;
 	unsigned int pageIndex = 0;
 	unsigned char segmentCount = 0;
+	Uint64 sampleCount = 0;
 
 
 	SDL_RWops *file = SDL_RWFromFile("forest.ogg", "r");
@@ -138,7 +140,7 @@ int main(int argc, const char* argv[]){
 	SDL_RWread(file, &pageString[0], sizeof(GLubyte)*4, 1);
 	SDL_RWread(file, &versionByte, sizeof(GLubyte), 1);
 	SDL_RWread(file, &bitFlags, sizeof(GLubyte), 1);
-	SDL_RWseek(file, sizeof(GLubyte)*8, RW_SEEK_CUR); // Ignore timestamp
+	SDL_RWread(file, &sampleCount, sizeof(GLubyte)*8, 1);
 	SDL_RWread(file, &serialNumb, sizeof(GLubyte)*4, 1);
 	SDL_RWread(file, &pageIndex, sizeof(GLubyte)*4, 1);
 	SDL_RWseek(file, sizeof(GLubyte), RW_SEEK_CUR); // Ignore CRC checksum
@@ -156,6 +158,7 @@ int main(int argc, const char* argv[]){
 	SDL_Log("Serial numb %i", serialNumb);
 	SDL_Log("Page index %i", pageIndex);
 	SDL_Log("Segment count %i", segmentCount);
+	SDL_Log("Sample count %i", sampleCount);
 
 	/*jl::OpenGLWindow window(
 		"OpenGL Application",
@@ -279,22 +282,11 @@ int main(int argc, const char* argv[]){
 
 
 
-
-
-
-	/*ALCdevice *openalDevice;
-	ALCcontext *openalContext;
-
-	// Open device with default settings
-	openalDevice = alcOpenDevice(NULL);
-	openalContext = alcCreateContext(openalDevice, NULL);
-	alcMakeContextCurrent(openalContext);
-
 	ALuint openalBuffer, openalSource;
 	alGenBuffers(1, &openalBuffer);
 	alGenSources(1, &openalSource);
 
-	alSource3i(openalSource, AL_POSITION, 0,0,-1);
+	alSource3i(openalSource, AL_POSITION, 0,0,-10);
 	alSourcei(openalSource, AL_SOURCE_RELATIVE, AL_TRUE);
 	alSourcei(openalSource, AL_ROLLOFF_FACTOR, 0);
 
@@ -304,9 +296,13 @@ int main(int argc, const char* argv[]){
 	JL_INFO_LOG("Channels: %i", info.channels);
 	JL_INFO_LOG("Samplerate: %i", info.samplerate);
 	JL_INFO_LOG("Frames: %i", info.frames);
+	JL_INFO_LOG("Samples: %i", sampleNumber);
 
 	std::vector<ALshort> samples(sampleNumber);
 	sf_read_short(sndFile, &samples[0], sampleNumber);
+	sf_close(sndFile);
+
+
 	alSourceRewind(openalSource);
 	alSourcei(openalSource, AL_BUFFER, 0);
 
@@ -316,7 +312,7 @@ int main(int argc, const char* argv[]){
 	alSourceQueueBuffers(openalSource, 1, &openalBuffer);
 	alSourcePlay(openalSource);
 
-	sf_close(sndFile);*/
+	JL_INFO_LOG("OPENAL VENDOR: %s", alGetString(AL_VERSION));
 
 	/*alDeleteSources(1, &openalSource);
 	alDeleteBuffers(1, &openalBuffer);
