@@ -86,7 +86,7 @@ namespace jl
 
 					else if(message->isType<std::string>())
 					{
-						const std::string& strData = static_cast<MessageData<std::string>*>(message)->data;
+						std::string strData = static_cast<MessageData<std::string>*>(message)->data;
 						lua_pushstring(state, strData.c_str());
 						++argCount;
 					}

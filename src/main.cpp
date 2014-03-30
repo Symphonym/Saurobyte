@@ -8,6 +8,7 @@
 #include <vector>
 #include <cstring>
 #include <unordered_map>
+#include <thread>
 
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
@@ -30,6 +31,7 @@
 #include "IdentifierTypes.hpp"
 #include "Logger.hpp"
 #include "AudioListener.hpp"
+#include "AudioFile.hpp"
 
 #include "Components/LuaComponent.hpp"
 #include "Systems/MeshSystem.hpp"
@@ -122,60 +124,6 @@ int main(int argc, const char* argv[]){
 	}*/
 
 
-
-	unsigned char A = 0, B = 0, C = 0, D = 0;
-	std::vector<char> pageString(4);
-	unsigned char versionByte = 0;
-	unsigned char bitFlags = 0;
-	unsigned int serialNumb = 0;
-	unsigned int pageIndex = 0;
-	unsigned char segmentCount = 0;
-	Uint64 sampleCount = 0;
-
-
-	SDL_RWops *file = SDL_RWFromFile("forest.ogg", "r");
-	//SDL_RWread(file, &A, sizeof(GLubyte), 1);
-	//SDL_RWread(file, &B, sizeof(GLubyte), 1);
-	//SDL_RWread(file, &C, sizeof(GLubyte), 1);
-	SDL_RWread(file, &pageString[0], sizeof(GLubyte)*4, 1);
-	SDL_RWread(file, &versionByte, sizeof(GLubyte), 1);
-	SDL_RWread(file, &bitFlags, sizeof(GLubyte), 1);
-	SDL_RWread(file, &sampleCount, sizeof(GLubyte)*8, 1);
-	SDL_RWread(file, &serialNumb, sizeof(GLubyte)*4, 1);
-	SDL_RWread(file, &pageIndex, sizeof(GLubyte)*4, 1);
-	SDL_RWseek(file, sizeof(GLubyte), RW_SEEK_CUR); // Ignore CRC checksum
-	SDL_RWread(file, &segmentCount, sizeof(GLubyte)*4, 1);
-	SDL_RWclose(file);
-
-	if(bitFlags & 0x1)
-		SDL_Log("OGG_continuation %i", 0x1);
-	if(bitFlags & 0x2)
-		SDL_Log("OGG_bos %i", 0x4);
-	if(bitFlags & 0x4)
-		SDL_Log("OGG_eos %i", 0x2);
-
-	SDL_Log("%s Version: %i", &pageString[0], versionByte);
-	SDL_Log("Serial numb %i", serialNumb);
-	SDL_Log("Page index %i", pageIndex);
-	SDL_Log("Segment count %i", segmentCount);
-	SDL_Log("Sample count %i", sampleCount);
-
-	/*jl::OpenGLWindow window(
-		"OpenGL Application",
-		800, 600,
-		SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE,
-		{
-			{SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE},
-			{SDL_GL_CONTEXT_MAJOR_VERSION, 3},
-			{SDL_GL_CONTEXT_MINOR_VERSION, 3},
-		},
-		300);
-	window.setVsync(false);
-
-	window.showPopup(SDL_MESSAGEBOX_WARNING,
-		"Missing file",
-		"File is missing. Please reinstall the program.");
-	*/
 	jl::Game game("HERRO", 800, 600);
 	game.addSystem<Dem>();
 	game.addSystem<jl::MeshSystem>();
@@ -279,77 +227,50 @@ int main(int argc, const char* argv[]){
 		return format;
 	};
 
-
-
-
-	ALuint openalBuffer, openalSource;
-	alGenBuffers(1, &openalBuffer);
-	alGenSources(1, &openalSource);
-
-	alSource3i(openalSource, AL_POSITION, 0,0,-10);
-	alSourcei(openalSource, AL_SOURCE_RELATIVE, AL_TRUE);
-	alSourcei(openalSource, AL_ROLLOFF_FACTOR, 0);
-
 	SF_INFO info;
 	SNDFILE *sndFile = sf_open("forest.ogg", SFM_READ, &info);
-	int sampleNumber = info.channels*info.frames;
+	int sampleNumber = info.channels*info.samplerate;
 	JL_INFO_LOG("Channels: %i", info.channels);
 	JL_INFO_LOG("Samplerate: %i", info.samplerate);
 	JL_INFO_LOG("Frames: %i", info.frames);
 	JL_INFO_LOG("Samples: %i", sampleNumber);
 
-	std::vector<ALshort> samples(sampleNumber);
-	sf_read_short(sndFile, &samples[0], sampleNumber);
 	sf_close(sndFile);
 
 
-	alSourceRewind(openalSource);
-	alSourcei(openalSource, AL_BUFFER, 0);
 
-	// wong
-	alBufferData(openalBuffer, getFormat(info.channels), &samples[0], sampleNumber*sizeof(ALushort), info.samplerate);
-
-	alSourceQueueBuffers(openalSource, 1, &openalBuffer);
-	alSourcePlay(openalSource);
 
 	JL_INFO_LOG("OPENAL VENDOR: %s", alGetString(AL_VERSION));
 
-	/*alDeleteSources(1, &openalSource);
-	alDeleteBuffers(1, &openalBuffer);
+	jl::AudioFile adFile;
+	//adFile.readFile("forest.ogg", jl::AudioFile::Stream);
+	//adFile.readFile("forest.ogg", jl::AudioFile::Stream);
+	//adFile.readFile("forest.ogg", jl::AudioFile::Stream);
+	adFile.readFile("forest.ogg", jl::AudioFile::Stream);
+	adFile.play();
 
-	alcMakeContextCurrent(NULL);
-	alcDestroyContext(openalContext);
-	alcCloseDevice(openalDevice);*/
-
-	/*
-	ALuint soundSource, soundBuffer;
-	if(!alureInitDevice(NULL, NULL))
-		JL_ERROR_LOG("Failed to open OpenAL device: %s", alureGetErrorString());
-
-	alGenSources(1, &soundSource);
-	soundBuffer = alureCreateBufferFromFile("forest.ogg");
-	if(!soundBuffer)
-		JL_ERROR_LOG("Failed to load audio file!");
-
-	alSourcei(soundSource, AL_BUFFER, soundBuffer);
-	auto callback = [] (void *unused, ALuint unused2) -> void
-	{	
-		audioRunner = false;
-	};
-	if(alurePlaySource(soundSource, callback, NULL) == AL_FALSE)
-		JL_ERROR_LOG("Failed to start OpenAL source!");
-
-
-	while(audioRunner)
+	JL_INFO_LOG("SSSSSSSSSSSSSSSSSSS jl AudioFile %i", sizeof(jl::AudioFile));
+	JL_INFO_LOG("DURATION %i", adFile.getDuration());
+	while(true)
 	{
-		alureSleep(0.125);
-		alureUpdate();
+		SDL_PumpEvents();
+		if(SDL_GetMouseState(NULL,NULL) & SDL_BUTTON(1))
+		{
+			adFile.pause();
+		}
+		else if(SDL_GetMouseState(NULL,NULL) & SDL_BUTTON(2))
+		{
+			adFile.play();
+			//JL_INFO_LOG("DURATION %f/%i", adFile.getPlayingOffset(), adFile.getDuration());
+		}
+		else if(SDL_GetMouseState(NULL,NULL) & SDL_BUTTON(3))
+		{
+			adFile.stop();
+		}
+		
+		if(SDL_GetKeyboardState(NULL)[SDL_SCANCODE_A])
+			break;
 	}
-	alDeleteSources(1, &soundSource);
-	alDeleteBuffers(1, &soundBuffer);
-
-	alureShutdownDevice();*/
-
 
 	game.gameLoop();
 

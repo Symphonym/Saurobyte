@@ -43,9 +43,9 @@ namespace jl
 	*/
 	template<typename TDataType> struct MessageData : public Message
 	{
-		const TDataType &data;
+		TDataType data;
 
-		MessageData(const std::string &messageName, const TDataType &newData, Entity *entityPtr = nullptr)
+		MessageData(const std::string &messageName, TDataType newData, Entity *entityPtr = nullptr)
 			:
 			Message(messageName, TypeIdGrabber::getUniqueTypeID<TDataType>()),
 			data(newData)
@@ -60,7 +60,7 @@ namespace jl
 	*/
 	template<typename TType = char> Message* createMessage(
 		const std::string &messageName,
-		const TType &newData = 0,
+		TType newData = 0,
 		Entity *entityPtr = nullptr)
 	{
 		return new MessageData<TType>(messageName, newData, entityPtr);

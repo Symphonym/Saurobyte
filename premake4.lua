@@ -37,7 +37,7 @@ solution "MyApplication"
 			"src/Systems/*.hpp", "src/Systems/*.cpp",
 			"src/Components/*.hpp", "src/Components/*.cpp",
 			"src/Lua/*.hpp", "src/Lua/*.cpp"})
-		links({"SDL2", "SDL2_image", "lua", "dl", "alure", "openal", "sndfile"})
+		links({"SDL2", "SDL2_image", "lua", "dl", "openal", "sndfile"})
 		targetdir("bin")
 
 
