@@ -5,6 +5,7 @@
 #include <string>
 #include <array>
 #include <SndFile/sndfile.h>
+#include "Math.hpp"
 
 class SDL_Thread;
 namespace jl
@@ -53,12 +54,14 @@ namespace jl
 		AudioFile();
 		~AudioFile();
 
-		void readFile(const std::string &fileName, ReadingTypes readingType);
+		void readFile(const std::string &fileName, ReadingTypes readingType = ReadingTypes::Load);
 
 		void play();
 		void pause();
 		void stop();
 
+
+		void setPosition(Vector3f position);
 		void setPlayingOffset(float offset);
 		void setLooping(bool looping);
 

@@ -158,6 +158,10 @@ namespace jl
 			SDL_WaitThread(m_updateThread, NULL);
 		}
 	}
+	void AudioFile::setPosition(Vector3f position)
+	{
+		alSource3f(m_source, AL_POSITION, position.x, position.y, position.z);
+	}
 	void AudioFile::setPlayingOffset(float offset)
 	{
 		alSourcef(m_source, AL_SEC_OFFSET, offset);
@@ -171,7 +175,7 @@ namespace jl
 	{
 		ALfloat offset = 0;
 		alGetSourcef(m_source, AL_SEC_OFFSET, &offset);
-		return offset;//(m_fileInfo.frames)/m_fileInfo.samplerate;
+		return offset;
 	}
 	std::size_t AudioFile::getDuration() const
 	{

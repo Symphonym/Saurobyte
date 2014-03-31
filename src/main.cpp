@@ -201,32 +201,6 @@ int main(int argc, const char* argv[]){
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 
-
-
-
-	auto getFormat = [] (unsigned int channelCount) -> int
-	{
-
-		// Find the good format according to the number of channels
-		int format = 0;
-		switch (channelCount)
-		{
-			case 1 : format = AL_FORMAT_MONO16; break;
-			case 2 : format = AL_FORMAT_STEREO16; break;
-			case 4 : format = alGetEnumValue("AL_FORMAT_QUAD16"); break;
-			case 6 : format = alGetEnumValue("AL_FORMAT_51CHN16"); break;
-			case 7 : format = alGetEnumValue("AL_FORMAT_61CHN16"); break;
-			case 8 : format = alGetEnumValue("AL_FORMAT_71CHN16"); break;
-			default : format = 0; break;
-		}
-
-		// Fixes a bug on OS X
-		if (format == -1)
-			format = 0;
-
-		return format;
-	};
-
 	SF_INFO info;
 	SNDFILE *sndFile = sf_open("forest.ogg", SFM_READ, &info);
 	int sampleNumber = info.channels*info.samplerate;
@@ -246,7 +220,7 @@ int main(int argc, const char* argv[]){
 	//adFile.readFile("forest.ogg", jl::AudioFile::Stream);
 	//adFile.readFile("forest.ogg", jl::AudioFile::Stream);
 	//adFile.readFile("forest.ogg", jl::AudioFile::Stream);
-	adFile.readFile("forest.ogg", jl::AudioFile::Stream);
+	adFile.readFile("forest.ogg", jl::AudioFile::Load);
 	adFile.play();
 
 	JL_INFO_LOG("SSSSSSSSSSSSSSSSSSS jl AudioFile %i", sizeof(jl::AudioFile));
