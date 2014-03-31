@@ -14,10 +14,6 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include <AL/al.h>
-#include <AL/alc.h>
-#include <SndFile/sndfile.h>
-
 #include "Shader.hpp"
 #include "ShaderProgram.hpp"
 #include "OpenGLWindow.hpp"
@@ -106,24 +102,6 @@ int main(int argc, const char* argv[]){
 	//REPLACE MESSAGING WITH GLOBAL EVENT SYSTEM IN GAME CLASS WHERE SHIT IS PUSHED TO AND
 	//WHICH CAN BE POLLED BY SYSTEMS AND WHATNOT
 
-	/*std::unordered_map<std::string, int*> stuffz;
-	stuffz["AB"] = new int(1337);
-	stuffz["dadad"] = new int(52);
-	stuffz["AfB"] = new int(2344);
-	stuffz["gff"] = new int(65);
-	stuffz["hgh"] = new int(34342);
-	stuffz["fgg"] = new int(42);
-
-	for(auto itr = stuffz.begin(); itr != stuffz.end(); itr++)
-	{
-		int& val = *itr->second;
-		if(*itr->second == 52)
-			stuffz.clear();
-
-		JL_INFO_LOG("VAL %i", val);
-	}*/
-
-
 	jl::Game game("HERRO", 800, 600);
 	game.addSystem<Dem>();
 	game.addSystem<jl::MeshSystem>();
@@ -202,7 +180,7 @@ int main(int argc, const char* argv[]){
 
 
 	SF_INFO info;
-	SNDFILE *sndFile = sf_open("forest.ogg", SFM_READ, &info);
+	SNDFILE *sndFile = sf_open("heartbeat.wav", SFM_READ, &info);
 	int sampleNumber = info.channels*info.samplerate;
 	JL_INFO_LOG("Channels: %i", info.channels);
 	JL_INFO_LOG("Samplerate: %i", info.samplerate);
@@ -216,15 +194,18 @@ int main(int argc, const char* argv[]){
 
 	JL_INFO_LOG("OPENAL VENDOR: %s", alGetString(AL_VERSION));
 
+	jl::AudioListener::setVolume(0.1f);
 	jl::AudioFile adFile;
-	//adFile.readFile("forest.ogg", jl::AudioFile::Stream);
-	//adFile.readFile("forest.ogg", jl::AudioFile::Stream);
-	//adFile.readFile("forest.ogg", jl::AudioFile::Stream);
-	adFile.readFile("forest.ogg", jl::AudioFile::Load);
+	adFile.readFile("Ove Melaa - dddd.ogg", jl::AudioFile::Load);
+	adFile.setLooping(true);
 	adFile.play();
 
+	jl::AudioFile adFile2;
+	adFile2.readFile("Ove Melaa - ItaloLoopDikkoDikko_1.ogg", jl::AudioFile::Stream);
+	adFile2.setLooping(true);
+	//adFile2.play();
+
 	JL_INFO_LOG("SSSSSSSSSSSSSSSSSSS jl AudioFile %i", sizeof(jl::AudioFile));
-	JL_INFO_LOG("DURATION %i", adFile.getDuration());
 	while(true)
 	{
 		SDL_PumpEvents();
@@ -235,15 +216,19 @@ int main(int argc, const char* argv[]){
 		else if(SDL_GetMouseState(NULL,NULL) & SDL_BUTTON(2))
 		{
 			adFile.play();
-			//JL_INFO_LOG("DURATION %f/%i", adFile.getPlayingOffset(), adFile.getDuration());
 		}
 		else if(SDL_GetMouseState(NULL,NULL) & SDL_BUTTON(3))
 		{
-			adFile.stop();
+			adFile.setPlayingOffset(8);
+			adFile2.setPlayingOffset(8);
 		}
 		
 		if(SDL_GetKeyboardState(NULL)[SDL_SCANCODE_A])
 			break;
+
+		SDL_Delay(100);
+		JL_INFO_LOG("%f/%f", adFile.getPlayingOffset(), adFile.getDuration());
+
 	}
 
 	game.gameLoop();

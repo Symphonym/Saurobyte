@@ -2,6 +2,7 @@
 #define JL_LOGGER_HPP
 
 #include <SDL2/SDL_log.h>
+//#include <SDL2/SDL_messagebox.h>  MAYBE DO THIS
 
 #define JL_LOG_LINETOSTRING(x) #x
 #define JL_LOG_LINETOVALUE(x) JL_LOG_LINETOSTRING(x)
