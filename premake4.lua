@@ -3,12 +3,20 @@
 local operatingSystem = os.get()
 local osDefines = {}
 
+-- Delete library files in binary folder
+local executableLibaryDir = "lib"
+os.rmdir("bin/"..executableLibaryDir)
+
+-- Define operating system and move libs to binary dir
 if(operatingSystem == "linux") then
 	table.insert(osDefines, "OS_LINUX")
+	os.execute("cp -r ./lib/linux/ ./bin/lib/")
 elseif(operatingSystem == "windows") then
 	table.insert(osDefines, "OS_WINDOWS")
+	os.execute("cp -r ./lib/windows/ ./bin/lib/")
 elseif(operatingSystem == "macosx") then
 	table.insert(osDefines, "OS_MACOSX")
+	os.execute("cp -r ./lib/mac/ ./bin/lib/")
 end
 
 
@@ -25,7 +33,7 @@ solution "MyApplication"
 	-- Set rpath and C++11 for GCC
 	configuration({"linux", "gmake"})
 		buildoptions({"-std=c++0x"})
-		linkoptions("-Wl,-R\\$$ORIGIN/lib/linux")
+		linkoptions("-Wl,-R\\$$ORIGIN/"..executableLibaryDir.."/")
 
 
 	-- A project defines one build target

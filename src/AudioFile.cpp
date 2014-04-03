@@ -41,7 +41,6 @@ namespace jl
 			sf_close(m_file);
 			m_file = nullptr;
 		}
-
 		// Force updating thread to finish
 		m_audioStatus = AudioStatuses::Stopped;
 		SDL_WaitThread(m_updateThread, NULL);

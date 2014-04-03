@@ -28,6 +28,7 @@
 #include "Logger.hpp"
 #include "AudioListener.hpp"
 #include "AudioFile.hpp"
+#include "AudioDevice.hpp"
 
 #include "Components/LuaComponent.hpp"
 #include "Systems/MeshSystem.hpp"
@@ -189,48 +190,54 @@ int main(int argc, const char* argv[]){
 
 	sf_close(sndFile);
 
+	/*
+		AudioEngine design
+
+		AudioEngine stores buffers
+		playSound(string) creates a new audio source with the buffer stored at 'string'
+		the sound will be tracked in a separate thread and deletion of it is taken care of there as well.
+
+		AudioEngine makes sure streams can only be made to files not already streamed and so that static
+		sounds use the same buffer (if they want the same sound).
+
+		PlaySound sounds are unconfigurable and is deleted when playback ends.
+		CreateSound sounds are returned to the user for further configuration
+		and are not deleted until the end of the application unless the user
+		says otherwise.
+
+	*/
 
 
 
 	JL_INFO_LOG("OPENAL VENDOR: %s", alGetString(AL_VERSION));
 
-	jl::AudioListener::setVolume(0.1f);
-	jl::AudioFile adFile;
-	adFile.readFile("Ove Melaa - dddd.ogg", jl::AudioFile::Load);
-	adFile.setLooping(true);
-	adFile.play();
+	jl::AudioListener::setVolume(0.2f);
 
-	jl::AudioFile adFile2;
-	adFile2.readFile("Ove Melaa - ItaloLoopDikkoDikko_1.ogg", jl::AudioFile::Stream);
-	adFile2.setLooping(true);
-	//adFile2.play();
+	//jl::AudioDevice::registerAudio("Ove Melaa - ItaloLoopDikkoDikko_1.ogg", "Swag");
+	jl::AudioDevice::registerAudio("forest.ogg", "Swag");
+	JL_INFO_LOG("SSSSSSSSSSSSSSSSSSS jl AudioFile %i", sizeof(jl::AudioChunk));
 
-	JL_INFO_LOG("SSSSSSSSSSSSSSSSSSS jl AudioFile %i", sizeof(jl::AudioFile));
-	while(true)
+
 	{
-		SDL_PumpEvents();
-		if(SDL_GetMouseState(NULL,NULL) & SDL_BUTTON(1))
+		jl::StreamHandle aaa = jl::AudioDevice::playStream("Swag");
+		//aaa->setPitch(2);
+		while(true)
 		{
-			adFile.pause();
+			SDL_PumpEvents();
+			if(SDL_GetMouseState(NULL,NULL) & SDL_BUTTON(1))
+			{
+				jl::AudioDevice::stopAllAudio();
+			}
+			else if(SDL_GetMouseState(NULL,NULL) & SDL_BUTTON(2))
+			{
+				jl::AudioHandle source = jl::AudioDevice::playSound("Swag");
+				source->setPitch(2);
+			}
+			if(SDL_GetKeyboardState(NULL)[SDL_SCANCODE_A])
+				break;
+			SDL_Delay(100);
 		}
-		else if(SDL_GetMouseState(NULL,NULL) & SDL_BUTTON(2))
-		{
-			adFile.play();
-		}
-		else if(SDL_GetMouseState(NULL,NULL) & SDL_BUTTON(3))
-		{
-			adFile.setPlayingOffset(8);
-			adFile2.setPlayingOffset(8);
-		}
-		
-		if(SDL_GetKeyboardState(NULL)[SDL_SCANCODE_A])
-			break;
-
-		SDL_Delay(100);
-		JL_INFO_LOG("%f/%f", adFile.getPlayingOffset(), adFile.getDuration());
-
 	}
-
 	game.gameLoop();
 
 
