@@ -56,7 +56,7 @@ namespace jl
 		void setRelativeToListener(bool relative);
 
 		// This is virtual since all audio sources are not using the same
-		// methods to loop, i.e streams.
+		// methods to loop, i.e streams. TODO remove
 		virtual void setLooping(bool looping);
 
 		bool isPlaying() const;

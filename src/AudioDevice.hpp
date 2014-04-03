@@ -10,11 +10,11 @@
 
 namespace jl
 {
+	// Handles to audio data
 	typedef std::shared_ptr<AudioSource> AudioHandle;
 	typedef std::shared_ptr<AudioChunk> SoundHandle;
 	typedef std::shared_ptr<AudioStream> StreamHandle;
 
-	class AudioSource;
 	class AudioDevice
 	{
 	private:
@@ -31,13 +31,6 @@ namespace jl
 		static std::size_t audioCleanup();
 
 	public:
-
-
-		enum ReadingTypes
-		{
-			Stream,
-			Load
-		};
 
 		static int getFormatFromChannels(unsigned int channelCount);
 		static std::string getOpenALError(ALenum error);

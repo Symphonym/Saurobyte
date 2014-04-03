@@ -1,20 +1,14 @@
 #include "AudioDevice.hpp"
-#include "Logger.hpp"
 #include "AudioSource.hpp"
 #include "AudioChunk.hpp"
 #include "Logger.hpp"
-#include "MutexLock.hpp"
-
 
 #include <unordered_map>
-#include <unordered_set>
 #include <string>
 #include <vector>
 #include <memory>
 #include <SDL2/SDL_thread.h>
 #include <SDL2/SDL_timer.h>
-#include <SDL2/SDL_mutex.h>
-#include <SDL2/SDL_assert.h>
 #include <SndFile/sndfile.h>
 
 namespace jl
@@ -148,7 +142,7 @@ namespace jl
 		else
 		{
 			JL_ERROR_LOG("Couldn't find any sound by the name '%s'", name.c_str());
-			return StreamHandle(nullptr);
+			return StreamHandle();
 		}
 	}
 	StreamHandle AudioDevice::playStream(const std::string &name)
