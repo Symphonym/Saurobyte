@@ -106,10 +106,11 @@ int main(int argc, const char* argv[]){
 	jl::Game game("HERRO", 800, 600);
 	game.addSystem<Dem>();
 	game.addSystem<jl::MeshSystem>();
+	game.setLogging(jl::GameLogging::Debug);
 
 	jl::Entity& ent = game.createEntity();
 	ent.addComponent<Compiz>();
-	ent.addComponent<jl::LuaComponent>("luaFile.lua");
+	//ent.addComponent<jl::LuaComponent>("luaFile.lua");
 
 	//ent.save("FancyCompiz");
 
@@ -214,12 +215,12 @@ int main(int argc, const char* argv[]){
 	jl::AudioListener::setVolume(0.2f);
 
 	//jl::AudioDevice::registerAudio("Ove Melaa - ItaloLoopDikkoDikko_1.ogg", "Swag");
-	jl::AudioDevice::registerAudio("forest.ogg", "Swag");
+	jl::AudioDevice::registerAudio("Ove Melaa - ItaloLoopDikkoDikko_1.ogg", "Swag");
 	JL_INFO_LOG("SSSSSSSSSSSSSSSSSSS jl AudioFile %i", sizeof(jl::AudioChunk));
 
 
 	{
-		jl::StreamHandle aaa = jl::AudioDevice::playStream("Swag");
+		//jl::StreamHandle aaa = jl::AudioDevice::playStream("dadad");
 		//aaa->setPitch(2);
 		while(true)
 		{

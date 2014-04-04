@@ -24,8 +24,6 @@ namespace jl
 		// Audio filenames and buffers mapped to string names
 		std::unordered_map<std::string, AudioData> m_audioFiles;
 
-		SDL_mutex *m_mutex = nullptr;
-
 		std::vector<SoundHandle> m_sounds;
 		std::vector<StreamHandle> m_streams;
 
@@ -41,20 +39,24 @@ namespace jl
 		m_device(nullptr),
 		m_context(nullptr)
 	{
-		m_mutex = SDL_CreateMutex();
 		m_lastCleanupTick = SDL_GetTicks() + CleanupMSInterval;
-
 
 		// Initialize OpenAL device with default settings
 		m_device = alcOpenDevice(NULL);
 
 		if(!m_device)
+		{
 			JL_ERROR_LOG("Could not Initialize OpenAL device");
+			JL_THROW_ERROR("OpenAL error\n\nOpenAL failed to initialize an audio \ndevice, sound playback impossible.");
+		}
 
 		m_context = alcCreateContext(m_device, NULL);
 
-		if(!m_context || alcMakeContextCurrent(m_context))
+		if(!m_context || !alcMakeContextCurrent(m_context))
+		{
 			JL_ERROR_LOG("Could not create and set OpenAL context.");
+			JL_THROW_ERROR("OpenAL error\n\nOpenAL failed to create a \ncontext, sound playback impossible.");
+		}
 
 		JL_INFO_LOG("OpenAL Vendor: %s", alGetString(AL_VENDOR));
 		JL_INFO_LOG("OpenAL Version: %s", alGetString(AL_VERSION));
@@ -67,8 +69,6 @@ namespace jl
 	}
 	AudioDevice::~AudioDevice()
 	{
-		SDL_DestroyMutex(m_mutex);
-
 		for(auto itr = m_audioFiles.begin(); itr != m_audioFiles.end(); itr++)
 		{
 			if(alIsBuffer(itr->second.buffer))
@@ -98,17 +98,21 @@ namespace jl
 	{
 		switch(errorCode)
 		{
+			case AL_INVALID_NAME:
+				return "AL_INVALID_NAME";
 			case AL_INVALID_ENUM:
-				return "OpenAL error (AL_INVALID_ENUM): Invalid enum parameter passed to OpenAL call";
+				return "AL_INVALID_ENUM";
 			case AL_INVALID_VALUE:
-				return "OpenAL error (AL_INVALID_VALUE): Invalid value parameter passed to OpenAL call";
+				return "AL_INVALID_VALUE";
 			case AL_INVALID_OPERATION:
-				return "OpenAL error (AL_INVALID_OPERATION): Illegal OpenAL call";
+				return "AL_INVALID_OPERATION";
 			case AL_OUT_OF_MEMORY:
-				return "OpenAL error (AL_OUT_OF_MEMORY): OpenAL does not have enough memory available";
+				return "AL_OUT_OF_MEMORY";
+			case AL_NO_ERROR:
+				return "AL_NO_ERROR";
 
 			default:
-				return "No error";
+				return "Unknown error code: " + std::to_string(errorCode);
 		}
 	}
 
@@ -141,7 +145,7 @@ namespace jl
 		}
 		else
 		{
-			JL_ERROR_LOG("Couldn't find any sound by the name '%s'", name.c_str());
+			JL_WARNING_LOG("Couldn't find any stream by the name '%s'", name.c_str());
 			return StreamHandle();
 		}
 	}
@@ -151,6 +155,8 @@ namespace jl
 
 		if(handle)
 			handle->play();
+		else
+			JL_WARNING_LOG("Attempted to play non-existant stream!");
 
 		return handle;
 	}
@@ -172,7 +178,7 @@ namespace jl
 
 				if(file == NULL)
 				{
-					JL_ERROR_LOG("Could not open audio file '%s'", itr->second.fileName.c_str());
+					JL_WARNING_LOG("Could not open audio file '%s'", itr->second.fileName.c_str());
 					return SoundHandle();
 				}
 
@@ -201,7 +207,7 @@ namespace jl
 		}
 		else
 		{
-			JL_ERROR_LOG("Couldn't find any sound by the name '%s'", name.c_str());
+			JL_WARNING_LOG("Couldn't find any sound by the name '%s'", name.c_str());
 			return SoundHandle(nullptr);
 		}
 	}
@@ -211,6 +217,8 @@ namespace jl
 
 		if(handle)
 			handle->play();
+		else
+			JL_WARNING_LOG("Attempted to play non-existant sound!");
 
 		return handle;
 	}
@@ -249,12 +257,9 @@ namespace jl
 			for(auto& index : streamIndicesToRemove)
 				m_streams.erase(m_streams.begin() + index);
 
-			JL_INFO_LOG("Removed %i sounds", soundsRemoved);
-			JL_INFO_LOG("Total sounds %i", getTotalSoundCount());
-
+			JL_DEBUG_LOG("Removed %i sounds", soundsRemoved);
 
 			return soundsRemoved;
-
 		}
 		
 
@@ -265,6 +270,7 @@ namespace jl
 	{
 		stopStreams();
 		stopSounds();
+		JL_DEBUG_LOG("Stopped all audio playback");
 
 		audioCleanup();
 	}

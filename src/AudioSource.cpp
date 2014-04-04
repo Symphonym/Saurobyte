@@ -17,9 +17,19 @@ namespace jl
 		// Generate a new audio source
 		alGenSources(1, &m_source);
 
-		// Rewind the active buffer
-		alSourceRewind(m_source);
-		alSourcei(m_source, AL_BUFFER, 0); // Clear buffers
+		ALenum sourceError = alGetError();
+
+		if (sourceError != AL_NO_ERROR)
+			JL_WARNING_LOG(
+				"OpenAL failed to generate a new source. This audio is very unlikely to play. (%s)",
+				AudioDevice::getOpenALError(sourceError).c_str());
+		else
+		{
+			// Rewind the active buffer
+			alSourceRewind(m_source);
+			alSourcei(m_source, AL_BUFFER, 0); // Clear buffers
+		}
+
 	}
 
 	AudioSource::~AudioSource()

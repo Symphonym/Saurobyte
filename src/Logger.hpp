@@ -2,7 +2,7 @@
 #define JL_LOGGER_HPP
 
 #include <SDL2/SDL_log.h>
-//#include <SDL2/SDL_messagebox.h>  MAYBE DO THIS
+#include <string>
 
 #define JL_LOG_LINETOSTRING(x) #x
 #define JL_LOG_LINETOVALUE(x) JL_LOG_LINETOSTRING(x)
@@ -19,5 +19,14 @@
 
 // Log errors, messages will display unless error logs are disabled
 #define JL_ERROR_LOG(formatMsg, ...) SDL_LogError(SDL_LOG_CATEGORY_ERROR, JL_LOG_LOCATION formatMsg, ##__VA_ARGS__)
+
+
+namespace jl
+{
+	void displayAndThrowError(const std::string &logMessage);
+};
+
+// Attemps to display an SDL message box with the location of the error and the specified logMessage
+#define JL_THROW_ERROR(logMessage)  jl::displayAndThrowError("File: " __FILE__ "\nLine: " JL_LOG_LINETOVALUE(__LINE__) "\n\n" logMessage)
 
 #endif

@@ -16,6 +16,8 @@ function init(self)
 	for index, value in ipairs(ents) do
 		print("Entity " .. value:GetID() .. " inside (" .. scene:GetName() .. ") = " .. tostring(scene:Contains(value)))
 	end
+
+	RegisterAudio("forest.ogg", "SpookyShit")
 end
 
 local r, g, b = 1,1,1
@@ -77,11 +79,17 @@ function update(self, delta)
 end
 
 function events(self, eventName, ...)
-	--print(self:GetID() .. " " .. eventName)
-	if(eventName == "KeyDown" or eventName == "KeyUp") then
+	print(self:GetID() .. " " .. eventName)
+	if(eventName == "KeyDown") then
 		local keyName, keyRepeat = ...
 		if(keyName == "K" and not keyRepeat) then
 			self:Kill()
+		end
+
+		if(keyName == "P" and not keyRepeat) then
+			PlaySound("SpookyShit")
+		elseif(keyName == "O" and not keyRepeat) then
+
 		end
 	end
 	--[[print("NAME " .. self:GetComponent("MeshComponent"):GetName())

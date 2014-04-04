@@ -22,12 +22,13 @@ namespace jl
 		m_file = sf_open(filePath.c_str(), SFM_READ, &m_fileInfo);
 
 		if(m_file == NULL)
-			JL_ERROR_LOG("Could not open audio file for streaming '%s'", filePath.c_str());
+			JL_WARNING_LOG("Could not open audio file for streaming '%s'", filePath.c_str());
 
 		m_fileName = filePath;
 		m_duration = static_cast<float>(m_fileInfo.frames)/static_cast<float>(m_fileInfo.samplerate);
 
-		fillBuffers();
+		if(m_file != NULL)
+			fillBuffers();
 	}
 	AudioStream::~AudioStream()
 	{
