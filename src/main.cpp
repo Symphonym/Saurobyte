@@ -212,12 +212,19 @@ int main(int argc, const char* argv[]){
 
 	JL_INFO_LOG("OPENAL VENDOR: %s", alGetString(AL_VERSION));
 
-	jl::AudioListener::setVolume(0.2f);
+	jl::AudioListener::setVolume(0.1f);
+
+	bool wab = true;
+	bool wub = false;
+
+	if(true == true && (wab || wub))
+		JL_INFO_LOG("TRUE");
+
+
 
 	//jl::AudioDevice::registerAudio("Ove Melaa - ItaloLoopDikkoDikko_1.ogg", "Swag");
 	jl::AudioDevice::registerAudio("Ove Melaa - ItaloLoopDikkoDikko_1.ogg", "Swag");
 	JL_INFO_LOG("SSSSSSSSSSSSSSSSSSS jl AudioFile %i", sizeof(jl::AudioChunk));
-
 
 	{
 		//jl::StreamHandle aaa = jl::AudioDevice::playStream("dadad");
@@ -231,8 +238,9 @@ int main(int argc, const char* argv[]){
 			}
 			else if(SDL_GetMouseState(NULL,NULL) & SDL_BUTTON(2))
 			{
-				jl::AudioHandle source = jl::AudioDevice::playSound("Swag");
+				jl::SoundHandle source = jl::AudioDevice::playSound("Swag");
 				source->setPitch(2);
+				source->setOffset(5);
 			}
 			if(SDL_GetKeyboardState(NULL)[SDL_SCANCODE_A])
 				break;

@@ -41,6 +41,15 @@ namespace jl
 		}
 	}
 
+	void AudioStream::setLooping(bool looping)
+	{
+		//TODO alSourcei(m_source, AL_LOOPING, looping ? AL_TRUE : AL_FALSE);
+	}
+	void AudioStream::setOffset(float secondOffset)
+	{
+		//TODO alSourcef(m_source, AL_SEC_OFFSET, secondOffset);
+	}
+
 	void AudioStream::onUpdate()
 	{
 		ALint processedBuffers = 0;

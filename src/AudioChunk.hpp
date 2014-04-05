@@ -2,24 +2,29 @@
 #define JL_AUDIOCHUNK_HPP
 
 #include <string>
+#include <memory>
 #include "AudioSource.hpp"
 
 namespace jl
 {
+
+
+	typedef std::shared_ptr<unsigned int> AudioBufferHandle;
 	class AudioChunk : public AudioSource
 	{
 	private:
 
 		// OpenAL buffer handle
-		unsigned int m_buffer;
+		AudioBufferHandle m_buffer;
 
 		std::string m_fileName;
 
 	public:
 
-		explicit AudioChunk(unsigned int buffer, const std::string &fileName);
+		explicit AudioChunk(AudioBufferHandle buffer, const std::string &fileName);
 
-		void setBuffer(unsigned int buffer, const std::string &fileName);
+		virtual void setLooping(bool looping);
+		virtual void setOffset(float secondOffset);
 
 		std::string getFileName() const;
 

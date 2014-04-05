@@ -17,20 +17,28 @@ namespace jl
 	{
 		struct AudioData
 		{
-			ALuint buffer; 
+			// Use a handle so we can keep track of how many audio sources
+			// that uses this buffer.
+			AudioBufferHandle buffer; 
 			std::string fileName;
 		};
 
-		// Audio filenames and buffers mapped to string names
 		std::unordered_map<std::string, AudioData> m_audioFiles;
 
+		// Active audio sources
 		std::vector<SoundHandle> m_sounds;
 		std::vector<StreamHandle> m_streams;
+
+		// Sounds can be played through channels which allows their volume
+		// to be set collectively. TODO
+		//std::unordered_map<std::string, float> m_audioChannels;
+		unsigned int m_sourceCount = 0;
+		unsigned int m_sourceLimit = 0;
 
 		unsigned int m_lastCleanupTick;
 		const unsigned int CleanupMSInterval = 10000;
 
-		ALCint m_maxMonoCount = 0, m_maxStereoCount = 0;
+		
 	};
 
 
@@ -61,18 +69,19 @@ namespace jl
 		JL_INFO_LOG("OpenAL Vendor: %s", alGetString(AL_VENDOR));
 		JL_INFO_LOG("OpenAL Version: %s", alGetString(AL_VERSION));
 
-		alcGetIntegerv(m_device, ALC_MONO_SOURCES, 1, &m_maxMonoCount);
-		alcGetIntegerv(m_device, ALC_STEREO_SOURCES, 1, &m_maxStereoCount);
-		JL_INFO_LOG("OpenAL supports a maximum of %i mono sources.", m_maxMonoCount);
-		JL_INFO_LOG("OpenAL supports a maximum of %i stereo sources.", m_maxStereoCount);
+		ALCint maxMono = 0, maxStereo = 0;
+		alcGetIntegerv(m_device, ALC_MONO_SOURCES, 1, &maxMono);
+		alcGetIntegerv(m_device, ALC_STEREO_SOURCES, 1, &maxStereo);
+		JL_INFO_LOG("OpenAL supports a maximum of %i mono sources.", maxMono);
+		JL_INFO_LOG("OpenAL supports a maximum of %i stereo sources.", maxStereo);
 		//JL_INFO_LOG("OpenAL opened device: %s", alcGetString(m_device, ALC_DEFAULT_DEVICE_SPECIFIER));
 	}
 	AudioDevice::~AudioDevice()
 	{
 		for(auto itr = m_audioFiles.begin(); itr != m_audioFiles.end(); itr++)
 		{
-			if(alIsBuffer(itr->second.buffer))
-				alDeleteBuffers(1, &itr->second.buffer);
+			if(alIsBuffer(*itr->second.buffer))
+				alDeleteBuffers(1, itr->second.buffer.get());
 		}
 
 		alcMakeContextCurrent(NULL);
@@ -123,7 +132,7 @@ namespace jl
 		{
 			AudioData data;
 			data.fileName = fileName;
-			data.buffer = 0;
+			data.buffer = AudioBufferHandle(new unsigned int(0));
 
 			m_audioFiles[name] = data;
 		}
@@ -170,7 +179,7 @@ namespace jl
 		if(itr != m_audioFiles.end())
 		{
 			// Check if data hasn't been loaded for this file previously
-			if(!alIsBuffer(itr->second.buffer) || itr->second.buffer == 0)
+			if(!alIsBuffer(*itr->second.buffer) || *itr->second.buffer == 0)
 			{
 				// Open file and save initial data
 				SF_INFO fileInfo;
@@ -183,14 +192,14 @@ namespace jl
 				}
 
 				// Create new buffer
-				alGenBuffers(1, &itr->second.buffer);
+				alGenBuffers(1, itr->second.buffer.get());
 
 				// Read whole file
 				int sampleCount = fileInfo.frames * fileInfo.channels;
 				std::vector<ALshort> fileData(sampleCount);
 				sf_read_short(file, &fileData[0], sampleCount);
 				alBufferData(
-					itr->second.buffer,
+					*itr->second.buffer,
 					AudioDevice::getFormatFromChannels(fileInfo.channels),
 					&fileData[0],
 					sampleCount*sizeof(ALushort),
@@ -223,7 +232,7 @@ namespace jl
 		return handle;
 	}
 
-	std::size_t AudioDevice::audioCleanup()
+	void AudioDevice::audioCleanup()
 	{
 		// Perform cleanup if interval has passed
 		if(SDL_TICKS_PASSED(SDL_GetTicks(), m_lastCleanupTick))
@@ -234,6 +243,7 @@ namespace jl
 			std::vector<std::size_t> soundIndicesToRemove, streamIndicesToRemove;
 			std::size_t soundsRemoved = 0;
 
+			// Clean sounds
 			for(std::size_t i = 0; i < m_sounds.size(); i++)
 			{
 				SoundHandle &handle = m_sounds[i];
@@ -243,6 +253,8 @@ namespace jl
 					++soundsRemoved;
 				}
 			}
+
+			// Clean streams
 			for(std::size_t i = 0; i < m_streams.size(); i++)
 			{
 				StreamHandle &handle = m_streams[i];
@@ -257,13 +269,25 @@ namespace jl
 			for(auto& index : streamIndicesToRemove)
 				m_streams.erase(m_streams.begin() + index);
 
-			JL_DEBUG_LOG("Removed %i sounds", soundsRemoved);
 
-			return soundsRemoved;
+			std::size_t buffersRemoved = 0;
+
+			// Clean buffers
+			for(auto itr = m_audioFiles.begin(); itr != m_audioFiles.end(); itr++)
+			{
+				if(itr->second.buffer.use_count() == 1)
+				{
+					if(alIsBuffer(*itr->second.buffer))
+						alDeleteBuffers(1, itr->second.buffer.get());
+
+					*itr->second.buffer = 0;
+					++buffersRemoved;
+				}
+			}
+
+			JL_DEBUG_LOG("Removed %i audio sources", soundsRemoved);
+			JL_DEBUG_LOG("Removed %i audio buffers", buffersRemoved);
 		}
-		
-
-		return 0;
 	}
 
 	void AudioDevice::stopAllAudio()

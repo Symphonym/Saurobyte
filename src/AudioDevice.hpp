@@ -15,6 +15,7 @@ namespace jl
 	typedef std::shared_ptr<AudioChunk> SoundHandle;
 	typedef std::shared_ptr<AudioStream> StreamHandle;
 
+
 	class AudioDevice
 	{
 	private:
@@ -28,9 +29,14 @@ namespace jl
 		AudioDevice();
 		~AudioDevice();
 
-		static std::size_t audioCleanup();
+		// Performs complete audio cleanup, deleting unused buffers and audio sources
+		static void audioCleanup();
 
 	public:
+
+		// Add channel support
+		// store audio etc values by mapped channel names
+		// set these values to audios put in that channel TODO
 
 		static int getFormatFromChannels(unsigned int channelCount);
 		static std::string getOpenALError(ALenum error);

@@ -9,42 +9,32 @@ namespace jl
 {
 	AudioSource::AudioSource()
 		:
-		m_lastUsageTick(0),
+		m_isValidSource(false),
+		m_audioCleanupTick(0),
 		m_thread(nullptr),
 		m_source(0),
 		m_audioStatus(AudioStatus::Stopped)
 	{
-		// Generate a new audio source
-		alGenSources(1, &m_source);
-
-		ALenum sourceError = alGetError();
-
-		if (sourceError != AL_NO_ERROR)
-			JL_WARNING_LOG(
-				"OpenAL failed to generate a new source. This audio is very unlikely to play. (%s)",
-				AudioDevice::getOpenALError(sourceError).c_str());
-		else
-		{
-			// Rewind the active buffer
-			alSourceRewind(m_source);
-			alSourcei(m_source, AL_BUFFER, 0); // Clear buffers
-		}
-
+		// Create source
+		revalidateSource();
 	}
 
 	AudioSource::~AudioSource()
 	{
 		stop();
 
-		if(alIsSource(m_source))
+		if(alIsSource(m_source) && m_isValidSource)
+		{
 			alDeleteSources(1, &m_source);
+			m_isValidSource = false; // Just because
+		}
 	}
 
 	void AudioSource::play()
 	{
-		if(!isPlaying())
+		if(m_isValidSource && !isPlaying())
 		{
-			m_lastUsageTick = SDL_GetTicks();
+			m_audioCleanupTick = SDL_GetTicks();
 			auto threadFunc = [] (void *data) -> int
 			{	
 				AudioSource *audio = static_cast<AudioSource*>(data);
@@ -63,27 +53,33 @@ namespace jl
 			m_thread = SDL_CreateThread(threadFunc, threadName.c_str(), this);
 			onPlay();
 		}
+		else if(!m_isValidSource)
+			JL_WARNING_LOG("You are attemping to play an invalid sound!");
 	}
 	void AudioSource::pause()
 	{
-		if(isPlaying())
+		if(m_isValidSource && isPlaying())
 		{
-			m_lastUsageTick = SDL_GetTicks();
+			m_audioCleanupTick = SDL_GetTicks();
 			m_audioStatus = AudioSource::Paused;
 			alSourcePause(m_source);
 			onPause();
 		}
+		else if(!m_isValidSource)
+			JL_WARNING_LOG("You are attemping to pause an invalid sound!");
 	}
 	void AudioSource::stop()
 	{
-		if(isPlaying() || m_audioStatus == AudioStatus::Paused)
+		if(m_isValidSource && (isPlaying() || m_audioStatus == AudioStatus::Paused))
 		{
-			m_lastUsageTick = SDL_GetTicks();
+			m_audioCleanupTick = SDL_GetTicks();
 			m_audioStatus = AudioSource::Stopped;
-			alSourceStop(m_source);
 			SDL_WaitThread(m_thread, NULL);
+			alSourceStop(m_source);
 			onStop();
 		}
+		else if(!m_isValidSource)
+			JL_WARNING_LOG("You are attemping to stop an invalid sound!");
 	}
 	int AudioSource::updateData()
 	{
@@ -137,9 +133,48 @@ namespace jl
 	{
 		alSourcei(m_source, AL_LOOPING, looping ? AL_TRUE : AL_FALSE);
 	}
+	void AudioSource::setVolume(float volume)
+	{
+		alSourcei(m_source, AL_GAIN, volume);
+	}
+
+	bool AudioSource::revalidateSource()
+	{
+		// Generate a new audio source
+		if(!m_isValidSource)
+		{
+			alGenSources(1, &m_source);
+			ALenum sourceError = alGetError();
+
+			if (sourceError != AL_NO_ERROR)
+			{
+				JL_WARNING_LOG(
+					"OpenAL failed to generate a new source. This audio is very unlikely to play. (%s)",
+					AudioDevice::getOpenALError(sourceError).c_str());
+
+				return false;
+			}
+			else if(sourceError == AL_NO_ERROR)
+			{
+				m_isValidSource = true;
+
+				// Rewind the active buffer
+				alSourceRewind(m_source);
+				alSourcei(m_source, AL_BUFFER, 0); // Clear buffers
+
+				return true;
+			}
+		}
+
+		return false;
+	}
 
 	bool AudioSource::isPlaying() const
 	{
 		return m_audioStatus == AudioStatus::Playing;
+	}
+	bool AudioSource::isValid() const
+	{
+		return m_isValidSource;
 	}
 };

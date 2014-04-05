@@ -20,11 +20,13 @@ elseif(operatingSystem == "macosx") then
 end
 
 
+Project_Name = "jlEngine"
+Solution_Name = "jlEngine_Solution"
 
 -- A solution contains projects, and defines the available configurations
-solution "MyApplication"
+solution(Solution_Name)
 	
-	configurations { "Debug", "Release" }
+	configurations({ "Debug", "Release" })
 		location("build")
 		includedirs({"inc"})
 		libdirs("lib/linux")
@@ -36,18 +38,23 @@ solution "MyApplication"
 		linkoptions("-Wl,-R\\$$ORIGIN/"..executableLibaryDir.."/")
 
 
-	-- A project defines one build target
-	project("MyApplication")
+	-- Set project options
+	project(Project_Name)
 		kind("WindowedApp")
 		language("C++")
 		includedirs({"src"})
+		targetdir("bin")
+		
+		-- Set source files
 		files({"src/*.hpp", "src/*.cpp",
 			"src/Systems/*.hpp", "src/Systems/*.cpp",
 			"src/Components/*.hpp", "src/Components/*.cpp",
 			"src/Lua/*.hpp", "src/Lua/*.cpp"})
-		links({"SDL2", "SDL2_image", "lua", "dl", "openal", "sndfile"})
-		targetdir("bin")
 
+		-- Link common libraries
+		links({"SDL2", "SDL2_image", "lua", "dl", "openal", "sndfile"})
+
+		-- Link platform specific libraries
 
 		-- Link OpenGL on Linux
 		configuration("linux")
@@ -99,7 +106,7 @@ newaction(
 
 		if(operatingSystem == "linux") then
 			print("\n<<< Running (release) project >>>> \n")
-			os.execute("cd ./bin && ./MyApplication")
+			os.execute("cd ./bin && ./"..Project_Name)
 		end
 	end
 })
@@ -113,7 +120,7 @@ newaction(
 
 		if(operatingSystem == "linux") then
 			print("\n<<< Running (debug) project >>>> \n")
-			os.execute("cd ./bin && gdb -tui ./MyApplication")
+			os.execute("cd ./bin && gdb -tui ./"..Project_Name)
 		end
 	end
 })

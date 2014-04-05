@@ -36,6 +36,9 @@ namespace jl
 
 		explicit AudioStream(const std::string &filePath);
 		~AudioStream();
+
+		virtual void setLooping(bool looping);
+		virtual void setOffset(float secondOffset);
 	};
 };
 

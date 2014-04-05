@@ -29,7 +29,11 @@ namespace jl
 		virtual void onPause() {};
 		virtual void onStop() {};
 
-		unsigned int m_lastUsageTick;
+		// Whether or not the source was generated successfully
+		bool m_isValidSource;
+
+		// Ticks after which the next cleanup is supposd to happen
+		unsigned int m_audioCleanupTick;
 
 		SDL_Thread *m_thread;
 
@@ -54,12 +58,20 @@ namespace jl
 		void setVelocity(Vector3f velocity);
 		void setDirection(Vector3f direction);
 		void setRelativeToListener(bool relative);
+		void setVolume(float volume);
 
-		// This is virtual since all audio sources are not using the same
-		// methods to loop, i.e streams. TODO remove
-		virtual void setLooping(bool looping);
+		// If the internal is invalid, this function may be called in an attempt to
+		// recreate it. It returns true if the source could be recreated, false otherwise.
+		bool revalidateSource();
+
+		// AudioSources must implement their own functionality in the following
+		virtual void setLooping(bool looping) = 0;
+		virtual void setOffset(float secondOffset) = 0;
 
 		bool isPlaying() const;
+
+		// Whether or not the internal OpenAL source is valid
+		bool isValid() const;
 	};
 };
 

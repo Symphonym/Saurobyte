@@ -5,23 +5,23 @@
 
 namespace jl
 {
-	AudioChunk::AudioChunk(unsigned int buffer, const std::string &fileName)
+	AudioChunk::AudioChunk(AudioBufferHandle buffer, const std::string &fileName)
 		:
 		m_buffer(buffer),
 		m_fileName(fileName)
 	{
 		// Queue our buffer
-		alSourceQueueBuffers(m_source, 1, &buffer);
+		alSourceQueueBuffers(m_source, 1, buffer.get());
 
 	}
 
-	void AudioChunk::setBuffer(unsigned int buffer, const std::string &fileName)
+	void AudioChunk::setLooping(bool looping)
 	{
-		alSourcei(m_source, AL_BUFFER, 0);
-
-		m_fileName = fileName;
-		m_buffer = buffer;
-		alSourceQueueBuffers(m_source, 1, &m_buffer);
+		alSourcei(m_source, AL_LOOPING, looping ? AL_TRUE : AL_FALSE);
+	}
+	void AudioChunk::setOffset(float secondOffset)
+	{
+		alSourcef(m_source, AL_SEC_OFFSET, secondOffset);
 	}
 
 	std::string AudioChunk::getFileName() const
