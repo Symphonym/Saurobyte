@@ -22,9 +22,10 @@ namespace jl
 		// Make sure the component doesn't exist, then add it
 		auto itr = m_components.find(component->typeID);
 
-		// Overwrite existing component, make sure it's not the same
-		if(itr != m_components.end() && component != itr->second.get())
-			m_components.erase(itr);
+		// Due to the nature of unique_ptr, existing components will be
+		// overwrited, so make sure we're not adding the same component twice.
+		if(itr != m_components.end() && component == itr->second.get())
+			return;
 
 		m_components[component->typeID] = ComponentPtr(component);
 

@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <vector>
 #include <string>
+#include <memory>
 #include "Scene.hpp"
 
 namespace jl
@@ -13,7 +14,9 @@ namespace jl
 	{
 	private:
 
-		std::unordered_map<std::string, Scene*> m_scenePool;
+		typedef std::unique_ptr<Scene> ScenePtr;
+
+		std::unordered_map<std::string, ScenePtr> m_scenePool;
 		Scene *m_activeScene;
 
 		enum SceneActions

@@ -33,6 +33,7 @@
 #include "Components/LuaComponent.hpp"
 #include "Systems/MeshSystem.hpp"
 #include "Components/MeshComponent.hpp"
+#include "Components/TransformComponent.hpp"
 
 struct Compiz : public jl::Component<Compiz>
 {
@@ -114,7 +115,11 @@ int main(int argc, const char* argv[]){
 	game.setLogging(jl::GameLogging::Debug);
 
 	jl::Entity& ent = game.createEntity();
-	ent.addComponent<Compiz>();
+	Compiz *zz = new Compiz();
+	//ent.addComponent<Compiz>();
+	ent.addComponent(jl::TypeIdGrabber::getUniqueTypeID<Compiz>(), zz);
+	ent.addComponent(jl::TypeIdGrabber::getUniqueTypeID<Compiz>(), zz);
+	ent.addComponent(jl::TypeIdGrabber::getUniqueTypeID<Compiz>(), zz);
 	//ent.addComponent<jl::LuaComponent>("luaFile.lua");
 
 	//ent.save("FancyCompiz");
@@ -161,6 +166,7 @@ int main(int argc, const char* argv[]){
 	},
 	"panda.jpg");
 	ent2.addComponent<jl::LuaComponent>("luaFile.lua");
+	ent2.addComponent<jl::TransformComponent>(0,1,0);
 	jl::Scene& sc = game.createScene("HUE");
 
 	jl::Scene& sc2 = game.createScene("H");
@@ -219,33 +225,32 @@ int main(int argc, const char* argv[]){
 
 	jl::AudioListener::setVolume(0.1f);
 
-	bool wab = true;
-	bool wub = false;
-
-	if(true == true && (wab || wub))
-		JL_INFO_LOG("TRUE");
-
-
-
 	//jl::AudioDevice::registerAudio("Ove Melaa - ItaloLoopDikkoDikko_1.ogg", "Swag");
-	jl::AudioDevice::registerAudio("Ove Melaa - ItaloLoopDikkoDikko_1.ogg", "Swag");
+	jl::AudioDevice::registerAudio("1_Coins.ogg", "Swag");
 	JL_INFO_LOG("SSSSSSSSSSSSSSSSSSS jl AudioFile %i", sizeof(jl::AudioChunk));
 
 	{
 		//jl::StreamHandle aaa = jl::AudioDevice::playStream("dadad");
 		//aaa->setPitch(2);
+		jl::SoundHandle sounderu = jl::AudioDevice::playSound("Swag");
+				sounderu->setOffset(5);
+				sounderu->setLooping(true);
+				sounderu->setRelativeToListener(true);
+				float x = 0;
 		while(true)
 		{
 			SDL_PumpEvents();
 			if(SDL_GetMouseState(NULL,NULL) & SDL_BUTTON(1))
 			{
-				jl::AudioDevice::stopAllAudio();
+				//jl::AudioDevice::stopAllAudio();
+				x+= 0.1f;
+				sounderu->setPosition(jl::Vector3f(x,0,0));
 			}
 			else if(SDL_GetMouseState(NULL,NULL) & SDL_BUTTON(2))
 			{
 				jl::SoundHandle source = jl::AudioDevice::playSound("Swag");
-				source->setPitch(2);
 				source->setOffset(5);
+				source->setLooping(true);
 			}
 			if(SDL_GetKeyboardState(NULL)[SDL_SCANCODE_A])
 				break;

@@ -13,9 +13,6 @@ namespace jl
 	{
 		frameCleanup();
 
-		for(auto itr = m_systemPool.begin(); itr != m_systemPool.end(); itr++)
-			delete itr->second;
-
 		m_systemPool.clear();
 	}
 
@@ -24,7 +21,7 @@ namespace jl
 		// Make sure the system doesn't exist, then add it
 		auto iter = m_systemPool.find(newSystem->getTypeID());
 		if(iter == m_systemPool.end())
-			m_systemPool[newSystem->getTypeID()] = newSystem;
+			m_systemPool[newSystem->getTypeID()] = SystemPtr(newSystem);
 	}
 	void SystemPool::removeSystem(TypeID id)
 	{
@@ -35,8 +32,8 @@ namespace jl
 		// return false.
 		if(iter != m_systemPool.end())
 		{
+			m_pendingDeletes.push_back(std::move(iter->second));
 			m_systemPool.erase(iter);
-			m_pendingDeletes.push_back(iter->second);
 		}
 	}
 	BaseSystem* SystemPool::getSystem(TypeID id)
@@ -46,7 +43,7 @@ namespace jl
 		if(iter == m_systemPool.end())
 			return nullptr;
 		else
-			return iter->second;
+			return iter->second.get();
 	}
 	bool SystemPool::hasSystem(TypeID id)
 	{
@@ -89,11 +86,6 @@ namespace jl
 
 	void SystemPool::frameCleanup()
 	{
-		for(std::size_t i = 0; i < m_pendingDeletes.size(); i++)
-		{
-			delete m_pendingDeletes[i];
-			m_pendingDeletes[i] = NULL;
-		}
 		m_pendingDeletes.clear();
 	}
 

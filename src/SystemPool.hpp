@@ -3,6 +3,7 @@
 
 #include <unordered_map>
 #include <vector>
+#include <memory>
 #include "IdentifierTypes.hpp"
 #include "System.hpp"
 
@@ -14,8 +15,10 @@ namespace jl
 	{
 	private:
 
-		std::unordered_map<TypeID, BaseSystem*> m_systemPool;
-		std::vector<BaseSystem*> m_pendingDeletes;
+		typedef std::unique_ptr<BaseSystem> SystemPtr;
+
+		std::unordered_map<TypeID, SystemPtr> m_systemPool;
+		std::vector<SystemPtr> m_pendingDeletes;
 
 		Game *m_game;
 

@@ -3,11 +3,12 @@
 
 #include <string>
 #include "Math.hpp"
+#include "NonCopyable.hpp"
 
 class SDL_Thread;
 namespace jl
 {
-	class AudioSource
+	class AudioSource : public NonCopyable
 	{
 	public:
 		enum AudioStatus

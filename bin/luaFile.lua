@@ -43,39 +43,6 @@ function update(self, delta)
 		print(game:GetWindowWidth() .. " X " .. game:GetWindowHeight())
 	end
 
-	--local x, y = GetMousePos()
-
-	--print("Comp count " .. self:GetComponentCount())
-
-	--local comp = self:GetComponent("MeshComponent")
-	--comp:SetValue("color", 1, 0, 0)
-
-	--[[if (IsMousePressed("left")) then
-		r = r - 10*delta
-	elseif (IsMousePressed("right")) then
-		r = r + 10*delta
-	elseif (IsMousePressed("middle")) then
-		print(1.0/delta)
-	end
-
-
-
-
-	if(IsKeyPressed("B")) then
-		SubscribeEvent("KeyDown")
-	end
-	if(HasComponent("MeshComponent")) then
-		local comp = GetComponent("MeshComponent")
-		SetComponentValue(comp, "color", r, g, b)
-	end
-	if(HasComponent("MeshComponent") and IsKeyPressed("L")) then
-		local comp = GetComponent("MeshComponent")
-
-		SetComponentValue(comp, "color", 1, 1, 1)
-
-
-	end]]
-
 end
 
 function events(self, eventName, ...)
@@ -89,22 +56,11 @@ function events(self, eventName, ...)
 		if(keyName == "P" and not keyRepeat) then
 			PlaySound("Swag")
 		elseif(keyName == "O" and not keyRepeat) then
-
+			local comp = self:GetComponent("TransformComponent")
+			local x, y, z = comp:GetValue("position")
+			print("Heru X= "..x.. " Y= "..y.." Z= "..z)
 		end
 	end
-	--[[print("NAME " .. self:GetComponent("MeshComponent"):GetName())
-
-	if(eventName == "KeyDown") then
-		local keyName, keyRepeat = ...
-
-		if(keyName == "H" and not keyRepeat) then
-			self:KillEntity()
-		elseif(keyName == "C" and not keyRepeat) then
-			game:ChangeScene("HUE")
-		elseif(keyName == "V" and not keyRepeat) then
-			game:ChangeScene("H")
-		end
-	end]]
 end
 
 function killed(self)

@@ -43,7 +43,7 @@ namespace jl
 
 	void AudioStream::setLooping(bool looping)
 	{
-		//TODO alSourcei(m_source, AL_LOOPING, looping ? AL_TRUE : AL_FALSE);
+		m_loop = looping;
 	}
 	void AudioStream::setOffset(float secondOffset)
 	{
@@ -74,7 +74,7 @@ namespace jl
 
 			// If looping is enabled and we reached end of file, just move to the
 			// beginning of the file and start reading there.
-			if(readCount <= 0 && m_loop)
+			if(readCount < sampleSecondCount && m_loop)
 			{
 				//m_playingOffset = 0;
 				sf_seek(m_file, 0, SEEK_SET);

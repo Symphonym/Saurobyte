@@ -14,8 +14,6 @@ namespace jl
 	ScenePool::~ScenePool()
 	{
 		frameCleanup();
-		for(auto itr = m_scenePool.begin(); itr != m_scenePool.end(); itr++)
-			delete itr->second;
 
 		m_scenePool.clear();
 	}
@@ -25,7 +23,7 @@ namespace jl
 		auto itr = m_scenePool.find(name);
 		if(itr == m_scenePool.end())
 		{
-			m_scenePool[name] = new Scene(name);
+			m_scenePool[name] = ScenePtr(new Scene(name));
 			JL_DEBUG_LOG("Created new scene '%s'", name.c_str());
 			
 			if(m_activeScene == nullptr)
@@ -42,7 +40,7 @@ namespace jl
 		auto itr = m_scenePool.find(name);
 		if(itr != m_scenePool.end())
 		{
-			m_pendingActions.push_back({itr->second, SceneActions::Delete});
+			m_pendingActions.push_back({itr->second.release(), SceneActions::Delete});
 			m_scenePool.erase(itr);
 		}
 	}
@@ -93,8 +91,8 @@ namespace jl
 		auto itr = m_scenePool.find(name);
 		if(itr != m_scenePool.end())
 		{
-			m_activeScene = itr->second;
-			m_pendingActions.push_back({itr->second, SceneActions::Change});
+			m_activeScene = itr->second.get();
+			m_pendingActions.push_back({itr->second.get(), SceneActions::Change});
 		}
 	}
 	Scene* ScenePool::getActiveScene()
@@ -105,7 +103,7 @@ namespace jl
 	{
 		auto itr = m_scenePool.find(name);
 		if(itr != m_scenePool.end())
-			return itr->second;
+			return itr->second.get();
 		else
 			return nullptr;
 	}

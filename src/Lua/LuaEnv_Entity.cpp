@@ -2,6 +2,8 @@
 #include "Game.hpp"
 #include "Systems/LuaSystem.hpp"
 #include "Components/LuaComponent.hpp"
+#include "Logger.hpp"
+
 
 namespace jl
 {
@@ -10,8 +12,12 @@ namespace jl
 		// First arg is self
 		Entity* entity = LuaEnvironment::convertUserdata<Entity>(state, 1, "jl.Entity");
 
+
 		// Second argument is comp name
 		std::string valueName = luaL_checkstring(state, 2);
+
+		JL_INFO_LOG("GETTERU %s", valueName.c_str());
+
 
 		lua_settop(state, 0);
 		BaseComponent *comp = entity->getComponent(valueName);

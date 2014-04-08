@@ -69,6 +69,24 @@ namespace jl
 
 	void TransformComponent::onLuaSet(const std::string& valueName, lua_State *state)
 	{
+		if(valueName == "position")
+		{
+			m_position.x = luaL_checknumber(state, 1);
+			m_position.y = luaL_checknumber(state, 2);
+			m_position.z = luaL_checknumber(state, 3);
+		}
+		else if(valueName == "x")
+			m_position.x = luaL_checknumber(state, 1);
+		else if(valueName == "y")
+			m_position.y = luaL_checknumber(state, 1);
+		else if(valueName == "z")
+			m_position.z = luaL_checknumber(state, 1);
+		else if(valueName == "rotation")
+		{
+			m_rotation.x = luaL_checknumber(state, 1);
+			m_rotation.y = luaL_checknumber(state, 2);
+			m_rotation.z = luaL_checknumber(state, 3);
+		}
 
 	}
 	int TransformComponent::onLuaGet(const std::string& valueName, lua_State *state)
