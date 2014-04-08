@@ -24,16 +24,16 @@ local r, g, b = 1,1,1
 
 function update(self, delta)
 
-	if(IsKeyPressed("Left")) then
+	if(IsKeyPressed("Left") or IsKeyPressed("A")) then
 		game:MoveCamera(0,0,-delta*10)
 	end
-	if(IsKeyPressed("Right")) then
+	if(IsKeyPressed("Right") or IsKeyPressed("D")) then
 		game:MoveCamera(0,0,delta*10)
 	end
-	if(IsKeyPressed("Up")) then
+	if(IsKeyPressed("Up") or IsKeyPressed("W")) then
 		game:MoveCamera(0, delta*10, 0)
 	end
-	if(IsKeyPressed("Down")) then
+	if(IsKeyPressed("Down") or IsKeyPressed("S")) then
 		game:MoveCamera(0, -delta*10, 0)
 	end
 
@@ -87,7 +87,7 @@ function events(self, eventName, ...)
 		end
 
 		if(keyName == "P" and not keyRepeat) then
-			PlaySound("SpookyShit")
+			PlaySound("Swag")
 		elseif(keyName == "O" and not keyRepeat) then
 
 		end

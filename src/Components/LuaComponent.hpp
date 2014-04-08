@@ -26,13 +26,9 @@ namespace jl
 		// Events that the script is subscribed to
 		std::unordered_set<std::string> subscribedEvents;
 
-		LuaComponent(const std::string fileName)
-			:
-			runningStatus(LuaRunningStatuses::NotLoaded),
-			luaFile(fileName)
-		{}
+		LuaComponent(const std::string fileName);
 
-
+		virtual std::string getName() const;
 	};
 };
 

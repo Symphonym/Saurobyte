@@ -25,7 +25,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-//#define GLM_FORCE_RADIANS
+#define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 
 namespace jl
@@ -39,6 +39,11 @@ namespace jl
 	typedef glm::ivec2 Vector2i;
 	typedef glm::ivec3 Vector3i;
 	typedef glm::ivec4 Vector4i;
+
+	// Matrices
+	typedef glm::mat4 Matrix4;
+	typedef glm::mat3 Matrix3;
+	typedef glm::mat2 Matrix2;
 
 };
 

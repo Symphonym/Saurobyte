@@ -2,10 +2,9 @@
 #define JL_COMPONENT_HPP
 
 #include <string>
-#include <Lua/lua.hpp>
 #include <unordered_map>
+#include <Lua/lua.hpp>
 #include "IdentifierTypes.hpp"
-
 
 
 namespace jl
@@ -23,16 +22,14 @@ namespace jl
 
 	protected:
 
-		BaseComponent(TypeID typeID, const std::string &name) 
+		BaseComponent(TypeID typeID) 
 			:
-			typeID(typeID),
-			name(name)
+			typeID(typeID)
 		{};
 
 	public:
 
 		const TypeID typeID;
-		const std::string name;
 
 		virtual ~BaseComponent() {};
 
@@ -40,6 +37,8 @@ namespace jl
 		virtual void onLuaSet(const std::string& valueName, lua_State *state) {};
 		virtual int onLuaGet(const std::string& valueName, lua_State *state) {};
 
+		// Components must provide a name for Lua usage
+		virtual std::string getName() const = 0;
 
 		// Cloning function that must be overridden by deriving classes
 		virtual BaseComponent* clone()  = 0;
@@ -51,9 +50,9 @@ namespace jl
 	public:
 
 		// Component names are optional, but they won't be accessable through Lua then
-		Component(const std::string &name = "") 
+		Component() 
 			:
-			BaseComponent(TypeIdGrabber::getUniqueTypeID<TType>(), name)
+			BaseComponent(TypeIdGrabber::getUniqueTypeID<TType>())
 		{};
 		virtual ~Component() {};
 
@@ -63,6 +62,7 @@ namespace jl
 			// CRTP - Curiously Recurring Template Pattern
 			return new TType(static_cast<TType const&>(*this));
 		};
+
 	};
 
 };

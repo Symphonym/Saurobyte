@@ -77,20 +77,34 @@ namespace jl
 
 		// Running Lua scripts
 		bool runScript(const std::string &filePath);
-		/*template<typename TType> void exposeComponentToLua()
+		template<typename TBaseType, typename TRealType = TBaseType> void exposeComponentToLua()
 		{
 			auto func = [] (lua_State *state) -> int
 			{
+				// First argument is self
+				Entity *ent = LuaEnvironment::convertUserdata<Entity>(state, 1, "jl.Entity");
 
+				// All other args are optional parameters to constructor
+				ent->addComponent<TBaseType>(new TRealType(state));
+
+				return 0;
 			};
+
+			std::string funcName = "Add";
+
+
+			lua_State *state = m_luaEnvironment.getRaw();
+
+			// Grab component name
+			TRealType tempComp = TRealType(state);
+			funcName += tempComp.getName();
 
 			const luaL_Reg funcs[] = 
 			{
-				{ "addcomp", func },
+				{ funcName.c_str(), func },
 				{ NULL, NULL }
 			};
 
-			lua_State *state = m_luaEnvironment.getRaw();
 
 			// Grab entity metatable
 			luaL_getmetatable(state, "jl.Entity");
@@ -100,7 +114,7 @@ namespace jl
 
 			// Pop metatable value
 			lua_pop(state, 1);
-		};*/
+		};
 
 		EntityPool& getEntityPool();
 		SystemPool& getSystemPool();

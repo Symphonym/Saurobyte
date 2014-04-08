@@ -2,13 +2,15 @@
 #define JL_ENTITY_HPP
 
 #include <unordered_map>
+#include <memory>
 #include "IdentifierTypes.hpp"
 #include "Component.hpp"
 
 namespace jl
 {
 
-	typedef std::unordered_map<TypeID, BaseComponent*> ComponentBag;
+	typedef std::unique_ptr<BaseComponent> ComponentPtr;
+	typedef std::unordered_map<TypeID, ComponentPtr> ComponentBag;
 	typedef std::unordered_map<std::string, BaseComponent*> LuaComponentBag;
 
 	class Game;

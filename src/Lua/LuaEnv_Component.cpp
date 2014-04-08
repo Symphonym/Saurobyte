@@ -42,7 +42,7 @@ namespace jl
 		// First argument is self
 		BaseComponent *comp = LuaEnvironment::convertUserdata<BaseComponent>(state, 1, "jl.Component");
 
-		lua_pushstring(state, comp->name.c_str());
+		lua_pushstring(state, comp->getName().c_str());
 		return 1;
 	}
 

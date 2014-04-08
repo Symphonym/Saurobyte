@@ -1,0 +1,9 @@
+
+-- Todo list
+
+* Networking (Some kind of component maybe)
+* Octree, or similar
+* Template function to send messages
+* Use smart ptrs
+* Sound class in Lua
+* Graphics, use new vertex class and transform component

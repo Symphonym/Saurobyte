@@ -40,7 +40,7 @@ struct Compiz : public jl::Component<Compiz>
 
 	Compiz()
 		:
-		jl::Component<Compiz>("Compiz"),
+		jl::Component<Compiz>(),
 		compizVariable(0)
 	{}
 
@@ -63,6 +63,11 @@ struct Compiz : public jl::Component<Compiz>
 		if(valueName == "Variable")
 			compizVariable = luaL_checknumber(state, 1);
 	};
+
+	virtual std::string getName() const
+	{
+		return "Compiz";
+	}
 };
 
 struct Dem : public jl::System<Dem>

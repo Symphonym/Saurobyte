@@ -8,8 +8,10 @@
 namespace jl
 {
 
-
+	// Audio buffer handle used for statically played sounds in order
+	// to keep track of how many AudioChunks that are using the buffer.
 	typedef std::shared_ptr<unsigned int> AudioBufferHandle;
+
 	class AudioChunk : public AudioSource
 	{
 	private:

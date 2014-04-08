@@ -13,9 +13,6 @@ namespace jl
 	}
 	Entity::~Entity()
 	{
-		// Immidiately delete all components
-		for(auto iter = m_components.begin(); iter != m_components.end(); iter++)
-			delete iter->second;
 		m_components.clear();
 		m_luaComponents.clear();
 	}
@@ -23,35 +20,33 @@ namespace jl
 	void Entity::addComponent(TypeID id, BaseComponent *component)
 	{
 		// Make sure the component doesn't exist, then add it
-		auto iter = m_components.find(component->typeID);
+		auto itr = m_components.find(component->typeID);
 
 		// Overwrite existing component, make sure it's not the same
-		if(iter != m_components.end() && component != iter->second)
-			delete iter->second;
+		if(itr != m_components.end() && component != itr->second.get())
+			m_components.erase(itr);
 
-		m_components[component->typeID] = component;
+		m_components[component->typeID] = ComponentPtr(component);
 
-		// Save component by name as well if it has one, used by Lua
-		if(!component->name.empty())
-			m_luaComponents[component->name] = component;
+		// Save component by name as well, used by Lua
+		m_luaComponents[component->getName()] = component;
 
 		refresh();
 	}
 	void Entity::removeComponent(TypeID id)
 	{
-		auto iter = m_components.find(id);
+		auto itr = m_components.find(id);
 
 		// Remove component if it exists
-		if(iter != m_components.end())
+		if(itr != m_components.end())
 		{
 
 			// Remove from name map as well
-			auto nameItr = m_luaComponents.find(iter->second->name);
+			auto nameItr = m_luaComponents.find(itr->second->getName());
 			if(nameItr != m_luaComponents.end())
 				m_luaComponents.erase(nameItr);
 
-			delete iter->second;
-			m_components.erase(iter);
+			m_components.erase(itr);
 			refresh();
 		}
 
@@ -60,7 +55,7 @@ namespace jl
 	{
 		auto iter = m_components.find(id);
 
-		return iter == m_components.end() ? nullptr : iter->second;
+		return iter == m_components.end() ? nullptr : iter->second.get();
 	}
 	BaseComponent* const Entity::getComponent(const std::string &componentName)
 	{
@@ -76,11 +71,6 @@ namespace jl
 
 	void Entity::removeAllComponents()
 	{
-		// Don't run removeComponent function so we can refresh the entity
-		// only once instead.
-		for(auto iter = m_components.begin(); iter != m_components.end(); iter++)
-			delete iter->second;
-
 		m_components.clear();
 		m_luaComponents.clear();
 

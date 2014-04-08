@@ -32,7 +32,7 @@ namespace jl
 		// Sounds can be played through channels which allows their volume
 		// to be set collectively. TODO
 		//std::unordered_map<std::string, float> m_audioChannels;
-		unsigned int m_sourceCount = 0;
+		unsigned int m_sourceCount = 0; // TODO use these
 		unsigned int m_sourceLimit = 0;
 
 		unsigned int m_lastCleanupTick;

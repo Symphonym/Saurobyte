@@ -16,18 +16,6 @@ namespace jl
 	{
 		// Push all pending deletes to the spare pool
 		frameCleanup();
-		for(std::size_t i = 0; i < m_sparePool.size(); i++)
-			delete m_sparePool[i];
-
-		for(auto itr = m_entityPool.begin(); itr != m_entityPool.end(); itr++)
-			delete itr->second;
-
-		// Delete entity templates
-		for(auto itr = m_entityTemplates.begin(); itr != m_entityTemplates.end(); itr++)
-		{
-			for(std::size_t i = 0; i < itr->second.size(); i++)
-				delete itr->second[i];
-		}
 
 		m_sparePool.clear();
 		m_entityPool.clear();
@@ -47,7 +35,7 @@ namespace jl
 		else
 			newEntity = new Entity(m_currentEntityID++, m_game);
 
-		m_entityPool[newEntity->getID()] = newEntity;
+		m_entityPool[newEntity->getID()] = EntityPtr(newEntity);
 		return *newEntity;
 	}
 	Entity& EntityPool::createEntity(const std::string &templateName)
@@ -84,16 +72,11 @@ namespace jl
 		// Overwrite existing save
 		auto findItr = m_entityTemplates.find(templateName);
 		if(findItr != m_entityTemplates.end())
-		{
-			for(std::size_t i = 0; i < findItr->second.size(); i++)
-				delete findItr->second[i];
-
 			findItr->second.clear();
-		}
 
-		std::vector<BaseComponent*>& componentSetup = m_entityTemplates[templateName];
+		std::vector<ComponentPtr>& componentSetup = m_entityTemplates[templateName];
 		for(auto itr = entity.getComponents().begin(); itr != entity.getComponents().end(); itr++)
-			componentSetup.push_back(itr->second->clone());
+			componentSetup.push_back(ComponentPtr(itr->second->clone()));
 	}
 
 	void EntityPool::frameCleanup()
@@ -120,7 +103,6 @@ namespace jl
 
 
 					m_sparePool.push_back(entity);
-					m_entityPool.erase(itr);
 				}
 			}
 			else if(action == EntityActions::Refresh)
@@ -145,7 +127,7 @@ namespace jl
 	Entity* EntityPool::getEntity(EntityID id)
 	{
 		auto itr = m_entityPool.find(id);
-		return itr != m_entityPool.end() ? itr->second : nullptr;
+		return itr != m_entityPool.end() ? itr->second.get() : nullptr;
 	}
 	std::size_t EntityPool::getEntityCount() const
 	{

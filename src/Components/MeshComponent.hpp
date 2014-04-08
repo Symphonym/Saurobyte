@@ -58,6 +58,7 @@ namespace jl
 		void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
 
 		virtual void onLuaSet(const std::string& valueName, lua_State *context);
+		virtual std::string getName() const;
 
 		void storeData();
 

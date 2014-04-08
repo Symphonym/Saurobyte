@@ -8,7 +8,7 @@ namespace jl
 
 	MeshComponent::MeshComponent(const std::vector<Triangle> &triangles, const std::string &texturePath)
 		:
-		Component<MeshComponent>("MeshComponent"),
+		Component<MeshComponent>(),
 		m_vertexBuffer(0),
 		m_vertexCount(0),
 		m_colorOffset(0),
@@ -239,5 +239,9 @@ namespace jl
 
 			setColor(r, g, b, 1); 
 		}
+	}
+	std::string MeshComponent::getName() const
+	{
+		return "MeshComponent";
 	}
 }

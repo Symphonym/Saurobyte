@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <vector>
 #include <string>
+#include <memory>
 #include "IdentifierTypes.hpp"
 #include "Entity.hpp"
 
@@ -13,10 +14,12 @@ namespace jl
 	class EntityPool
 	{	
 	private:
+
+		typedef std::unique_ptr<Entity> EntityPtr;
 		static EntityID m_currentEntityID;
 
-		std::unordered_map<EntityID, Entity*> m_entityPool;
-		std::unordered_map<std::string, std::vector<BaseComponent*> > m_entityTemplates;
+		std::unordered_map<EntityID, EntityPtr> m_entityPool;
+		std::unordered_map<std::string, std::vector<ComponentPtr> > m_entityTemplates;
 
 		// Killed entities, that will be recycled whenever a new entity is wanted
 		std::vector<Entity*> m_sparePool;
