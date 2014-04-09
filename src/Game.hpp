@@ -77,7 +77,7 @@ namespace jl
 
 		// Running Lua scripts
 		bool runScript(const std::string &filePath);
-		template<typename TBaseType, typename TRealType = TBaseType> void exposeComponentToLua()
+		/*template<typename TBaseType, typename TRealType = TBaseType> void exposeComponentToLua()
 		{
 			auto func = [] (lua_State *state) -> int
 			{
@@ -96,7 +96,7 @@ namespace jl
 			lua_State *state = m_luaEnvironment.getRaw();
 
 			// Grab component name
-			TRealType tempComp = TRealType(state);
+			TRealType tempComp = TRealType(state); // This doesn't have the args pushed, won't work
 			funcName += tempComp.getName();
 
 			const luaL_Reg funcs[] = 
@@ -114,7 +114,7 @@ namespace jl
 
 			// Pop metatable value
 			lua_pop(state, 1);
-		};
+		};*/
 
 		EntityPool& getEntityPool();
 		SystemPool& getSystemPool();

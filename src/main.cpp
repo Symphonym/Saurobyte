@@ -29,6 +29,7 @@
 #include "AudioListener.hpp"
 #include "AudioFile.hpp"
 #include "AudioDevice.hpp"
+#include "BoundingBox.hpp"
 
 #include "Components/LuaComponent.hpp"
 #include "Systems/MeshSystem.hpp"
@@ -219,6 +220,11 @@ int main(int argc, const char* argv[]){
 
 	*/
 
+	jl::BoundingBox box1(jl::Vector3f(0,0,0), 1, 1, 1);
+	jl::BoundingBox box2(jl::Vector3f(2,0,0), 1, 1, 1);
+
+	JL_INFO_LOG("INTERSECTION = %i", box1.intersects(box2));
+
 
 
 	JL_INFO_LOG("OPENAL VENDOR: %s", alGetString(AL_VERSION));
@@ -226,7 +232,7 @@ int main(int argc, const char* argv[]){
 	jl::AudioListener::setVolume(0.1f);
 
 	//jl::AudioDevice::registerAudio("Ove Melaa - ItaloLoopDikkoDikko_1.ogg", "Swag");
-	jl::AudioDevice::registerAudio("1_Coins.ogg", "Swag");
+	jl::AudioDevice::registerAudio("Ove Melaa - ItaloLoopDikkoDikko_1.ogg", "Swag");
 	JL_INFO_LOG("SSSSSSSSSSSSSSSSSSS jl AudioFile %i", sizeof(jl::AudioChunk));
 
 	{

@@ -16,9 +16,8 @@ namespace jl
 	private:
 
 		typedef std::unique_ptr<Entity> EntityPtr;
-		static EntityID m_currentEntityID;
 
-		std::unordered_map<EntityID, EntityPtr> m_entityPool;
+		std::vector<EntityPtr> m_entityPool;
 		std::unordered_map<std::string, std::vector<ComponentPtr> > m_entityTemplates;
 
 		// Killed entities, that will be recycled whenever a new entity is wanted
@@ -58,7 +57,7 @@ namespace jl
 		void saveEntity(const std::string &templateName, Entity &entity);
 
 		// Retrieves an entity by id, returns null if it could not be found
-		Entity* getEntity(EntityID id);
+		Entity& getEntity(EntityID id);
 		std::size_t getEntityCount() const;
 
 		void frameCleanup();

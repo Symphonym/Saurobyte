@@ -12,3 +12,4 @@ CHECK	* Looping with streams
 CHECK	* Lua acessing components, transform specifically
 		* Re-use sounds be swapping buffers and files intead of sources, use spare pool and delete if bigger than real pool
 		* Global script running constantly, maybe
+		* Lua play streams

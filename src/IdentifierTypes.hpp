@@ -4,11 +4,11 @@
 namespace jl
 {
 
+	// Used when storying Entity ID's
+	typedef unsigned int EntityID;
+
 	// Used when storing type ID's
 	typedef unsigned int TypeID;
-
-	// Used when storying entity ID's
-	typedef unsigned int EntityID;
 
 	/*
 	TypeIdGrabber

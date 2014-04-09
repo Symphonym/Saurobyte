@@ -4,8 +4,6 @@
 namespace jl
 {
 
-	EntityID EntityPool::m_currentEntityID = 0;
-
 	EntityPool::EntityPool(Game *game)
 		:
 		m_game(game)
@@ -20,7 +18,6 @@ namespace jl
 		m_sparePool.clear();
 		m_entityPool.clear();
 		m_entityTemplates.clear();
-		m_currentEntityID = 0;
 	}
 
 	Entity& EntityPool::createEntity()
@@ -33,9 +30,9 @@ namespace jl
 			m_sparePool.pop_back();
 		}
 		else
-			newEntity = new Entity(m_currentEntityID++, m_game);
+			newEntity = new Entity(m_entityPool.size()-1, m_game);
 
-		m_entityPool[newEntity->getID()] = EntityPtr(newEntity);
+		m_entityPool.push_back(EntityPtr(newEntity));
 		return *newEntity;
 	}
 	Entity& EntityPool::createEntity(const std::string &templateName)
@@ -88,9 +85,6 @@ namespace jl
 
 			if(action == EntityActions::Kill)
 			{
-				auto itr = m_entityPool.find(entity->getID());
-				if(itr != m_entityPool.end())
-				{
 					// Detach entity from other systems first since we might
 					// want to do use data from the components just before they are removed.
 					m_game->getSystemPool().removeEntityFromSystems(*entity, true);
@@ -103,7 +97,6 @@ namespace jl
 
 
 					m_sparePool.push_back(entity);
-				}
 			}
 			else if(action == EntityActions::Refresh)
 			{
@@ -124,10 +117,9 @@ namespace jl
 		m_pendingActions.clear();
 	}
 
-	Entity* EntityPool::getEntity(EntityID id)
+	Entity& EntityPool::getEntity(EntityID id)
 	{
-		auto itr = m_entityPool.find(id);
-		return itr != m_entityPool.end() ? itr->second.get() : nullptr;
+		return *m_entityPool.at(id);
 	}
 	std::size_t EntityPool::getEntityCount() const
 	{
