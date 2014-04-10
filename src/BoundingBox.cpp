@@ -13,8 +13,8 @@ namespace jl
 	}
 	BoundingBox::BoundingBox(const Vector3f &center, float width, float height, float depth)
 		:
-		m_minPoint({center.x - width, center.y - height, center.z - depth}),
-		m_maxPoint({center.x + width, center.y + height, center.z + depth}),
+		m_minPoint({center.x - width/2.f, center.y - height/2.f, center.z - depth/2.f}),
+		m_maxPoint({center.x + width/2.f, center.y + height/2.f, center.z + depth/2.f}),
 		m_size({width, height, depth}),
 		m_center(center)
 	{
@@ -61,6 +61,10 @@ namespace jl
 	const Vector3f& BoundingBox::getSize() const
 	{
 		return m_size;
+	}
+	float BoundingBox::getArea() const
+	{
+		return m_size.x*m_size.y*m_size.z;
 	}
 
 	const Vector3f& BoundingBox::getMinPoint() const

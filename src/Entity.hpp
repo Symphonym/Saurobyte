@@ -24,7 +24,7 @@ namespace jl
 
 		bool m_isActive;
 
-		const std::size_t m_id;
+		const EntityID m_id;
 		Game *const m_game;
 
 	public:

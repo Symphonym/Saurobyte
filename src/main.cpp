@@ -30,6 +30,7 @@
 #include "AudioFile.hpp"
 #include "AudioDevice.hpp"
 #include "BoundingBox.hpp"
+#include "RTree.hpp"
 
 #include "Components/LuaComponent.hpp"
 #include "Systems/MeshSystem.hpp"
@@ -220,11 +221,15 @@ int main(int argc, const char* argv[]){
 
 	*/
 
-	jl::BoundingBox box1(jl::Vector3f(0,0,0), 1, 1, 1);
-	jl::BoundingBox box2(jl::Vector3f(2,0,0), 1, 1, 1);
+	jl::BoundingBox box1(jl::Vector3f(1,2,0), 1, 1, 1);
+	jl::BoundingBox box2(jl::Vector3f(0,0,0), 1, 1, 1);
 
 	JL_INFO_LOG("INTERSECTION = %i", box1.intersects(box2));
 
+	jl::RTree<int> leTree;
+	jl::RTree<int>::Entry newEntry = std::make_pair(nullptr, jl::BoundingBox(jl::Vector3f(0,0,0),0,0,0));
+
+	leTree.findSuitableTree(newEntry);
 
 
 	JL_INFO_LOG("OPENAL VENDOR: %s", alGetString(AL_VERSION));

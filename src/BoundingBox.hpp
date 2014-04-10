@@ -34,6 +34,7 @@ namespace jl
 
 		const Vector3f& getCenter() const;
 		const Vector3f& getSize() const;
+		float getArea() const;
 
 		const Vector3f& getMinPoint() const;
 		const Vector3f& getMaxPoint() const;
