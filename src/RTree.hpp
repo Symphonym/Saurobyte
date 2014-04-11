@@ -22,6 +22,8 @@ namespace jl
 	public:
 
 		typedef std::array<BoundingBox, maxNodes> BoundsArray; 
+		typedef std::pair<BoundingBox, const TType*> AxisEntryPair;
+
 
 		struct Node
 		{
@@ -66,6 +68,21 @@ namespace jl
 
 
 		// Calculate overlapping value of a new boundingbox against an existing array of boundingboxes
+		float calculateOverlap(const BoundingBox &box1, const BoundingBox &box2)
+		{
+			// The newBox intersects with one of the other bounds
+			if(box1.intersects(box2))
+			{
+				// Get the bounds of the area that is shared
+				float width = std::fabs(box1.getSize().x - box2.getSize().x);
+				float height = std::fabs(box1.getSize().y - box2.getSize().y);
+				float depth = std::fabs(box1.getSize().z - box2.getSize().z);
+
+				return width*height*depth;
+			}
+
+			return 0;
+		}
 		float calculateOverlap(const BoundingBox &newBox, const BoundsArray &bounds, std::size_t maxIndex)
 		{
 			float overlapValue = 0;
@@ -73,17 +90,8 @@ namespace jl
 			{
 				const BoundingBox &otherBox = bounds[i];
 
-				// The newBox intersects with one of the other bounds
-				if(newBox.intersects(otherBox))
-				{
-					// Get the bounds of the area that is shared
-					float width = std::fabs(newBox.getSize().x - otherBox.getSize().x);
-					float height = std::fabs(newBox.getSize().y - otherBox.getSize().y);
-					float depth = std::fabs(newBox.getSize().z - otherBox.getSize().z);
-
-					// Add area of overlapping region
-					overlapValue += width*height*depth;
-				}
+				// Add area of overlapping region
+				overlapValue += calculateOverlap(newBox, otherBox);
 			}
 
 			return overlapValue;
@@ -114,7 +122,7 @@ namespace jl
 		}
 
 		// Finds a node suitable for inserting an object with the 'newBox' bounding box
-		Node& findSuitableTree(Node &rootNode, const BoundingBox &newBox)
+		Node& findSuitableNode(Node &rootNode, const BoundingBox &newBox)
 		{
 			// If root is a leaf, it is suitable for data insertion
 			if(rootNode.leafNode)
@@ -161,7 +169,7 @@ namespace jl
 					}
 
 					// Venture down this node until we find a leaf node
-					return findSuitableTree(*lowestOverlapNode.second, newBox);
+					return findSuitableNode(*lowestOverlapNode.second, newBox);
 				}
 
 				// If children aren't leaves
@@ -201,25 +209,95 @@ namespace jl
 						}
 					}
 
-					return findSuitableTree(*rootNode.data.children[lowestMBRNode.second], newBox);
+					return findSuitableNode(*rootNode.data.children[lowestMBRNode.second], newBox);
 				}
 
 			}
 		};
-		Node& findSuitableTree(const BoundingBox &newBox)
+		Node& findSuitableNode(const BoundingBox &newBox)
 		{
-			return findSuitableTree(m_rootNode, newBox);
+			return findSuitableNode(m_rootNode, newBox);
 		};
 
-		void splitTree(Node &node)
+		// Boundingbox axis comparator
+		template<int AxisIndex> struct AxisComparator
 		{
-			unsigned int splitDistribution = maxNodes - (2*minNodes) + 2; 
-
-			std::priority_queue<float> sortedX, sortedY, sortedZ;
-			for(unsigned int k = 1; k < splitDistribution; k++)
+			bool operator () (const BoundingBox &lhs, const BoundingBox &rhs) const
 			{
+				if(lhs.getMinPoint()[AxisIndex] == rhs.getMinPoint()[AxisIndex])
+					return lhs.getMaxPoint()[AxisIndex] < rhs.getMaxPoint()[AxisIndex];
+				else
+					return lhs.getMinPoint()[AxisIndex] < rhs.getMinPoint()[AxisIndex];
+			}
+		};
+
+		// Mixes together all the goodness values of a split and returns a number, the lower the better split
+		template<int AxisIndex> float goodnessValue(
+			std::priority_queue<AxisEntryPair, std::vector<AxisEntryPair>, AxisComparator<AxisIndex> > &sortedAxisList)
+		{
+			// This is how many ways we can split the axis
+			unsigned int splitDistributions = maxNodes - (2*minNodes) + 2;
+
+			// Now lets test the 'goodness' of each split
+			for(unsigned int k = 1; k < splitDistributions; k++)
+			{
+				unsigned int firstEntries = (minNodes - 1) + k;
+
+				BoundingBox firstMbr = sortedAxisList.first[0];
+				BoundingBox secondMbr = sortedAxisList.first[firstEntries];
+
+				// TODO are indexes right here?
+
+				// The first half of the split
+				for(unsigned int i = 0; i < firstEntries; i++)
+					firstMbr.enlarge(sortedAxisList.first[i]);
+
+				// The second half of the split
+				for(unsigned int i = firstEntries; i < maxNodes+1; i++)
+					secondMbr.enlarge(sortedAxisList.first[i]);
+
+				float margin = firstMbr.getPerimeter() + secondMbr.getPerimeter();
+				float overlap = calculateOverlap(firstMbr, secondMbr);
+				float area = firstMbr.getArea() + secondMbr.getArea();
 				// TODO I don't know what I'm doing, research more on splitting
 			}
+
+			// TODO return some goodness valueness
+			return 0;
+		};
+
+		void splitNode(Node &nodeToSplit, const TType *newEntry, const BoundingBox &newBox)
+		{
+			// This is how many ways we can split the axis
+			unsigned int splitDistributions = maxNodes - (2*minNodes) + 2;
+
+
+			std::priority_queue<AxisEntryPair, std::vector<AxisEntryPair>, AxisComparator<0> > sortedX;
+			std::priority_queue<AxisEntryPair, std::vector<AxisEntryPair>, AxisComparator<1> > sortedY;
+			std::priority_queue<AxisEntryPair, std::vector<AxisEntryPair>, AxisComparator<2> > sortedZ;
+
+			// First add the new entry (+1)
+			sortedX.push(std::make_pair(newBox, newEntry));
+			sortedY.push(std::make_pair(newBox, newEntry));
+			sortedZ.push(std::make_pair(newBox, newEntry));
+
+			// Then add the other entries (M)
+			for(std::size_t i = 0; i < nodeToSplit.entries.size(); i++)
+			{
+				const TType *entry = nodeToSplit.entries[i];
+				BoundingBox box = nodeToSplit.bounds[i];
+
+				sortedX.push(std::make_pair(box, entry));
+				sortedY.push(std::make_pair(box, entry));
+				sortedZ.push(std::make_pair(box, entry));
+			}
+
+			// Lower values == better split
+			float splittingX = goodnessValue<0>(sortedX);
+			float splittingY = goodnessValue<1>(sortedY);
+			float splittingZ = goodnessValue<2>(sortedZ);
+
+			
 		};
 
 	public:

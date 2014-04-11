@@ -228,7 +228,7 @@ int main(int argc, const char* argv[]){
 
 	jl::RTree<int> leTree;
 
-	leTree.findSuitableTree(box2);
+	leTree.findSuitableNode(box2);
 
 
 	JL_INFO_LOG("OPENAL VENDOR: %s", alGetString(AL_VERSION));
