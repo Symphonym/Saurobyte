@@ -21,20 +21,26 @@ namespace jl
 
 	public:
 
+		// Default constructor is 1x1x1 cube centered at origo
+		explicit BoundingBox(const Vector3f &center = {0,0,0}, float width = 1, float height = 1, float depth = 1);
 		explicit BoundingBox(const Vector3f &minPoint, const Vector3f &maxPoint);
-		explicit BoundingBox(const Vector3f &center, float width, float height, float depth);
 
 		// Checks whether or not this bounding box collides with another, sharing the
 		// same edge does not count as a collision.
 		bool intersects(const BoundingBox &other) const;
 
+		// Enlarges this bounding box so that 'newBox' fits within it
+		BoundingBox& enlarge(const BoundingBox &newBox);
+
 		void setSize(const Vector3f &size);
 		void setCenter(const Vector3f &center);
 		void setPoints(const Vector3f &minPoint, const Vector3f &maxPoint);
 
+
 		const Vector3f& getCenter() const;
 		const Vector3f& getSize() const;
 		float getArea() const;
+		float getPerimeter() const;
 
 		const Vector3f& getMinPoint() const;
 		const Vector3f& getMaxPoint() const;

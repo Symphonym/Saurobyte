@@ -227,9 +227,8 @@ int main(int argc, const char* argv[]){
 	JL_INFO_LOG("INTERSECTION = %i", box1.intersects(box2));
 
 	jl::RTree<int> leTree;
-	jl::RTree<int>::Entry newEntry = std::make_pair(nullptr, jl::BoundingBox(jl::Vector3f(0,0,0),0,0,0));
 
-	leTree.findSuitableTree(newEntry);
+	leTree.findSuitableTree(box2);
 
 
 	JL_INFO_LOG("OPENAL VENDOR: %s", alGetString(AL_VERSION));
