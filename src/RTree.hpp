@@ -6,6 +6,7 @@
 #include <queue>
 #include <cmath>
 #include <limits>
+#include <algorithm>
 #include "BoundingBox.hpp"
 #include "Math.hpp"
 
@@ -62,9 +63,6 @@ namespace jl
 		};
 
 		Node m_rootNode;
-
-
-
 
 
 		// Calculate overlapping value of a new boundingbox against an existing array of boundingboxes
@@ -231,12 +229,19 @@ namespace jl
 			}
 		};
 
-		// Mixes together all the goodness values of a split and returns a number, the lower the better split
-		template<int AxisIndex> float goodnessValue(
-			std::priority_queue<AxisEntryPair, std::vector<AxisEntryPair>, AxisComparator<AxisIndex> > &sortedAxisList)
+		// Returns the margin value of an axis to split, and the value referenced by 'optimalDistribution_K' will
+		// hold the 'k' value of the optimal distribution on this axis.
+		template<int AxisIndex> float calculateOptimalSplit(
+			std::priority_queue<AxisEntryPair, std::vector<AxisEntryPair>, AxisComparator<AxisIndex> > &sortedAxisList,
+			unsigned int &optimalDistribution_K)
 		{
 			// This is how many ways we can split the axis
 			unsigned int splitDistributions = maxNodes - (2*minNodes) + 2;
+
+			float marginValue = 0;
+
+			float lowestOverlap = std::numeric_limits<float>::max();
+			float lowestArea = std::numeric_limits<float>::max();
 
 			// Now lets test the 'goodness' of each split
 			for(unsigned int k = 1; k < splitDistributions; k++)
@@ -247,6 +252,7 @@ namespace jl
 				BoundingBox secondMbr = sortedAxisList.first[firstEntries];
 
 				// TODO are indexes right here?
+				// meaning that should i start at 0, and i start at firstEntries, and end at maxNodes+1
 
 				// The first half of the split
 				for(unsigned int i = 0; i < firstEntries; i++)
@@ -256,22 +262,30 @@ namespace jl
 				for(unsigned int i = firstEntries; i < maxNodes+1; i++)
 					secondMbr.enlarge(sortedAxisList.first[i]);
 
-				float margin = firstMbr.getPerimeter() + secondMbr.getPerimeter();
-				float overlap = calculateOverlap(firstMbr, secondMbr);
-				float area = firstMbr.getArea() + secondMbr.getArea();
-				// TODO I don't know what I'm doing, research more on splitting
+				marginValue += firstMbr.getPerimeter() + secondMbr.getPerimeter();
+
+				float overlapValue = calculateOverlap(firstMbr, secondMbr);
+				float areaValue = firstMbr.getArea() + secondMbr.getArea();
+
+				// Aha, this distribution is the best yet!
+				if(overlapValue < lowestOverlap ||
+					(overlapValue == lowestOverlap && areaValue < lowestArea))
+				{
+					lowestOverlap = overlapValue;
+					lowestArea = areaValue;
+					optimalDistribution_K = k;
+				}
 			}
 
-			// TODO return some goodness valueness
-			return 0;
+			return marginValue;
 		};
 
+		// Split the node along the optimal axis and use the best distribution in which 'newBox'
+		// can be inserted.
 		void splitNode(Node &nodeToSplit, const TType *newEntry, const BoundingBox &newBox)
 		{
-			// This is how many ways we can split the axis
-			unsigned int splitDistributions = maxNodes - (2*minNodes) + 2;
-
-
+			// TODO newEntry might not be needed as arg
+			// TODO does this sort by 'upper' and 'lower' values? Or just one of them? Paper says to sort by both.
 			std::priority_queue<AxisEntryPair, std::vector<AxisEntryPair>, AxisComparator<0> > sortedX;
 			std::priority_queue<AxisEntryPair, std::vector<AxisEntryPair>, AxisComparator<1> > sortedY;
 			std::priority_queue<AxisEntryPair, std::vector<AxisEntryPair>, AxisComparator<2> > sortedZ;
@@ -292,12 +306,40 @@ namespace jl
 				sortedZ.push(std::make_pair(box, entry));
 			}
 
-			// Lower values == better split
-			float splittingX = goodnessValue<0>(sortedX);
-			float splittingY = goodnessValue<1>(sortedY);
-			float splittingZ = goodnessValue<2>(sortedZ);
+			// Optimal distribution on each axis, 'k' value
+			unsigned int optimalDistribution_X = 0;
+			unsigned int optimalDistribution_Y = 0;
+			unsigned int optimalDistribution_Z = 0;
 
+			float marginValue_X = calculateOptimalSplit<0>(sortedX, optimalDistribution_X);
+			float marginValue_Y = calculateOptimalSplit<1>(sortedY, optimalDistribution_Y);
+			float marginValue_Z = calculateOptimalSplit<2>(sortedZ, optimalDistribution_Z);
+
+			float smallestMargin = std::min({marginValue_X, marginValue_Y, marginValue_Z});
+
+			// Axis to split, and distribution to use
+			int splitAxis = -1;
+			unsigned int optimalDistribution_K = 0;
+
+			// Determine split axis
+			if(smallestMargin == marginValue_X)
+			{
+				splitAxis = 0;
+				optimalDistribution_K = optimalDistribution_X;
+			}
+			else if(smallestMargin == marginValue_Y)
+			{
+				splitAxis = 1;
+				optimalDistribution_K = optimalDistribution_Y;
+			}
+			else if(smallestMargin == marginValue_Z)
+			{
+				splitAxis = 2;
+				optimalDistribution_Z = optimalDistribution_Z;
+			}
 			
+			// TODO we know who the axis to split, and distribution of split, so do some vodoo split below here and all is
+			// good
 		};
 
 	public:
