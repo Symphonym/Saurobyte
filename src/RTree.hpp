@@ -284,8 +284,8 @@ namespace jl
 		// Split the node along the optimal axis and use the best distribution in which 'newBox'
 		// can be inserted.
 		// 'nodeToSplit' is the node, and it's bounding box that's currently full
-		// 'newNode' is the node that was created for the splitting, that is, the second half of the split
-		// 'newEntry' is the new entry that we want to fit into a leaf node
+		// 'newNode' is the node that was created by the parent for the splitting, that is, the second half of the split
+		// 'newEntry' is the new entry that we want to fit into the 'nodeToSplit' leaf node
 		void splitNode(
 			const std::pair<BoundingBox&, Node&> &nodeToSplit,
 			const std::pair<BoundingBox&, Node&> &newNode,
@@ -376,14 +376,24 @@ namespace jl
 				newNode.second.data.entries[i] = splitAxisRef[i].second;
 				newNode.second.childrenCount++;
 			}
-			
-			// TODO we know who the axis to split, and distribution of split, so do some vodoo split below here and all is
-			// good
-			// add new node and use mbr 2 for it
 
 		};
 
 	public:
+
+		void insert(const TType *newEntry, const BoundingBox &entryBounds)
+		{
+			Node &suitableNode = findSuitableNode(entryBounds);
+
+			// The node has room for another entry, so just add it
+			if(suitableNode.childrenCount < maxNodes)
+			{
+				int newIndex = suitableNode.childrenCount++;
+				suitableNode.data.entries[newIndex] = newEntry;
+				suitableNode.bounds[newIndex] = entryBounds;
+			}
+			// TODO handle overflowing etc else if
+		};
 
 		RTree()
 			:
