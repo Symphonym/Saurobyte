@@ -220,20 +220,18 @@ namespace jl
 		// Boundingbox axis comparator
 		template<int AxisIndex> struct AxisComparator
 		{
-			bool operator () (const BoundingBox &lhs, const BoundingBox &rhs) const
+			bool operator () (const AxisEntryPair &lhs, const AxisEntryPair &rhs) const
 			{
-				if(lhs.getMinPoint()[AxisIndex] == rhs.getMinPoint()[AxisIndex])
-					return lhs.getMaxPoint()[AxisIndex] < rhs.getMaxPoint()[AxisIndex];
+				if(lhs.first.getMinPoint()[AxisIndex] == rhs.first.getMinPoint()[AxisIndex])
+					return lhs.first.getMaxPoint()[AxisIndex] < rhs.first.getMaxPoint()[AxisIndex];
 				else
-					return lhs.getMinPoint()[AxisIndex] < rhs.getMinPoint()[AxisIndex];
+					return lhs.first.getMinPoint()[AxisIndex] < rhs.first.getMinPoint()[AxisIndex];
 			}
 		};
 
 		// Returns the margin value of an axis to split, and the value referenced by 'optimalDistribution_K' will
 		// hold the 'k' value of the optimal distribution on this axis.
-		template<int AxisIndex> float calculateOptimalSplit(
-			std::priority_queue<AxisEntryPair, std::vector<AxisEntryPair>, AxisComparator<AxisIndex> > &sortedAxisList,
-			unsigned int &optimalDistribution_K)
+		float calculateOptimalSplit(std::vector<AxisEntryPair> &sortedAxisList, unsigned int &optimalDistribution_K)
 		{
 			// This is how many ways we can split the axis
 			unsigned int splitDistributions = maxNodes - (2*minNodes) + 2;
@@ -248,19 +246,22 @@ namespace jl
 			{
 				unsigned int firstEntries = (minNodes - 1) + k;
 
-				BoundingBox firstMbr = sortedAxisList.first[0];
-				BoundingBox secondMbr = sortedAxisList.first[firstEntries];
+				BoundingBox firstMbr = sortedAxisList[0].first;
+				BoundingBox secondMbr = sortedAxisList[firstEntries].first;
 
 				// TODO are indexes right here?
 				// meaning that should i start at 0, and i start at firstEntries, and end at maxNodes+1
 
+				// In the loops below at start at the starting index + 1 since the first element is
+				// used to initialize the MBR
+
 				// The first half of the split
-				for(unsigned int i = 0; i < firstEntries; i++)
-					firstMbr.enlarge(sortedAxisList.first[i]);
+				for(unsigned int i = 1; i < firstEntries; i++)
+					firstMbr.enlarge(sortedAxisList[i].first);
 
 				// The second half of the split
-				for(unsigned int i = firstEntries; i < maxNodes+1; i++)
-					secondMbr.enlarge(sortedAxisList.first[i]);
+				for(unsigned int i = firstEntries+1; i < maxNodes+1; i++)
+					secondMbr.enlarge(sortedAxisList[i].first);
 
 				marginValue += firstMbr.getPerimeter() + secondMbr.getPerimeter();
 
@@ -282,64 +283,104 @@ namespace jl
 
 		// Split the node along the optimal axis and use the best distribution in which 'newBox'
 		// can be inserted.
-		void splitNode(Node &nodeToSplit, const TType *newEntry, const BoundingBox &newBox)
+		// 'nodeToSplit' is the node, and it's bounding box that's currently full
+		// 'newNode' is the node that was created for the splitting, that is, the second half of the split
+		// 'newEntry' is the new entry that we want to fit into a leaf node
+		void splitNode(
+			const std::pair<BoundingBox&, Node&> &nodeToSplit,
+			const std::pair<BoundingBox&, Node&> &newNode,
+			const std::pair<BoundingBox&, const TType*> &newEntry)
 		{
 			// TODO newEntry might not be needed as arg
 			// TODO does this sort by 'upper' and 'lower' values? Or just one of them? Paper says to sort by both.
-			std::priority_queue<AxisEntryPair, std::vector<AxisEntryPair>, AxisComparator<0> > sortedX;
-			std::priority_queue<AxisEntryPair, std::vector<AxisEntryPair>, AxisComparator<1> > sortedY;
-			std::priority_queue<AxisEntryPair, std::vector<AxisEntryPair>, AxisComparator<2> > sortedZ;
+			std::vector<AxisEntryPair> sortedX;
+			std::vector<AxisEntryPair> sortedY;
+			std::vector<AxisEntryPair> sortedZ;
 
 			// First add the new entry (+1)
-			sortedX.push(std::make_pair(newBox, newEntry));
-			sortedY.push(std::make_pair(newBox, newEntry));
-			sortedZ.push(std::make_pair(newBox, newEntry));
+			sortedX.push_back(newEntry);
+			sortedY.push_back(newEntry);
+			sortedZ.push_back(newEntry);
 
 			// Then add the other entries (M)
-			for(std::size_t i = 0; i < nodeToSplit.entries.size(); i++)
+			for(std::size_t i = 0; i < nodeToSplit.second.childrenCount; i++)
 			{
-				const TType *entry = nodeToSplit.entries[i];
-				BoundingBox box = nodeToSplit.bounds[i];
+				const TType *entry = nodeToSplit.second.data.entries[i];
+				BoundingBox box = nodeToSplit.second.bounds[i];
 
-				sortedX.push(std::make_pair(box, entry));
-				sortedY.push(std::make_pair(box, entry));
-				sortedZ.push(std::make_pair(box, entry));
+				sortedX.push_back(std::make_pair(box, entry));
+				sortedY.push_back(std::make_pair(box, entry));
+				sortedZ.push_back(std::make_pair(box, entry));
 			}
+
+			// Sort the axis vectors
+			std::sort(sortedX.begin(), sortedX.end(), AxisComparator<0>());
+			std::sort(sortedY.begin(), sortedY.end(), AxisComparator<1>());
+			std::sort(sortedZ.begin(), sortedZ.end(), AxisComparator<2>());
+
 
 			// Optimal distribution on each axis, 'k' value
 			unsigned int optimalDistribution_X = 0;
 			unsigned int optimalDistribution_Y = 0;
 			unsigned int optimalDistribution_Z = 0;
 
-			float marginValue_X = calculateOptimalSplit<0>(sortedX, optimalDistribution_X);
-			float marginValue_Y = calculateOptimalSplit<1>(sortedY, optimalDistribution_Y);
-			float marginValue_Z = calculateOptimalSplit<2>(sortedZ, optimalDistribution_Z);
+			float marginValue_X = calculateOptimalSplit(sortedX, optimalDistribution_X);
+			float marginValue_Y = calculateOptimalSplit(sortedY, optimalDistribution_Y);
+			float marginValue_Z = calculateOptimalSplit(sortedZ, optimalDistribution_Z);
 
 			float smallestMargin = std::min({marginValue_X, marginValue_Y, marginValue_Z});
 
 			// Axis to split, and distribution to use
-			int splitAxis = -1;
+			std::vector<AxisEntryPair> *splitAxisVector = nullptr;
 			unsigned int optimalDistribution_K = 0;
 
 			// Determine split axis
 			if(smallestMargin == marginValue_X)
 			{
-				splitAxis = 0;
+				splitAxisVector = &sortedX;
 				optimalDistribution_K = optimalDistribution_X;
 			}
 			else if(smallestMargin == marginValue_Y)
 			{
-				splitAxis = 1;
+				splitAxisVector = &sortedY;
 				optimalDistribution_K = optimalDistribution_Y;
 			}
 			else if(smallestMargin == marginValue_Z)
 			{
-				splitAxis = 2;
+				splitAxisVector = &sortedZ;
 				optimalDistribution_Z = optimalDistribution_Z;
+			}
+
+			std::vector<AxisEntryPair> splitAxisRef = *splitAxisVector;
+
+			// Put entries of first group into the first node
+			nodeToSplit.second.childrenCount = 1; // Initialize with first element
+			nodeToSplit.first = splitAxisRef[0].first;
+			nodeToSplit.second.data.entries[0] = splitAxisRef[1].second;
+
+			for(std::size_t i = 1; i < optimalDistribution_K; i++)
+			{
+				nodeToSplit.first.enlarge(splitAxisRef[i].first);
+				nodeToSplit.second.data.entries[i] = splitAxisRef[i].second;
+				nodeToSplit.second.childrenCount++;
+			}
+
+			// Put entries of second group in the second node
+			newNode.second.childrenCount = 1; // Initialize with first element
+			newNode.first = splitAxisRef[optimalDistribution_K].first;
+			newNode.second.data.entries[optimalDistribution_K] = splitAxisRef[1].second;
+
+			for(std::size_t i = optimalDistribution_K+1; i < maxNodes+1; i++)
+			{
+				newNode.first.enlarge(splitAxisRef[i].first);
+				newNode.second.data.entries[i] = splitAxisRef[i].second;
+				newNode.second.childrenCount++;
 			}
 			
 			// TODO we know who the axis to split, and distribution of split, so do some vodoo split below here and all is
 			// good
+			// add new node and use mbr 2 for it
+
 		};
 
 	public:
