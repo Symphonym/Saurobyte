@@ -39,9 +39,6 @@ namespace jl
 			// List of bounds for entry/children at the same index
 			BoundsArray bounds;
 
-			// Level number, root is always 0
-			unsigned int level;
-
 			// Amount of entries/childs in this node
 			unsigned int childrenCount;
 
@@ -60,7 +57,6 @@ namespace jl
 
 			Node()
 				:
-				level(0),
 				childrenCount(0),
 				leafNode(false)
 			{
@@ -75,7 +71,7 @@ namespace jl
 		typedef std::vector<std::pair<Node*, int> > NodeSearchPath;
 
 
-		Node m_rootNode;
+		Node *m_rootNode;
 
 
 		// Calculate overlapping value of a new boundingbox against an existing array of boundingboxes
@@ -242,7 +238,7 @@ namespace jl
 		NodeSearchPath findSuitableNode(const BoundingBox &newBox)
 		{
 			NodeSearchPath searchPath;
-			searchPath.push_back(std::make_pair(&m_rootNode, -1)); // Index is -1 since root has no parent
+			searchPath.push_back(std::make_pair(m_rootNode, -1)); // Index is -1 since root has no parent
 			return findSuitableNode(newBox, searchPath);
 		};
 
@@ -318,7 +314,7 @@ namespace jl
 		void splitNode(
 			const std::pair<BoundingBox&, Node&> &nodeToSplit,
 			const std::pair<BoundingBox&, Node&> &newNode,
-			const std::pair<BoundingBox&, const TType*> &newEntry)
+			const std::pair<const BoundingBox&, const TType*> &newEntry)
 		{
 			// TODO newEntry might not be needed as arg
 			// TODO does this sort by 'upper' and 'lower' values? Or just one of them? Paper says to sort by both.
@@ -407,7 +403,6 @@ namespace jl
 			newNode.second.childrenCount = 1; // Initialize with first element
 			newNode.first = splitAxisRef[optimalDistribution_K].first;
 			newNode.second.data.entries[0] = splitAxisRef[optimalDistribution_K].second;
-			newNode.second.level = nodeToSplit.second.level; // Make sure they're at the same level
 
 			realIndex = 1;
 			for(std::size_t i = optimalDistribution_K+1; i < maxNodes+1; i++)
@@ -420,26 +415,36 @@ namespace jl
 
 		};
 
-		void reinsert(Node &parentNode, Node& node, int positionInParent, OverflowMap &overflowMap)
+		void reinsert(Node &parentNode, Node& node, int positionInParent)
 		{
-			std::vector<std::pair<float, const TType*> > sortedByDistance;
+			// This allows us to sort by distance, and then update the Node data members
+			std::vector<std::pair<float, std::pair<BoundingBox, const TType*> > > sortedByDistance(node.childrenCount);
 			Vector3f nodeCenter = parentNode.bounds[positionInParent].getCenter();
 
 			for(std::size_t i = 0; i < node.childrenCount; i++)
 			{
 				Vector3f entryCenter = node.bounds[i];
-				sortedByDistance.push_back(std::make_pair(glm::distance(entryCenter, nodeCenter), node.data.entries[i]));
+				sortedByDistance.push_back(
+					std::make_pair(glm::distance(entryCenter, nodeCenter),
+						std::make_pair(node.bounds[i], node.data.entries[i])));
 			}
 			std::sort(sortedByDistance.begin(), sortedByDistance.end());
 
+			// Update node data according to this distance sort
+			for(std::size_t i = 0; i < node.childrenCount; i++)
+			{
+				node.bounds[i] = sortedByDistance[i].second.first;
+				node.entries[i] = sortedByDistance[i].second.second;
+			}
 
+			// Reinsert the last 'ReinsertFactor' entries
 			node.childrenCount -= ReinsertFactor;
 			for(std::size_t i = node.childrenCount + ReinsertFactor; i > node.childrenCount; i--)
-				insert(node.data.entries[i], node.bounds[i], overflowMap);
+				insert(node.data.entries[i], node.bounds[i], false);
 		}
 
 
-		void insert(const TType *newEntry, const BoundingBox &entryBounds, OverflowMap &overflowMap)
+		void insert(const TType *newEntry, const BoundingBox &entryBounds, bool firstInsert = true)
 		{
 			NodeSearchPath searchPath = findSuitableNode(entryBounds);
 			Node &suitableNode = *searchPath.back().first;
@@ -456,11 +461,42 @@ namespace jl
 			else if(suitableNode.childrenCount == maxNodes)
 			{
 				// Make sure we aren't the root node and haven't already invoked OverflowTreatment
-				if(suitableNode.level != 0 && overflowMap.find(suitableNode.level) == overflowMap.end())
+				if(suitableNode != &m_rootNode && firstInsert)
+					reinsert(searchPath[searchPath.size()-2], suitableNode, searchPath.back().second);
+				else
 				{
-					overflowMap.insert(suitableNode.level);
-					reinsert(searchPath[*searchPath.size()-2], suitableNode, searchPath.back().second, overflowMap);
-					// reinsert, get parent how do we do, we need center of suitableNode, which only parent has
+					BoundingBox splitNodeBounds;
+					Node *splitNode = new Node();
+					splitNode(
+						std::make_pair(std::ref(suitableNode), searchPath[searchPath.size()-2].bounds[searchPath.back().second]),
+						std::make_pair(std::ref(splitNodeBounds), splitNode),
+						std::make_pair(std::ref(entryBounds), newEntry));
+
+					// If we split the root, create a new root
+					if(suitableNode.level == 0)
+					{
+						Node *newRoot = new Node();
+						newRoot->childrenCount = 2;
+
+						newRoot.data.children[0] = splitNode;
+						newRoot.bounds[0] = splitNodeBounds;
+
+						newRoot.data.children[1] = m_rootNode;
+						newRoot.bounds[1] = calculateMBR(m_rootNode->bounds, m_rootNode->childrenCount);
+
+						m_rootNode = newRoot;
+					}
+
+					// Else just insert the new element into the parent
+					else
+					{
+						Node *parent = searchPath[searchPath.size()-2];
+
+						int newIndex = parent->childrenCount++;
+						parent->children[newIndex] = splitNode;
+						parent->bounds[newIndex] = splitNodeBounds;
+					}
+					//std::pair<BoundingBox, const TType*> secondSplitHalf = std::make_pair()
 				}
 				//if(suitableNode.parent != nullptr)
 					//reinsert(*suitableNode.parent, suitableNode,)
@@ -493,7 +529,7 @@ namespace jl
 
 		void insert(const TType *newEntry, const BoundingBox &entryBounds)
 		{
-			insert(newEntry, entryBounds, OverflowMap());
+			insert(newEntry, entryBounds);
 		};
 
 
@@ -501,8 +537,10 @@ namespace jl
 			:
 			m_rootNode()
 		{
+			m_rootNode = new Node();
+
 			// Root node will always be the leaf node at startup, as the tree is empty
-			m_rootNode.leafNode = true;
+			m_rootNode->leafNode = true;
 
 			static_assert(minNodes >= 2, "R-trees cannot have a minimum node values less than 2");
 			static_assert(minNodes <= maxNodes/2, "R-trees cannot have a minimum node value above half the maximum value");

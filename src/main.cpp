@@ -230,8 +230,8 @@ int main(int argc, const char* argv[]){
 
 	leTree.findSuitableNode(box2);
 	leTree.splitNode(
-		std::make_pair(std::ref(box2), std::ref(leTree.m_rootNode)),
-		std::make_pair(std::ref(box2), std::ref(leTree.m_rootNode)),
+		std::make_pair(std::ref(box2), std::ref(*leTree.m_rootNode)),
+		std::make_pair(std::ref(box2), std::ref(*leTree.m_rootNode)),
 		std::make_pair(std::ref(box2), nullptr));
 
 
