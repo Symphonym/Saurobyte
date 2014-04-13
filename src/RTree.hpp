@@ -7,6 +7,7 @@
 #include <cmath>
 #include <limits>
 #include <algorithm>
+#include <unordered_set>
 #include "BoundingBox.hpp"
 #include "Math.hpp"
 #include "Logger.hpp"
@@ -25,6 +26,9 @@ namespace jl
 
 		typedef std::array<BoundingBox, maxNodes> BoundsArray; 
 		typedef std::pair<BoundingBox, const TType*> AxisEntryPair;
+		typedef std::unordered_set<unsigned int> OverflowMap;
+
+		const int ReinsertFactor = maxNodes * 0.3;
 
 
 		struct Node
@@ -34,6 +38,9 @@ namespace jl
 
 			// List of bounds for entry/children at the same index
 			BoundsArray bounds;
+
+			// Level number, root is always 0
+			unsigned int level;
 
 			// Amount of entries/childs in this node
 			unsigned int childrenCount;
@@ -53,6 +60,7 @@ namespace jl
 
 			Node()
 				:
+				level(0),
 				childrenCount(0),
 				leafNode(false)
 			{
@@ -384,6 +392,7 @@ namespace jl
 			newNode.second.childrenCount = 1; // Initialize with first element
 			newNode.first = splitAxisRef[optimalDistribution_K].first;
 			newNode.second.data.entries[0] = splitAxisRef[optimalDistribution_K].second;
+			newNode.second.level = nodeToSplit.second.level; // Make sure they're at the same level
 
 			realIndex = 1;
 			for(std::size_t i = optimalDistribution_K+1; i < maxNodes+1; i++)
@@ -396,7 +405,7 @@ namespace jl
 
 		};
 
-		void reinsert(Node &parentNode, Node& node, int positionInParent)
+		void reinsert(Node &parentNode, Node& node, int positionInParent, OverflowMap &overflowMap)
 		{
 			std::vector<std::pair<float, const TType*> > sortedByDistance;
 			Vector3f nodeCenter = parentNode.bounds[positionInParent].getCenter();
@@ -406,11 +415,16 @@ namespace jl
 				Vector3f entryCenter = node.bounds[i];
 				sortedByDistance.push_back(std::make_pair(glm::distance(entryCenter, nodeCenter), node.data.entries[i]));
 			}
+			std::sort(sortedByDistance.begin(), sortedByDistance.end());
+
+
+			node.childrenCount -= ReinsertFactor;
+			for(std::size_t i = node.childrenCount + ReinsertFactor; i > node.childrenCount; i--)
+				insert(node.data.entries[i], node.bounds[i], overflowMap);
 		}
 
-	public:
 
-		void insert(const TType *newEntry, const BoundingBox &entryBounds)
+		void insert(const TType *newEntry, const BoundingBox &entryBounds, OverflowMap &overflowMap)
 		{
 			Node &suitableNode = findSuitableNode(entryBounds);
 
@@ -425,11 +439,27 @@ namespace jl
 			// Shit, the most suitable node is full! Invoke OverflowTreatment
 			else if(suitableNode.childrenCount == maxNodes)
 			{
+				// Make sure we aren't the root node and haven't already invoked OverflowTreatment
+				if(suitableNode.level != 0 && overflowMap.find(suitableNode.level) == overflowMap.end())
+				{
+					overflowMap.insert(suitableNode.level);
+					// reinsert, get parent how do we do, we need center of suitableNode, which only parent has
+				}
+				//if(suitableNode.parent != nullptr)
+					//reinsert(*suitableNode.parent, suitableNode,)
 				// reinsert(suitableNode)
 				// TODO how do we get parent in here? D:
 			}
 			// TODO handle overflowing etc else if
 		};
+
+	public:
+
+		void insert(const TType *newEntry, const BoundingBox &entryBounds)
+		{
+			insert(newEntry, entryBounds, OverflowMap());
+		};
+
 
 		RTree()
 			:
