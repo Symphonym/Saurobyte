@@ -71,6 +71,10 @@ namespace jl
 
 		};
 
+		// Search path trace, nodes and their index in the parent array
+		typedef std::vector<std::pair<Node*, int> > NodeSearchPath;
+
+
 		Node m_rootNode;
 
 
@@ -129,17 +133,20 @@ namespace jl
 		}
 
 		// Finds a node suitable for inserting an object with the 'newBox' bounding box
-		Node& findSuitableNode(Node &rootNode, const BoundingBox &newBox)
+		// Returns a vector of all nodes in the search path, with the 'suitableNode' at the end of the vector
+		NodeSearchPath findSuitableNode(const BoundingBox &newBox, NodeSearchPath &searchPath)
 		{
+			Node& currentNode = *searchPath.back().first;
+
 			// If root is a leaf, it is suitable for data insertion
-			if(rootNode.leafNode)
-				return rootNode;
+			if(currentNode.leafNode)
+				return searchPath;
 			else
 			{
-				// We know 'rootNode' isn't a leaf node, thus we only access its children
+				// We know 'currentNode' isn't a leaf node, thus we only access its children
 
 				// If children are leaves
-				if(rootNode.data.children[0]->leafNode)
+				if(currentNode.data.children[0]->leafNode)
 				{
 					// We know that the 'children' are leaves, thus we only access their entries
 
@@ -149,10 +156,10 @@ namespace jl
 						0);
 
 					// Determine which child gives smallest overlap value
-					for(std::size_t i = 0; i < rootNode.childrenCount; i++)
+					for(std::size_t i = 0; i < currentNode.childrenCount; i++)
 					{
-						Node *child = rootNode.data.children[i];
-						BoundingBox mbr = rootNode.bounds[i];
+						Node *child = currentNode.data.children[i];
+						BoundingBox mbr = currentNode.bounds[i];
 						float overlapValue = calculateOverlap(newBox, child->bounds, child->childrenCount);
 
 						// Check if overlap value when inserting into this child is smaller
@@ -163,7 +170,7 @@ namespace jl
 						else if(overlapValue == lowestOverlapNode.first)
 						{
 							// Change of MBR area of the currently most suitable node
-							BoundingBox currentMBR = rootNode.bounds[lowestOverlapNode.second];
+							BoundingBox currentMBR = currentNode.bounds[lowestOverlapNode.second];
 							float currentMBRArea = currentMBR.getArea();
 							float currentMBRDelta = currentMBR.enlarge(newBox).getArea() - currentMBRArea;
 
@@ -177,8 +184,11 @@ namespace jl
 						}
 					}
 
+					searchPath.push_back(
+						std::make_pair(currentNode.data.children[lowestOverlapNode.second], lowestOverlapNode.second));
+
 					// Venture down this node until we find a leaf node
-					return findSuitableNode(*rootNode.data.children[lowestOverlapNode.second], newBox);
+					return findSuitableNode(newBox, searchPath);
 				}
 
 				// If children aren't leaves
@@ -193,11 +203,11 @@ namespace jl
 						0);
 
 					// Determine which child gives the smallest MBR area change
-					for(std::size_t i = 0; i < rootNode.childrenCount; i++)
+					for(std::size_t i = 0; i < currentNode.childrenCount; i++)
 					{
 						// Create a copy of the entries in the node and add the new data node to it
-						Node *child = rootNode.data.children[i];
-						BoundingBox mbr = rootNode.bounds[i];
+						Node *child = currentNode.data.children[i];
+						BoundingBox mbr = currentNode.bounds[i];
 
 						BoundingBox biggerMbr = mbr;
 						biggerMbr.enlarge(newBox); // MBR if we insert the new data
@@ -211,7 +221,7 @@ namespace jl
 						// Solve tied values
 						else if(newMBRDelta == lowestMBRNode.first)
 						{
-							float currentArea = rootNode.bounds[lowestMBRNode.second].getArea();
+							float currentArea = currentNode.bounds[lowestMBRNode.second].getArea();
 							float newArea = mbr.getArea();
 
 							// Inserting into this child yields a smaller area change
@@ -220,15 +230,20 @@ namespace jl
 						}
 					}
 
+					searchPath.push_back(
+						std::make_pair(currentNode.data.children[lowestMBRNode.second], lowestMBRNode.second));
+
 					// Venture down this node until we find a leaf node
-					return findSuitableNode(*rootNode.data.children[lowestMBRNode.second], newBox);
+					return findSuitableNode(newBox, searchPath);
 				}
 
 			}
 		};
-		Node& findSuitableNode(const BoundingBox &newBox)
+		NodeSearchPath findSuitableNode(const BoundingBox &newBox)
 		{
-			return findSuitableNode(m_rootNode, newBox);
+			NodeSearchPath searchPath;
+			searchPath.push_back(std::make_pair(&m_rootNode, -1)); // Index is -1 since root has no parent
+			return findSuitableNode(newBox, searchPath);
 		};
 
 		// Boundingbox axis comparator
@@ -426,7 +441,8 @@ namespace jl
 
 		void insert(const TType *newEntry, const BoundingBox &entryBounds, OverflowMap &overflowMap)
 		{
-			Node &suitableNode = findSuitableNode(entryBounds);
+			NodeSearchPath searchPath = findSuitableNode(entryBounds);
+			Node &suitableNode = *searchPath.back().first;
 
 			// The node has room for another entry, so just add it
 			if(suitableNode.childrenCount < maxNodes)
@@ -443,6 +459,7 @@ namespace jl
 				if(suitableNode.level != 0 && overflowMap.find(suitableNode.level) == overflowMap.end())
 				{
 					overflowMap.insert(suitableNode.level);
+					reinsert(searchPath[*searchPath.size()-2], suitableNode, searchPath.back().second, overflowMap);
 					// reinsert, get parent how do we do, we need center of suitableNode, which only parent has
 				}
 				//if(suitableNode.parent != nullptr)
@@ -451,6 +468,25 @@ namespace jl
 				// TODO how do we get parent in here? D:
 			}
 			// TODO handle overflowing etc else if
+
+			// Go through search path and update MBR's, start at the 'back' which is the leafNode
+			unsigned int parentIndex = std::numeric_limits<unsigned int>::max();
+			for(std::size_t i = searchPath.size() - 1; i > 0; i--)
+			{
+				Node& nodeInPath = *searchPath[i].first;
+
+				// We have no interest in updating the bounds of the entries in the leafNode
+				if(nodeInPath.leafNode)
+				{
+					parentIndex = searchPath[i].second;
+					continue;
+				}
+
+				nodeInPath.bounds[parentIndex] = calculateMBR(
+					nodeInPath.children[parentIndex].bounds, nodeInPath.children[parentIndex].childrenCount);
+
+				parentIndex = searchPath[i].second;
+			}
 		};
 
 	public:
