@@ -9,6 +9,7 @@
 #include <algorithm>
 #include "BoundingBox.hpp"
 #include "Math.hpp"
+#include "Logger.hpp"
 
 namespace jl
 {
@@ -134,40 +135,42 @@ namespace jl
 				{
 					// We know that the 'children' are leaves, thus we only access their entries
 
-					// Most suitable node to insert into, as of now
-					std::pair<float, Node*> lowestOverlapNode = std::make_pair(
+					// Most suitable node index to insert into, as of now
+					std::pair<float, int> lowestOverlapNode = std::make_pair(
 						std::numeric_limits<float>::max(),
-						nullptr);
+						0);
 
 					// Determine which child gives smallest overlap value
 					for(std::size_t i = 0; i < rootNode.childrenCount; i++)
 					{
 						Node *child = rootNode.data.children[i];
+						BoundingBox mbr = rootNode.bounds[i];
 						float overlapValue = calculateOverlap(newBox, child->bounds, child->childrenCount);
 
 						// Check if overlap value when inserting into this child is smaller
 						if(overlapValue < lowestOverlapNode.first)
-							lowestOverlapNode = std::make_pair(overlapValue, child);
+							lowestOverlapNode = std::make_pair(overlapValue, i);
 
 						// Solve tied values
 						else if(overlapValue == lowestOverlapNode.first)
 						{
-							float currentMBRDelta =
-								calculateMBR(lowestOverlapNode.second->bounds, lowestOverlapNode.second->childrenCount).enlarge(newBox).getArea() -
-								calculateMBR(lowestOverlapNode.second->bounds, lowestOverlapNode.second->childrenCount).getArea();
+							// Change of MBR area of the currently most suitable node
+							BoundingBox currentMBR = rootNode.bounds[lowestOverlapNode.second];
+							float currentMBRArea = currentMBR.getArea();
+							float currentMBRDelta = currentMBR.enlarge(newBox).getArea() - currentMBRArea;
 
-							float newMBRDelta =
-								calculateMBR(child->bounds, child->childrenCount).enlarge(newBox).getArea() -
-								calculateMBR(child->bounds, child->childrenCount).getArea();
+							// Change of MBR area with the newly considered node
+							float newMBRCurrentArea = mbr.getArea();
+							float newMBRDelta = mbr.enlarge(newBox).getArea() - newMBRCurrentArea;
 
 							// Inserting into this child yields a smaller MBR change
 							if(newMBRDelta < currentMBRDelta)
-								lowestOverlapNode = std::make_pair(overlapValue, child);
+								lowestOverlapNode = std::make_pair(overlapValue, i);
 						}
 					}
 
 					// Venture down this node until we find a leaf node
-					return findSuitableNode(*lowestOverlapNode.second, newBox);
+					return findSuitableNode(*rootNode.data.children[lowestOverlapNode.second], newBox);
 				}
 
 				// If children aren't leaves
@@ -186,10 +189,12 @@ namespace jl
 					{
 						// Create a copy of the entries in the node and add the new data node to it
 						Node *child = rootNode.data.children[i];
+						BoundingBox mbr = rootNode.bounds[i];
 
-						float newMBRDelta =
-								calculateMBR(child->bounds, child->childrenCount).enlarge(newBox).getArea() -
-								calculateMBR(child->bounds, child->childrenCount).getArea();
+						BoundingBox biggerMbr = mbr;
+						biggerMbr.enlarge(newBox); // MBR if we insert the new data
+
+						float newMBRDelta = biggerMbr.getArea() - mbr.getArea();
 
 						// Check if MBR change when inserting into this child is smaller
 						if(newMBRDelta < lowestMBRNode.first)
@@ -199,7 +204,7 @@ namespace jl
 						else if(newMBRDelta == lowestMBRNode.first)
 						{
 							float currentArea = rootNode.bounds[lowestMBRNode.second].getArea();
-							float newArea = rootNode.bounds[i].getArea();
+							float newArea = mbr.getArea();
 
 							// Inserting into this child yields a smaller area change
 							if(newArea < currentArea)
@@ -207,6 +212,7 @@ namespace jl
 						}
 					}
 
+					// Venture down this node until we find a leaf node
 					return findSuitableNode(*rootNode.data.children[lowestMBRNode.second], newBox);
 				}
 
@@ -351,33 +357,56 @@ namespace jl
 				optimalDistribution_Z = optimalDistribution_Z;
 			}
 
+			if(splitAxisVector == nullptr)
+			{
+				JL_ERROR_LOG("R* tree error, no optimal split could be found!");
+				return;
+			}
+
+
 			std::vector<AxisEntryPair> splitAxisRef = *splitAxisVector;
 
 			// Put entries of first group into the first node
 			nodeToSplit.second.childrenCount = 1; // Initialize with first element
 			nodeToSplit.first = splitAxisRef[0].first;
-			nodeToSplit.second.data.entries[0] = splitAxisRef[1].second;
+			nodeToSplit.second.data.entries[0] = splitAxisRef[0].second;
 
+			int realIndex = 1;
 			for(std::size_t i = 1; i < optimalDistribution_K; i++)
 			{
 				nodeToSplit.first.enlarge(splitAxisRef[i].first);
-				nodeToSplit.second.data.entries[i] = splitAxisRef[i].second;
+				nodeToSplit.second.data.entries[realIndex] = splitAxisRef[i].second;
 				nodeToSplit.second.childrenCount++;
+				realIndex++;
 			}
 
 			// Put entries of second group in the second node
 			newNode.second.childrenCount = 1; // Initialize with first element
 			newNode.first = splitAxisRef[optimalDistribution_K].first;
-			newNode.second.data.entries[optimalDistribution_K] = splitAxisRef[1].second;
+			newNode.second.data.entries[0] = splitAxisRef[optimalDistribution_K].second;
 
+			realIndex = 1;
 			for(std::size_t i = optimalDistribution_K+1; i < maxNodes+1; i++)
 			{
 				newNode.first.enlarge(splitAxisRef[i].first);
-				newNode.second.data.entries[i] = splitAxisRef[i].second;
+				newNode.second.data.entries[realIndex] = splitAxisRef[i].second;
 				newNode.second.childrenCount++;
+				realIndex++;
 			}
 
 		};
+
+		void reinsert(Node &parentNode, Node& node, int positionInParent)
+		{
+			std::vector<std::pair<float, const TType*> > sortedByDistance;
+			Vector3f nodeCenter = parentNode.bounds[positionInParent].getCenter();
+
+			for(std::size_t i = 0; i < node.childrenCount; i++)
+			{
+				Vector3f entryCenter = node.bounds[i];
+				sortedByDistance.push_back(std::make_pair(glm::distance(entryCenter, nodeCenter), node.data.entries[i]));
+			}
+		}
 
 	public:
 
@@ -391,6 +420,13 @@ namespace jl
 				int newIndex = suitableNode.childrenCount++;
 				suitableNode.data.entries[newIndex] = newEntry;
 				suitableNode.bounds[newIndex] = entryBounds;
+			}
+
+			// Shit, the most suitable node is full! Invoke OverflowTreatment
+			else if(suitableNode.childrenCount == maxNodes)
+			{
+				// reinsert(suitableNode)
+				// TODO how do we get parent in here? D:
 			}
 			// TODO handle overflowing etc else if
 		};
