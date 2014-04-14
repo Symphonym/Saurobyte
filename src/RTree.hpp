@@ -3,11 +3,9 @@
 
 #include <vector>
 #include <array>
-#include <queue>
 #include <cmath>
 #include <limits>
 #include <algorithm>
-#include <unordered_set>
 #include "BoundingBox.hpp"
 #include "Math.hpp"
 #include "Logger.hpp"
@@ -22,10 +20,11 @@ namespace jl
 	*/
 	template<typename TType, unsigned int minNodes = 4, unsigned int maxNodes = 8> class RTree
 	{
-	public:
+	private:
 
 		// Array of bounding boxes, which parents use to store children bounds
 		typedef std::array<BoundingBox, maxNodes> BoundsArray; 
+		typedef std::vector<const TType*> QueryResult;
 
 		// Defined as 'p' in the paper
 		const int ReinsertFactor = maxNodes * 0.3;
@@ -94,10 +93,10 @@ namespace jl
 
 			return 0;
 		}
-		float calculateOverlap(const BoundingBox &newBox, const BoundsArray &bounds, std::size_t maxIndex)
+		float calculateOverlap(const BoundingBox &newBox, const BoundsArray &bounds, std::size_t elementCount)
 		{
 			float overlapValue = 0;
-			for(std::size_t i = 0; i < maxIndex; i++)
+			for(std::size_t i = 0; i < elementCount; i++)
 			{
 				const BoundingBox &otherBox = bounds[i];
 
@@ -107,29 +106,40 @@ namespace jl
 
 			return overlapValue;
 		};
-		BoundingBox calculateMBR(const BoundsArray &bounds, std::size_t maxIndex)
+		BoundingBox calculateMBR(const BoundsArray &bounds, std::size_t elementCount)
 		{
 			// Lowest point
-			std::priority_queue<float, std::vector<float>, std::greater<float> > minX, minY, minZ;
+			float minX = std::numeric_limits<float>::max();
+			float minY = std::numeric_limits<float>::max();
+			float minZ = std::numeric_limits<float>::max();
 
 			// Highest point
-			std::priority_queue<float> maxX, maxY, maxZ;
+			float maxX = std::numeric_limits<float>::lowest();
+			float maxY = std::numeric_limits<float>::lowest();
+			float maxZ = std::numeric_limits<float>::lowest();
 
-			for(std::size_t i = 0; i < maxIndex; i++)
+			for(std::size_t i = 0; i < elementCount; i++)
 			{
 				const BoundingBox &boundingBox = bounds[i];
-				minX.push(boundingBox.getMinPoint().x);
-				minY.push(boundingBox.getMinPoint().y);
-				minZ.push(boundingBox.getMinPoint().z);
 
-				maxX.push(boundingBox.getMaxPoint().x);
-				maxY.push(boundingBox.getMaxPoint().y);
-				maxZ.push(boundingBox.getMaxPoint().z);
+				if(boundingBox.getMinPoint().x < minX)
+					minX = boundingBox.getMinPoint().x;
+				if(boundingBox.getMinPoint().y < minY)
+					minY = boundingBox.getMinPoint().y;
+				if(boundingBox.getMinPoint().z < minZ)
+					minZ = boundingBox.getMinPoint().z;
+
+				if(boundingBox.getMaxPoint().x > maxX)
+					maxX = boundingBox.getMaxPoint().x;
+				if(boundingBox.getMaxPoint().y > maxY)
+					maxY = boundingBox.getMaxPoint().y;
+				if(boundingBox.getMaxPoint().z > maxZ)
+					maxZ = boundingBox.getMaxPoint().z;
 			}
 
 			return BoundingBox(
-				Vector3f(minX.top(), minY.top(), minZ.top()),
-				Vector3f(maxX.top(), maxY.top(), maxZ.top()));
+				Vector3f(minX, minY, minZ),
+				Vector3f(maxX, maxY, maxZ));
 		}
 
 		// Finds a node suitable for inserting an object with the 'newBox' bounding box
@@ -382,7 +392,7 @@ namespace jl
 
 			if(splitAxisVector == nullptr)
 			{
-				JL_ERROR_LOG("R* tree error, no optimal split could be found!");
+				JL_ERROR_LOG("R* tree splitting error, no optimal split could be found!");
 				return;
 			}
 
@@ -407,6 +417,7 @@ namespace jl
 			newNode.second->childrenCount = 1; // Initialize with first element
 			*newNode.first = *splitAxisRef[optimalDistribution_K].first;
 			newNode.second->data.entries[0] = splitAxisRef[optimalDistribution_K].second;
+			newNode.second->leafNode = nodeToSplit.second->leafNode; // Make sure they're at the same level
 
 			realIndex = 1;
 			for(std::size_t i = optimalDistribution_K+1; i < maxNodes+1; i++)
@@ -426,14 +437,15 @@ namespace jl
 
 			std::vector<DistanceEntryPair> sortedByDistance(node.childrenCount);
 			Vector3f nodeCenter = parentNode.bounds[positionInParent].getCenter();
-
+			JL_INFO_LOG("Dist size %i", sortedByDistance.size());
 			for(std::size_t i = 0; i < node.childrenCount; i++)
 			{
 				Vector3f entryCenter = node.bounds[i].getCenter();
-				sortedByDistance.push_back(
+				sortedByDistance[i] =
 					DistanceEntryPair(glm::distance(entryCenter, nodeCenter),
-						BoxEntryPair(&node.bounds[i], node.data.entries[i])));
+						BoxEntryPair(&node.bounds[i], node.data.entries[i]));
 			}
+			JL_INFO_LOG("Dist size %i", sortedByDistance.size());
 
 			// Sort by distance
 			std::sort(sortedByDistance.begin(), sortedByDistance.end(),
@@ -445,8 +457,10 @@ namespace jl
 			// Update node data according to this distance sort
 			for(std::size_t i = 0; i < node.childrenCount; i++)
 			{
+				JL_INFO_LOG("PRE SET %i c %i", i, node.childrenCount);
 				node.bounds[i] = *sortedByDistance[i].second.first;
 				node.data.entries[i] = sortedByDistance[i].second.second;
+				JL_INFO_LOG("POST SET %i", i);
 			}
 
 			// Reinsert the last 'ReinsertFactor' entries
@@ -544,11 +558,61 @@ namespace jl
 			}
 		};
 
+		void query(const Node &nodeToQuery, const BoundingBox &queryBounds, QueryResult &queryResult)
+		{
+			for(std::size_t i = 0; i < nodeToQuery.childrenCount; i++)
+			{
+				// Check if bounds of node/entry intersects our query bounds
+				if(nodeToQuery.bounds[i].intersects(queryBounds))
+				{
+					// Add intersecting entries from leaf node
+					if(nodeToQuery.leafNode)
+						queryResult.push_back(nodeToQuery.data.entries[i]);
+
+					// Recurse into non-leaf nodes
+					else
+						query(*nodeToQuery.data.children[i], queryBounds, queryResult);
+				}
+				
+			}
+		};
+
+		void getAllBounds(const Node &nodeToQuery, std::vector<BoundingBox> &boundList) const
+		{
+			for(std::size_t i = 0; i < nodeToQuery.childrenCount; i++)
+			{
+					boundList.push_back(nodeToQuery.bounds[i]);
+
+					// Recurse into children and get their bounds
+					if(!nodeToQuery.leafNode)
+						getAllBounds(*nodeToQuery.data.children[i], boundList);
+			}
+		};
+
 	public:
 
 		void insert(const TType *newEntry, const BoundingBox &entryBounds)
 		{
 			insert(newEntry, entryBounds, true);
+		};
+
+		QueryResult query(const BoundingBox &queryBounds)
+		{
+			// Store result in temporary list
+			QueryResult result;
+			query(*m_rootNode, queryBounds, result);
+
+			// Return a copy of the results
+			return result;
+		};
+
+		// This iterates the whole R-tree, grabbing all entry and node bounds which can later be
+		// used for rendering. This is not a fast operation.
+		std::vector<BoundingBox> getAllBounds() const
+		{
+			std::vector<BoundingBox> result;
+			getAllBounds(*m_rootNode, result);
+			return result;
 		};
 
 
