@@ -229,12 +229,14 @@ int main(int argc, const char* argv[]){
 	jl::RTree<int> leTree;
 	int varu = 1337;
 
-	for(int i = 0; i < 55; i++)
+	for(int i = 0; i < 255; i++)
 		leTree.insert(&varu, box2);
 
-	JL_INFO_LOG("Query count: %i, Value %i", leTree.query(box2).size(), *leTree.query(box2)[0]);
-	JL_INFO_LOG("TOTAL AMOUNT OF BOUNDS: %i", leTree.getAllBounds().size());
+	//JL_INFO_LOG("Query count: %i, Value %i", leTree.query(box2).size(), *leTree.query(box2)[0]);
+	//JL_INFO_LOG("TOTAL AMOUNT OF BOUNDS: %i", leTree.getAllBounds().size());
 
+
+	leTree.printTree();
 
 	JL_INFO_LOG("OPENAL VENDOR: %s", alGetString(AL_VERSION));
 

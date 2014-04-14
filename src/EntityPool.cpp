@@ -30,7 +30,7 @@ namespace jl
 			m_sparePool.pop_back();
 		}
 		else
-			newEntity = new Entity(m_entityPool.size()-1, m_game);
+			newEntity = new Entity(m_entityPool.size(), m_game);
 
 		m_entityPool.push_back(EntityPtr(newEntity));
 		return *newEntity;

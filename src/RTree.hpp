@@ -6,6 +6,7 @@
 #include <cmath>
 #include <limits>
 #include <algorithm>
+#include <unordered_set>
 #include "BoundingBox.hpp"
 #include "Math.hpp"
 #include "Logger.hpp"
@@ -25,6 +26,7 @@ namespace jl
 		// Array of bounding boxes, which parents use to store children bounds
 		typedef std::array<BoundingBox, maxNodes> BoundsArray; 
 		typedef std::vector<const TType*> QueryResult;
+		typedef std::unordered_set<unsigned int> OverflowMap;
 
 		// Defined as 'p' in the paper
 		const int ReinsertFactor = maxNodes * 0.3;
@@ -40,6 +42,9 @@ namespace jl
 
 			// Amount of entries/childs in this node
 			unsigned int childrenCount;
+
+			// R-tree level index, 0 is always the leaf level
+			unsigned int level;
 
 			union
 			{
@@ -57,6 +62,7 @@ namespace jl
 			Node()
 				:
 				childrenCount(0),
+				level(0),
 				leafNode(false)
 			{
 			}
@@ -98,7 +104,7 @@ namespace jl
 			float overlapValue = 0;
 			for(std::size_t i = 0; i < elementCount; i++)
 			{
-				const BoundingBox &otherBox = bounds[i];
+				const BoundingBox &otherBox = bounds.at(i);
 
 				// Add area of overlapping region
 				overlapValue += calculateOverlap(newBox, otherBox);
@@ -120,7 +126,7 @@ namespace jl
 
 			for(std::size_t i = 0; i < elementCount; i++)
 			{
-				const BoundingBox &boundingBox = bounds[i];
+				const BoundingBox &boundingBox = bounds.at(i);
 
 				if(boundingBox.getMinPoint().x < minX)
 					minX = boundingBox.getMinPoint().x;
@@ -156,7 +162,7 @@ namespace jl
 				// We know 'currentNode' isn't a leaf node, thus we only access its children
 
 				// If children are leaves
-				if(currentNode.data.children[0]->leafNode)
+				if(currentNode.data.children.at(0)->leafNode)
 				{
 					// We know that the 'children' are leaves, thus we only access their entries
 
@@ -168,8 +174,8 @@ namespace jl
 					// Determine which child gives smallest overlap value
 					for(std::size_t i = 0; i < currentNode.childrenCount; i++)
 					{
-						Node *child = currentNode.data.children[i];
-						BoundingBox mbr = currentNode.bounds[i];
+						Node *child = currentNode.data.children.at(i);
+						BoundingBox mbr = currentNode.bounds.at(i);
 						float overlapValue = calculateOverlap(newBox, child->bounds, child->childrenCount);
 
 						// Check if overlap value when inserting into this child is smaller
@@ -180,7 +186,7 @@ namespace jl
 						else if(overlapValue == lowestOverlapNode.first)
 						{
 							// Change of MBR area of the currently most suitable node
-							BoundingBox currentMBR = currentNode.bounds[lowestOverlapNode.second];
+							BoundingBox currentMBR = currentNode.bounds.at(lowestOverlapNode.second);
 							float currentMBRArea = currentMBR.getArea();
 							float currentMBRDelta = currentMBR.enlarge(newBox).getArea() - currentMBRArea;
 
@@ -195,7 +201,7 @@ namespace jl
 					}
 
 					searchPath.push_back(
-						std::make_pair(currentNode.data.children[lowestOverlapNode.second], lowestOverlapNode.second));
+						std::make_pair(currentNode.data.children.at(lowestOverlapNode.second), lowestOverlapNode.second));
 
 					// Venture down this node until we find a leaf node
 					return findSuitableNode(newBox, searchPath);
@@ -216,8 +222,8 @@ namespace jl
 					for(std::size_t i = 0; i < currentNode.childrenCount; i++)
 					{
 						// Create a copy of the entries in the node and add the new data node to it
-						Node *child = currentNode.data.children[i];
-						BoundingBox mbr = currentNode.bounds[i];
+						Node *child = currentNode.data.children.at(i);
+						BoundingBox mbr = currentNode.bounds.at(i);
 
 						BoundingBox biggerMbr = mbr;
 						biggerMbr.enlarge(newBox); // MBR if we insert the new data
@@ -231,7 +237,7 @@ namespace jl
 						// Solve tied values
 						else if(newMBRDelta == lowestMBRNode.first)
 						{
-							float currentArea = currentNode.bounds[lowestMBRNode.second].getArea();
+							float currentArea = currentNode.bounds.at(lowestMBRNode.second).getArea();
 							float newArea = mbr.getArea();
 
 							// Inserting into this child yields a smaller area change
@@ -241,7 +247,7 @@ namespace jl
 					}
 
 					searchPath.push_back(
-						std::make_pair(currentNode.data.children[lowestMBRNode.second], lowestMBRNode.second));
+						std::make_pair(currentNode.data.children.at(lowestMBRNode.second), lowestMBRNode.second));
 
 					// Venture down this node until we find a leaf node
 					return findSuitableNode(newBox, searchPath);
@@ -285,8 +291,8 @@ namespace jl
 			{
 				unsigned int firstEntries = (minNodes - 1) + k;
 
-				BoundingBox firstMbr = *sortedAxisList[0].first;
-				BoundingBox secondMbr = *sortedAxisList[firstEntries].first;
+				BoundingBox firstMbr = *sortedAxisList.at(0).first;
+				BoundingBox secondMbr = *sortedAxisList.at(firstEntries).first;
 
 				// TODO are indexes right here?
 				// meaning that should i start at 0, and i start at firstEntries, and end at maxNodes+1
@@ -296,11 +302,11 @@ namespace jl
 
 				// The first half of the split
 				for(unsigned int i = 1; i < firstEntries; i++)
-					firstMbr.enlarge(*sortedAxisList[i].first);
+					firstMbr.enlarge(*sortedAxisList.at(i).first);
 
 				// The second half of the split
 				for(unsigned int i = firstEntries+1; i < maxNodes+1; i++)
-					secondMbr.enlarge(*sortedAxisList[i].first);
+					secondMbr.enlarge(*sortedAxisList.at(i).first);
 
 				marginValue += firstMbr.getPerimeter() + secondMbr.getPerimeter();
 
@@ -314,6 +320,10 @@ namespace jl
 					lowestOverlap = overlapValue;
 					lowestArea = areaValue;
 					optimalDistribution_K = k;
+
+								JL_INFO_LOG("FISRT GROUP %i", firstEntries);
+			JL_INFO_LOG("SECOND GROUP %i", maxNodes-firstEntries);
+
 				}
 			}
 
@@ -344,8 +354,8 @@ namespace jl
 			// Then add the other entries (M)
 			for(std::size_t i = 0; i < nodeToSplit.second->childrenCount; i++)
 			{
-				const TType *entry = nodeToSplit.second->data.entries[i];
-				BoundingBox &box = nodeToSplit.second->bounds[i];
+				const TType *entry = nodeToSplit.second->data.entries.at(i);
+				BoundingBox &box = nodeToSplit.second->bounds.at(i);
 
 				sortedX.push_back(BoxEntryPair(&box, entry));
 				sortedY.push_back(BoxEntryPair(&box, entry));
@@ -390,105 +400,232 @@ namespace jl
 				optimalDistribution_Z = optimalDistribution_Z;
 			}
 
+			optimalDistribution_K = (minNodes - 1) + optimalDistribution_K;
+
 			if(splitAxisVector == nullptr)
 			{
 				JL_ERROR_LOG("R* tree splitting error, no optimal split could be found!");
 				return;
 			}
 
-
 			std::vector<BoxEntryPair> splitAxisRef = *splitAxisVector;
 
 			// Put entries of first group into the first node
 			nodeToSplit.second->childrenCount = 1; // Initialize with first element
-			*nodeToSplit.first = *splitAxisRef[0].first;
-			nodeToSplit.second->data.entries[0] = splitAxisRef[0].second;
+			*nodeToSplit.first = *splitAxisRef.at(0).first;
+			nodeToSplit.second->data.entries.at(0) = splitAxisRef.at(0).second;
 
 			int realIndex = 1;
 			for(std::size_t i = 1; i < optimalDistribution_K; i++)
 			{
-				nodeToSplit.first->enlarge(*splitAxisRef[i].first);
-				nodeToSplit.second->data.entries[realIndex] = splitAxisRef[i].second;
+				nodeToSplit.first->enlarge(*splitAxisRef.at(i).first);
+				nodeToSplit.second->data.entries.at(realIndex) = splitAxisRef.at(i).second;
 				nodeToSplit.second->childrenCount++;
 				realIndex++;
 			}
 
 			// Put entries of second group in the second node
 			newNode.second->childrenCount = 1; // Initialize with first element
-			*newNode.first = *splitAxisRef[optimalDistribution_K].first;
-			newNode.second->data.entries[0] = splitAxisRef[optimalDistribution_K].second;
+			*newNode.first = *splitAxisRef.at(optimalDistribution_K).first;
+			newNode.second->data.entries.at(0) = splitAxisRef.at(optimalDistribution_K).second;
 			newNode.second->leafNode = nodeToSplit.second->leafNode; // Make sure they're at the same level
+			newNode.second->level = nodeToSplit.second->level;
 
 			realIndex = 1;
 			for(std::size_t i = optimalDistribution_K+1; i < maxNodes+1; i++)
 			{
-				newNode.first->enlarge(*splitAxisRef[i].first);
-				newNode.second->data.entries[realIndex] = splitAxisRef[i].second;
+				newNode.first->enlarge(*splitAxisRef.at(i).first);
+				newNode.second->data.entries.at(realIndex) = splitAxisRef.at(i).second;
 				newNode.second->childrenCount++;
 				realIndex++;
 			}
 
 		};
 
-		void reinsert(Node &parentNode, Node& node, int positionInParent)
+		void reinsert(Node &parentNode, Node& node, int positionInParent, OverflowMap &overflowMap)
 		{
 			// This allows us to sort by distance, and then update the Node data members
 			typedef std::pair<float, BoxEntryPair>  DistanceEntryPair;
 
 			std::vector<DistanceEntryPair> sortedByDistance(node.childrenCount);
-			Vector3f nodeCenter = parentNode.bounds[positionInParent].getCenter();
-			JL_INFO_LOG("Dist size %i", sortedByDistance.size());
+			Vector3f nodeCenter = parentNode.bounds.at(positionInParent).getCenter();
 			for(std::size_t i = 0; i < node.childrenCount; i++)
 			{
-				Vector3f entryCenter = node.bounds[i].getCenter();
-				sortedByDistance[i] =
+				Vector3f entryCenter = node.bounds.at(i).getCenter();
+				sortedByDistance.at(i) =
 					DistanceEntryPair(glm::distance(entryCenter, nodeCenter),
-						BoxEntryPair(&node.bounds[i], node.data.entries[i]));
+						BoxEntryPair(&node.bounds.at(i), node.data.entries.at(i)));
 			}
-			JL_INFO_LOG("Dist size %i", sortedByDistance.size());
 
 			// Sort by distance
-			std::sort(sortedByDistance.begin(), sortedByDistance.end(),
+			std::partial_sort(sortedByDistance.begin(), sortedByDistance.end() - ReinsertFactor, sortedByDistance.end(),
 				[] (const DistanceEntryPair &lhs, const DistanceEntryPair &rhs) -> bool
 				{
 					return lhs.first < rhs.first;
 				});
 
+			// Remove first 'ReinsertFactor' entries and move them to a separate vector
+			std::vector<DistanceEntryPair> toRemove(sortedByDistance.end() - ReinsertFactor, sortedByDistance.end());
+			sortedByDistance.erase(sortedByDistance.end() - ReinsertFactor, sortedByDistance.end());
+
+
+
 			// Update node data according to this distance sort
-			for(std::size_t i = 0; i < node.childrenCount; i++)
+			for(std::size_t i = 0; i < sortedByDistance.size(); i++)
 			{
-				JL_INFO_LOG("PRE SET %i c %i", i, node.childrenCount);
-				node.bounds[i] = *sortedByDistance[i].second.first;
-				node.data.entries[i] = sortedByDistance[i].second.second;
-				JL_INFO_LOG("POST SET %i", i);
+				node.bounds.at(i) = *sortedByDistance.at(i).second.first;
+				node.data.entries.at(i) = sortedByDistance.at(i).second.second;
 			}
 
-			// Reinsert the last 'ReinsertFactor' entries
 			node.childrenCount -= ReinsertFactor;
-			for(std::size_t i = node.childrenCount + ReinsertFactor; i > node.childrenCount; i--)
-				insert(node.data.entries[i], node.bounds[i], false);
+
+			// Reinsert the last 'ReinsertFactor' entries
+			parentNode.bounds.at(positionInParent) = calculateMBR(node.bounds, node.childrenCount); // Recalculate MBR
+			for(std::size_t i = 0; i < toRemove.size(); i++)
+			{
+				JL_INFO_LOG("REINSERT %i, TOTAL %i", i, toRemove.size());
+				insert(
+					toRemove.at(i).second.second,
+					*toRemove.at(i).second.first, 0, overflowMap);
+			}
+
+			// Decrease childrenCount after we reinsert, otherwise we'll just end up inesrting into
+			// ourselves again.
+
+			/*JL_INFO_LOG("Count -1: %i, Factor %i, Total %i", (node.childrenCount - 1), ReinsertFactor, (node.childrenCount - 1) + ReinsertFactor);
+			int startingIndex = node.childrenCount;
+			int endIndex = node.childrenCount + ReinsertFactor;
+			JL_INFO_LOG("START %i, END %i", startingIndex, endIndex);
+			for(std::size_t i = startingIndex; i < endIndex; i++)
+			{
+				JL_INFO_LOG("REINSERT %i, TOTAL %i", i, ReinsertFactor);
+				insert(node.data.entries.at(i), node.bounds.at(i), false);
+			}*/
 		}
 
 
-		void insert(const TType *newEntry, const BoundingBox &entryBounds, bool firstInsert)
+		void insert(const TType *newEntry, const BoundingBox &entryBounds, unsigned int desiredLevel, OverflowMap &overflowMap)
 		{
 			NodeSearchPath searchPath = findSuitableNode(entryBounds);
+			Node *parent = nullptr;
+
+			JL_INFO_LOG("INDEXERU %i", searchPath.size()-2 >= 0);
+			if(((int)searchPath.size()-2) >= 0)
+			{
+				JL_INFO_LOG("INDEXERU %i", searchPath.size()-2);
+				parent = searchPath.at(searchPath.size()-2).first;
+			}
+
+
+
 			Node &suitableNode = *searchPath.back().first;
 
 			// The node has room for another entry, so just add it
 			if(suitableNode.childrenCount < maxNodes)
 			{
+				JL_INFO_LOG("INSERT NORMAL");
 				int newIndex = suitableNode.childrenCount++;
-				suitableNode.data.entries[newIndex] = newEntry;
-				suitableNode.bounds[newIndex] = entryBounds;
+				suitableNode.data.entries.at(newIndex) = newEntry;
+				suitableNode.bounds.at(newIndex) = entryBounds;
 			}
 
 			// Shit, the most suitable node is full! Invoke OverflowTreatment
-			else if(suitableNode.childrenCount == maxNodes)
+			int overflowIndex = searchPath.size() - 1;
+			while(overflowIndex >= 0)
 			{
+				Node *overflowNode = searchPath[overflowIndex].first;
+				int parentIndex = searchPath[overflowIndex].second;
+
+				--overflowIndex;
+				if(overflowNode->childrenCount == maxNodes)
+				{
+					JL_INFO_LOG("INSERT WAS FULL");
+
+					// Make sure we aren't the root node and haven't already invoked OverflowTreatment
+					if(overflowNode->level != m_rootNode->level && overflowMap.find(overflowNode->level) == overflowMap.end())
+					{
+						JL_INFO_LOG("REINERT");
+						overflowMap.insert(overflowNode->level);
+						reinsert(*searchPath.at(overflowIndex).first, *overflowNode, parentIndex, overflowMap);
+					}
+					else
+					{
+						BoundingBox splitNodeBounds, newRootBounds;
+						Node *splitSecondHalf = new Node();
+
+						// If we're splitting root, use a temporary bounding box to store the bounds since root doesn't
+						// have a parent that stores its bounds.
+						BoundingBox &bounds = overflowNode ==  m_rootNode ?
+							newRootBounds : searchPath.at(overflowIndex).first->bounds.at(parentIndex);
+
+						splitNode(
+							BoxNodePair(&bounds, overflowNode),
+							BoxNodePair(&splitNodeBounds, splitSecondHalf),
+							BoxEntryPair(&entryBounds, newEntry));
+
+						JL_INFO_LOG("INSERT SPLIT");
+
+
+						// If we split the root, create a new root
+						if(overflowNode == m_rootNode)
+						{
+							JL_INFO_LOG("ROOT SPLIT");
+							Node *newRoot = new Node();
+							newRoot->childrenCount = 2;
+
+							newRoot->data.children.at(0) = splitSecondHalf;
+							newRoot->bounds.at(0) = splitNodeBounds;
+
+							newRoot->data.children.at(1) = m_rootNode;
+							newRoot->bounds.at(1) = newRootBounds;
+
+							newRoot->level = overflowNode->level + 1;
+
+							m_rootNode = newRoot;
+						}
+
+						// Else just insert the new element into the parent
+						else
+						{
+							JL_INFO_LOG("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuNORMAL SPLIT, INSERT TO PARENTERU");
+							Node *parent = searchPath.at(overflowIndex).first;
+
+							int newIndex = parent->childrenCount++;
+							parent->data.children.at(newIndex) = splitSecondHalf;
+							parent->bounds.at(newIndex) = splitNodeBounds;
+						}
+					}
+				}
+
+			}
+
+			/*else if(suitableNode.childrenCount == maxNodes)
+			{
+				JL_INFO_LOG("INSERT WAS FULL");
+				Node *betterSuitedNode = &suitableNode;
+				int parentIndex = searchPath.back().second;
+
+				if(&suitableNode != m_rootNode && overflowMap.find(suitableNode.level) != overflowMap.end())
+				{
+					JL_INFO_LOG("SIZERU %i", (int)searchPath.size()-2);
+					betterSuitedNode = searchPath.at(searchPath.size()-2).first;
+					parentIndex = searchPath.at(searchPath.size()-2).second;
+					JL_INFO_LOG("PSTSERURE");
+				}
+
 				// Make sure we aren't the root node and haven't already invoked OverflowTreatment
-				if(&suitableNode != m_rootNode && firstInsert)
-					reinsert(*searchPath[searchPath.size()-2].first, suitableNode, searchPath.back().second);
+				if(betterSuitedNode != m_rootNode && overflowMap.find(betterSuitedNode->level) == overflowMap.end())
+				{
+					JL_INFO_LOG("REINERT");
+					overflowMap.insert(betterSuitedNode->level);
+					reinsert(*parent, *betterSuitedNode, parentIndex, overflowMap);
+				
+				}
+				//else if(parent != nullptr && parent != m_rootNode && overflowMap.find(betterSuitedNode->level) != overflowMap.end())
+				//{
+				//	JL_INFO_LOG("OVERFLOWERdddddddddddddddddddddddddddddddddddddddddddddU");
+				//	reinsert(*searchPath.at(searchPath.size()-3).first, *parent, searchPath.at(searchPath.size()-2).second, overflowMap);
+				//}
 				else
 				{
 					BoundingBox splitNodeBounds, newRootBounds;
@@ -496,26 +633,31 @@ namespace jl
 
 					// If we're splitting root, use a temporary bounding box to store the bounds since root doesn't
 					// have a parent that stores its bounds.
-					BoundingBox &bounds = &suitableNode ==  m_rootNode ?
-						newRootBounds : searchPath[searchPath.size()-2].first->bounds[searchPath.back().second];
+					BoundingBox &bounds = betterSuitedNode ==  m_rootNode ?
+						newRootBounds : searchPath.at(searchPath.size()-2).first->bounds.at(parentIndex);
 
 					splitNode(
-						BoxNodePair(&bounds, &suitableNode),
+						BoxNodePair(&bounds, betterSuitedNode),
 						BoxNodePair(&splitNodeBounds, splitSecondHalf),
 						BoxEntryPair(&entryBounds, newEntry));
 
+					JL_INFO_LOG("INSERT SPLIT");
+
 
 					// If we split the root, create a new root
-					if(&suitableNode == m_rootNode)
+					if(betterSuitedNode == m_rootNode)
 					{
+						JL_INFO_LOG("ROOT SPLIT");
 						Node *newRoot = new Node();
 						newRoot->childrenCount = 2;
 
-						newRoot->data.children[0] = splitSecondHalf;
-						newRoot->bounds[0] = splitNodeBounds;
+						newRoot->data.children.at(0) = splitSecondHalf;
+						newRoot->bounds.at(0) = splitNodeBounds;
 
-						newRoot->data.children[1] = m_rootNode;
-						newRoot->bounds[1] = newRootBounds;
+						newRoot->data.children.at(1) = m_rootNode;
+						newRoot->bounds.at(1) = newRootBounds;
+
+						newRoot->level = betterSuitedNode->level + 1;
 
 						m_rootNode = newRoot;
 					}
@@ -523,38 +665,33 @@ namespace jl
 					// Else just insert the new element into the parent
 					else
 					{
-						Node *parent = searchPath[searchPath.size()-2].first;
+						JL_INFO_LOG("NORMAL SPLIT, INSERT TO PARENTERU");
+						Node *parent = searchPath.at(searchPath.size()-2).first;
 
 						int newIndex = parent->childrenCount++;
-						parent->data.children[newIndex] = splitSecondHalf;
-						parent->bounds[newIndex] = splitNodeBounds;
+						parent->data.children.at(newIndex) = splitSecondHalf;
+						parent->bounds.at(newIndex) = splitNodeBounds;
 					}
-					//std::pair<BoundingBox, const TType*> secondSplitHalf = std::make_pair()
 				}
-				//if(suitableNode.parent != nullptr)
-					//reinsert(*suitableNode.parent, suitableNode,)
-				// reinsert(suitableNode)
-				// TODO how do we get parent in here? D:
-			}
-			// TODO handle overflowing etc else if
+			}*/
 
 			// Go through search path and update MBR's, start at the 'back' which is the leafNode
 			unsigned int parentIndex = std::numeric_limits<unsigned int>::max();
 			for(std::size_t i = searchPath.size() - 1; i > 0; i--)
 			{
-				Node& nodeInPath = *searchPath[i].first;
+				Node& nodeInPath = *searchPath.at(i).first;
 
 				// We have no interest in updating the bounds of the entries in the leafNode
 				if(nodeInPath.leafNode)
 				{
-					parentIndex = searchPath[i].second;
+					parentIndex = searchPath.at(i).second;
 					continue;
 				}
 
-				nodeInPath.bounds[parentIndex] = calculateMBR(
-					nodeInPath.data.children[parentIndex]->bounds, nodeInPath.data.children[parentIndex]->childrenCount);
+				nodeInPath.bounds.at(parentIndex) = calculateMBR(
+					nodeInPath.data.children.at(parentIndex)->bounds, nodeInPath.data.children.at(parentIndex)->childrenCount);
 
-				parentIndex = searchPath[i].second;
+				parentIndex = searchPath.at(i).second;
 			}
 		};
 
@@ -563,15 +700,15 @@ namespace jl
 			for(std::size_t i = 0; i < nodeToQuery.childrenCount; i++)
 			{
 				// Check if bounds of node/entry intersects our query bounds
-				if(nodeToQuery.bounds[i].intersects(queryBounds))
+				if(nodeToQuery.bounds.at(i).intersects(queryBounds))
 				{
 					// Add intersecting entries from leaf node
 					if(nodeToQuery.leafNode)
-						queryResult.push_back(nodeToQuery.data.entries[i]);
+						queryResult.push_back(nodeToQuery.data.entries.at(i));
 
 					// Recurse into non-leaf nodes
 					else
-						query(*nodeToQuery.data.children[i], queryBounds, queryResult);
+						query(*nodeToQuery.data.children.at(i), queryBounds, queryResult);
 				}
 				
 			}
@@ -581,11 +718,32 @@ namespace jl
 		{
 			for(std::size_t i = 0; i < nodeToQuery.childrenCount; i++)
 			{
-					boundList.push_back(nodeToQuery.bounds[i]);
+				boundList.push_back(nodeToQuery.bounds.at(i));
 
-					// Recurse into children and get their bounds
-					if(!nodeToQuery.leafNode)
-						getAllBounds(*nodeToQuery.data.children[i], boundList);
+				// Recurse into children and get their bounds
+				if(!nodeToQuery.leafNode)
+					getAllBounds(*nodeToQuery.data.children.at(i), boundList);
+			}
+		};
+
+
+		void printTree(const Node &node, int tabCount)
+		{
+			std::string indent = "";
+				for(int i = 0; i < tabCount; i++)
+					indent += "    ";
+
+			for(std::size_t i = 0; i < node.childrenCount; i++)
+			{
+
+				// Recurse into children and get their bounds
+				if(!node.leafNode)
+				{
+					JL_INFO_LOG("%sCHILD (Level %i)", indent.c_str(), node.level);
+					printTree(*node.data.children.at(i), tabCount+1);
+				}
+				else
+					JL_INFO_LOG("%sENTRY (Level %i)", indent.c_str(), node.level);
 			}
 		};
 
@@ -593,7 +751,8 @@ namespace jl
 
 		void insert(const TType *newEntry, const BoundingBox &entryBounds)
 		{
-			insert(newEntry, entryBounds, true);
+			OverflowMap overflowMap;
+			insert(newEntry, entryBounds, 0, overflowMap);
 		};
 
 		QueryResult query(const BoundingBox &queryBounds)
@@ -615,12 +774,19 @@ namespace jl
 			return result;
 		};
 
+		void printTree()
+		{
+			JL_INFO_LOG("ROOT (Level %i)", m_rootNode->level);
+			printTree(*m_rootNode, 1);
+		};
+
 
 		RTree()
 			:
 			m_rootNode()
 		{
 			m_rootNode = new Node();
+			m_rootNode->level = 1;
 
 			// Root node will always be the leaf node at startup, as the tree is empty
 			m_rootNode->leafNode = true;
