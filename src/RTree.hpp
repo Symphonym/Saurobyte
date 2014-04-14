@@ -24,10 +24,10 @@ namespace jl
 	{
 	public:
 
+		// Array of bounding boxes, which parents use to store children bounds
 		typedef std::array<BoundingBox, maxNodes> BoundsArray; 
-		typedef std::pair<BoundingBox, const TType*> AxisEntryPair;
-		typedef std::unordered_set<unsigned int> OverflowMap;
 
+		// Defined as 'p' in the paper
 		const int ReinsertFactor = maxNodes * 0.3;
 
 
@@ -69,6 +69,10 @@ namespace jl
 
 		// Search path trace, nodes and their index in the parent array
 		typedef std::vector<std::pair<Node*, int> > NodeSearchPath;
+
+		// Used throughout the algorithms to clamp together data more easily
+		typedef std::pair<const BoundingBox*, const TType*>  BoxEntryPair;
+		typedef std::pair<BoundingBox*, Node*>  BoxNodePair;
 
 
 		Node *m_rootNode;
@@ -245,18 +249,18 @@ namespace jl
 		// Boundingbox axis comparator
 		template<int AxisIndex> struct AxisComparator
 		{
-			bool operator () (const AxisEntryPair &lhs, const AxisEntryPair &rhs) const
+			bool operator () (const BoxEntryPair &lhs, const BoxEntryPair &rhs) const
 			{
-				if(lhs.first.getMinPoint()[AxisIndex] == rhs.first.getMinPoint()[AxisIndex])
-					return lhs.first.getMaxPoint()[AxisIndex] < rhs.first.getMaxPoint()[AxisIndex];
+				if(lhs.first->getMinPoint()[AxisIndex] == rhs.first->getMinPoint()[AxisIndex])
+					return lhs.first->getMaxPoint()[AxisIndex] < rhs.first->getMaxPoint()[AxisIndex];
 				else
-					return lhs.first.getMinPoint()[AxisIndex] < rhs.first.getMinPoint()[AxisIndex];
+					return lhs.first->getMinPoint()[AxisIndex] < rhs.first->getMinPoint()[AxisIndex];
 			}
 		};
 
 		// Returns the margin value of an axis to split, and the value referenced by 'optimalDistribution_K' will
 		// hold the 'k' value of the optimal distribution on this axis.
-		float calculateOptimalSplit(std::vector<AxisEntryPair> &sortedAxisList, unsigned int &optimalDistribution_K)
+		float calculateOptimalSplit(std::vector<BoxEntryPair> &sortedAxisList, unsigned int &optimalDistribution_K)
 		{
 			// This is how many ways we can split the axis
 			unsigned int splitDistributions = maxNodes - (2*minNodes) + 2;
@@ -271,8 +275,8 @@ namespace jl
 			{
 				unsigned int firstEntries = (minNodes - 1) + k;
 
-				BoundingBox firstMbr = sortedAxisList[0].first;
-				BoundingBox secondMbr = sortedAxisList[firstEntries].first;
+				BoundingBox firstMbr = *sortedAxisList[0].first;
+				BoundingBox secondMbr = *sortedAxisList[firstEntries].first;
 
 				// TODO are indexes right here?
 				// meaning that should i start at 0, and i start at firstEntries, and end at maxNodes+1
@@ -282,11 +286,11 @@ namespace jl
 
 				// The first half of the split
 				for(unsigned int i = 1; i < firstEntries; i++)
-					firstMbr.enlarge(sortedAxisList[i].first);
+					firstMbr.enlarge(*sortedAxisList[i].first);
 
 				// The second half of the split
 				for(unsigned int i = firstEntries+1; i < maxNodes+1; i++)
-					secondMbr.enlarge(sortedAxisList[i].first);
+					secondMbr.enlarge(*sortedAxisList[i].first);
 
 				marginValue += firstMbr.getPerimeter() + secondMbr.getPerimeter();
 
@@ -312,15 +316,15 @@ namespace jl
 		// 'newNode' is the node that was created by the parent for the splitting, that is, the second half of the split
 		// 'newEntry' is the new entry that we want to fit into the 'nodeToSplit' leaf node
 		void splitNode(
-			const std::pair<BoundingBox&, Node&> &nodeToSplit,
-			const std::pair<BoundingBox&, Node&> &newNode,
-			const std::pair<const BoundingBox&, const TType*> &newEntry)
+			BoxNodePair nodeToSplit,
+			BoxNodePair newNode,
+			BoxEntryPair newEntry)
 		{
 			// TODO newEntry might not be needed as arg
 			// TODO does this sort by 'upper' and 'lower' values? Or just one of them? Paper says to sort by both.
-			std::vector<AxisEntryPair> sortedX;
-			std::vector<AxisEntryPair> sortedY;
-			std::vector<AxisEntryPair> sortedZ;
+			std::vector<BoxEntryPair> sortedX;
+			std::vector<BoxEntryPair> sortedY;
+			std::vector<BoxEntryPair> sortedZ;
 
 			// First add the new entry (+1)
 			sortedX.push_back(newEntry);
@@ -328,14 +332,14 @@ namespace jl
 			sortedZ.push_back(newEntry);
 
 			// Then add the other entries (M)
-			for(std::size_t i = 0; i < nodeToSplit.second.childrenCount; i++)
+			for(std::size_t i = 0; i < nodeToSplit.second->childrenCount; i++)
 			{
-				const TType *entry = nodeToSplit.second.data.entries[i];
-				BoundingBox box = nodeToSplit.second.bounds[i];
+				const TType *entry = nodeToSplit.second->data.entries[i];
+				BoundingBox &box = nodeToSplit.second->bounds[i];
 
-				sortedX.push_back(std::make_pair(box, entry));
-				sortedY.push_back(std::make_pair(box, entry));
-				sortedZ.push_back(std::make_pair(box, entry));
+				sortedX.push_back(BoxEntryPair(&box, entry));
+				sortedY.push_back(BoxEntryPair(&box, entry));
+				sortedZ.push_back(BoxEntryPair(&box, entry));
 			}
 
 			// Sort the axis vectors
@@ -356,7 +360,7 @@ namespace jl
 			float smallestMargin = std::min({marginValue_X, marginValue_Y, marginValue_Z});
 
 			// Axis to split, and distribution to use
-			std::vector<AxisEntryPair> *splitAxisVector = nullptr;
+			std::vector<BoxEntryPair> *splitAxisVector = nullptr;
 			unsigned int optimalDistribution_K = 0;
 
 			// Determine split axis
@@ -383,33 +387,33 @@ namespace jl
 			}
 
 
-			std::vector<AxisEntryPair> splitAxisRef = *splitAxisVector;
+			std::vector<BoxEntryPair> splitAxisRef = *splitAxisVector;
 
 			// Put entries of first group into the first node
-			nodeToSplit.second.childrenCount = 1; // Initialize with first element
-			nodeToSplit.first = splitAxisRef[0].first;
-			nodeToSplit.second.data.entries[0] = splitAxisRef[0].second;
+			nodeToSplit.second->childrenCount = 1; // Initialize with first element
+			*nodeToSplit.first = *splitAxisRef[0].first;
+			nodeToSplit.second->data.entries[0] = splitAxisRef[0].second;
 
 			int realIndex = 1;
 			for(std::size_t i = 1; i < optimalDistribution_K; i++)
 			{
-				nodeToSplit.first.enlarge(splitAxisRef[i].first);
-				nodeToSplit.second.data.entries[realIndex] = splitAxisRef[i].second;
-				nodeToSplit.second.childrenCount++;
+				nodeToSplit.first->enlarge(*splitAxisRef[i].first);
+				nodeToSplit.second->data.entries[realIndex] = splitAxisRef[i].second;
+				nodeToSplit.second->childrenCount++;
 				realIndex++;
 			}
 
 			// Put entries of second group in the second node
-			newNode.second.childrenCount = 1; // Initialize with first element
-			newNode.first = splitAxisRef[optimalDistribution_K].first;
-			newNode.second.data.entries[0] = splitAxisRef[optimalDistribution_K].second;
+			newNode.second->childrenCount = 1; // Initialize with first element
+			*newNode.first = *splitAxisRef[optimalDistribution_K].first;
+			newNode.second->data.entries[0] = splitAxisRef[optimalDistribution_K].second;
 
 			realIndex = 1;
 			for(std::size_t i = optimalDistribution_K+1; i < maxNodes+1; i++)
 			{
-				newNode.first.enlarge(splitAxisRef[i].first);
-				newNode.second.data.entries[realIndex] = splitAxisRef[i].second;
-				newNode.second.childrenCount++;
+				newNode.first->enlarge(*splitAxisRef[i].first);
+				newNode.second->data.entries[realIndex] = splitAxisRef[i].second;
+				newNode.second->childrenCount++;
 				realIndex++;
 			}
 
@@ -418,23 +422,31 @@ namespace jl
 		void reinsert(Node &parentNode, Node& node, int positionInParent)
 		{
 			// This allows us to sort by distance, and then update the Node data members
-			std::vector<std::pair<float, std::pair<BoundingBox, const TType*> > > sortedByDistance(node.childrenCount);
+			typedef std::pair<float, BoxEntryPair>  DistanceEntryPair;
+
+			std::vector<DistanceEntryPair> sortedByDistance(node.childrenCount);
 			Vector3f nodeCenter = parentNode.bounds[positionInParent].getCenter();
 
 			for(std::size_t i = 0; i < node.childrenCount; i++)
 			{
-				Vector3f entryCenter = node.bounds[i];
+				Vector3f entryCenter = node.bounds[i].getCenter();
 				sortedByDistance.push_back(
-					std::make_pair(glm::distance(entryCenter, nodeCenter),
-						std::make_pair(node.bounds[i], node.data.entries[i])));
+					DistanceEntryPair(glm::distance(entryCenter, nodeCenter),
+						BoxEntryPair(&node.bounds[i], node.data.entries[i])));
 			}
-			std::sort(sortedByDistance.begin(), sortedByDistance.end());
+
+			// Sort by distance
+			std::sort(sortedByDistance.begin(), sortedByDistance.end(),
+				[] (const DistanceEntryPair &lhs, const DistanceEntryPair &rhs) -> bool
+				{
+					return lhs.first < rhs.first;
+				});
 
 			// Update node data according to this distance sort
 			for(std::size_t i = 0; i < node.childrenCount; i++)
 			{
-				node.bounds[i] = sortedByDistance[i].second.first;
-				node.entries[i] = sortedByDistance[i].second.second;
+				node.bounds[i] = *sortedByDistance[i].second.first;
+				node.data.entries[i] = sortedByDistance[i].second.second;
 			}
 
 			// Reinsert the last 'ReinsertFactor' entries
@@ -444,7 +456,7 @@ namespace jl
 		}
 
 
-		void insert(const TType *newEntry, const BoundingBox &entryBounds, bool firstInsert = true)
+		void insert(const TType *newEntry, const BoundingBox &entryBounds, bool firstInsert)
 		{
 			NodeSearchPath searchPath = findSuitableNode(entryBounds);
 			Node &suitableNode = *searchPath.back().first;
@@ -461,28 +473,35 @@ namespace jl
 			else if(suitableNode.childrenCount == maxNodes)
 			{
 				// Make sure we aren't the root node and haven't already invoked OverflowTreatment
-				if(suitableNode != &m_rootNode && firstInsert)
-					reinsert(searchPath[searchPath.size()-2], suitableNode, searchPath.back().second);
+				if(&suitableNode != m_rootNode && firstInsert)
+					reinsert(*searchPath[searchPath.size()-2].first, suitableNode, searchPath.back().second);
 				else
 				{
-					BoundingBox splitNodeBounds;
-					Node *splitNode = new Node();
+					BoundingBox splitNodeBounds, newRootBounds;
+					Node *splitSecondHalf = new Node();
+
+					// If we're splitting root, use a temporary bounding box to store the bounds since root doesn't
+					// have a parent that stores its bounds.
+					BoundingBox &bounds = &suitableNode ==  m_rootNode ?
+						newRootBounds : searchPath[searchPath.size()-2].first->bounds[searchPath.back().second];
+
 					splitNode(
-						std::make_pair(std::ref(suitableNode), searchPath[searchPath.size()-2].bounds[searchPath.back().second]),
-						std::make_pair(std::ref(splitNodeBounds), splitNode),
-						std::make_pair(std::ref(entryBounds), newEntry));
+						BoxNodePair(&bounds, &suitableNode),
+						BoxNodePair(&splitNodeBounds, splitSecondHalf),
+						BoxEntryPair(&entryBounds, newEntry));
+
 
 					// If we split the root, create a new root
-					if(suitableNode.level == 0)
+					if(&suitableNode == m_rootNode)
 					{
 						Node *newRoot = new Node();
 						newRoot->childrenCount = 2;
 
-						newRoot.data.children[0] = splitNode;
-						newRoot.bounds[0] = splitNodeBounds;
+						newRoot->data.children[0] = splitSecondHalf;
+						newRoot->bounds[0] = splitNodeBounds;
 
-						newRoot.data.children[1] = m_rootNode;
-						newRoot.bounds[1] = calculateMBR(m_rootNode->bounds, m_rootNode->childrenCount);
+						newRoot->data.children[1] = m_rootNode;
+						newRoot->bounds[1] = newRootBounds;
 
 						m_rootNode = newRoot;
 					}
@@ -490,10 +509,10 @@ namespace jl
 					// Else just insert the new element into the parent
 					else
 					{
-						Node *parent = searchPath[searchPath.size()-2];
+						Node *parent = searchPath[searchPath.size()-2].first;
 
 						int newIndex = parent->childrenCount++;
-						parent->children[newIndex] = splitNode;
+						parent->data.children[newIndex] = splitSecondHalf;
 						parent->bounds[newIndex] = splitNodeBounds;
 					}
 					//std::pair<BoundingBox, const TType*> secondSplitHalf = std::make_pair()
@@ -519,7 +538,7 @@ namespace jl
 				}
 
 				nodeInPath.bounds[parentIndex] = calculateMBR(
-					nodeInPath.children[parentIndex].bounds, nodeInPath.children[parentIndex].childrenCount);
+					nodeInPath.data.children[parentIndex]->bounds, nodeInPath.data.children[parentIndex]->childrenCount);
 
 				parentIndex = searchPath[i].second;
 			}
@@ -529,7 +548,7 @@ namespace jl
 
 		void insert(const TType *newEntry, const BoundingBox &entryBounds)
 		{
-			insert(newEntry, entryBounds);
+			insert(newEntry, entryBounds, true);
 		};
 
 

@@ -229,10 +229,7 @@ int main(int argc, const char* argv[]){
 	jl::RTree<int> leTree;
 
 	leTree.findSuitableNode(box2);
-	leTree.splitNode(
-		std::make_pair(std::ref(box2), std::ref(*leTree.m_rootNode)),
-		std::make_pair(std::ref(box2), std::ref(*leTree.m_rootNode)),
-		std::make_pair(std::ref(box2), nullptr));
+	leTree.insert(nullptr, box2);
 
 
 	JL_INFO_LOG("OPENAL VENDOR: %s", alGetString(AL_VERSION));
