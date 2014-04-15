@@ -585,6 +585,7 @@ namespace jl
 				//}
 				else
 				{
+
 					invariant("Pre overflow split");
 					BoundingBox splitNodeBounds, newRootBounds;
 					Node *splitSecondHalf = new Node();

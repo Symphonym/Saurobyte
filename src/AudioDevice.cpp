@@ -140,7 +140,6 @@ namespace jl
 
 	StreamHandle AudioDevice::createStream(const std::string &name)
 	{
-		JL_INFO_LOG("SPLAYSTERAM");
 		// Perform cleanup before creating new streams
 		audioCleanup();
 
@@ -173,7 +172,6 @@ namespace jl
 
 	SoundHandle AudioDevice::createSound(const std::string &name)
 	{
-		JL_INFO_LOG("PLAYSOUND");
 		// Perform cleanup before creating new sounds
 		audioCleanup();
 
@@ -236,7 +234,6 @@ namespace jl
 
 	void AudioDevice::audioCleanup()
 	{
-		JL_DEBUG_LOG("CLEAUPERU ADUIO");
 		// Perform cleanup if interval has passed
 		if(SDL_TICKS_PASSED(SDL_GetTicks(), m_lastCleanupTick))
 		{
