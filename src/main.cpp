@@ -9,6 +9,7 @@
 #include <cstring>
 #include <unordered_map>
 #include <thread>
+#include <memory>
 
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
@@ -167,7 +168,7 @@ int main(int argc, const char* argv[]){
 		{{1.0f,-1.0f, 1.0f}, {0.982f, 0.099f, 0.879f}, {0.667979f, 1.0f-0.335851f}},
 	},
 	"panda.jpg");
-	ent2.addComponent<jl::LuaComponent>("luaFile.lua");
+	//ent2.addComponent<jl::LuaComponent>("luaFile.lua");
 	ent2.addComponent<jl::TransformComponent>(0,1,0);
 	jl::Scene& sc = game.createScene("HUE");
 
@@ -194,16 +195,6 @@ int main(int argc, const char* argv[]){
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 
-	SF_INFO info;
-	SNDFILE *sndFile = sf_open("heartbeat.wav", SFM_READ, &info);
-	int sampleNumber = info.channels*info.samplerate;
-	JL_INFO_LOG("Channels: %i", info.channels);
-	JL_INFO_LOG("Samplerate: %i", info.samplerate);
-	JL_INFO_LOG("Frames: %i", info.frames);
-	JL_INFO_LOG("Samples: %i", sampleNumber);
-
-	sf_close(sndFile);
-
 	/*
 		AudioEngine design
 
@@ -221,6 +212,7 @@ int main(int argc, const char* argv[]){
 
 	*/
 
+
 	jl::BoundingBox box1(jl::Vector3f(1,2,0), 1, 1, 1);
 	jl::BoundingBox box2(jl::Vector3f(0,0,0), 1, 1, 1);
 
@@ -229,16 +221,16 @@ int main(int argc, const char* argv[]){
 	jl::RTree<int> leTree;
 	int varu = 1337;
 
-	for(int i = 0; i < 255; i++)
+	for(int i = 0; i < 55; i++)
 		leTree.insert(&varu, box2);
 
 	//JL_INFO_LOG("Query count: %i, Value %i", leTree.query(box2).size(), *leTree.query(box2)[0]);
 	//JL_INFO_LOG("TOTAL AMOUNT OF BOUNDS: %i", leTree.getAllBounds().size());
 
 
-	leTree.printTree();
+	//leTree.printTree();
 
-	JL_INFO_LOG("OPENAL VENDOR: %s", alGetString(AL_VERSION));
+	/*JL_INFO_LOG("OPENAL VENDOR: %s", alGetString(AL_VERSION));
 
 	jl::AudioListener::setVolume(0.1f);
 
@@ -273,7 +265,7 @@ int main(int argc, const char* argv[]){
 				break;
 			SDL_Delay(100);
 		}
-	}
+	}*/
 	game.gameLoop();
 
 
