@@ -77,6 +77,15 @@ namespace jl
 		m_maxPoint = maxPoint;
 	}
 
+	bool BoundingBox::operator == (const BoundingBox &rhs)
+	{
+		return getMinPoint() == rhs.getMinPoint() && getMaxPoint() == rhs.getMaxPoint();
+	}
+	bool BoundingBox::operator != (const BoundingBox &rhs)
+	{
+		return getMinPoint() != rhs.getMinPoint() || getMaxPoint() != rhs.getMaxPoint();
+	}
+
 	const Vector3f& BoundingBox::getCenter() const
 	{
 		return m_center;

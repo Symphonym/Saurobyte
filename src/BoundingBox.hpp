@@ -36,6 +36,9 @@ namespace jl
 		void setCenter(const Vector3f &center);
 		void setPoints(const Vector3f &minPoint, const Vector3f &maxPoint);
 
+		bool operator == (const BoundingBox &rhs);
+		bool operator != (const BoundingBox &rhs);
+
 
 		const Vector3f& getCenter() const;
 		const Vector3f& getSize() const;
