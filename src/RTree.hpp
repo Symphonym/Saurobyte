@@ -2,7 +2,6 @@
 #define JL_RSTARTREE_HPP
 
 #include <vector>
-#include <array>
 #include <cmath>
 #include <limits>
 #include <algorithm>
@@ -20,14 +19,11 @@ namespace jl
 		R*-tree implementation used for 3D spatial partitioning of entities
 		Based on: http://dbs.mathematik.uni-marburg.de/publications/myPapers/1990/BKSS90.pdf
 	*/
-	template<typename TType, unsigned int minNodes = 4, unsigned int maxNodes = 8> class RTree
+	template<typename TType, typename TIdentifier = std::size_t, unsigned int minNodes = 4, unsigned int maxNodes = 8> class RTree
 	{
 	private:
 
-		// Typdef for the data we want to store in the R* tree
-		typedef TType* UserdataPtr;
-
-		typedef std::vector<UserdataPtr> QueryResult; 
+		typedef std::vector<TType> QueryResult; 
 		typedef std::unordered_set<unsigned int> OverflowMap; // Set of level numbers
 
 
@@ -44,8 +40,10 @@ namespace jl
 
 		struct Entry : public RTreeChild
 		{
-			UserdataPtr data;
-			Entry(UserdataPtr newData)
+			TType data;
+			TIdentifier id;
+
+			Entry(TType newData)
 				:
 				data(newData)
 			{};
@@ -65,7 +63,7 @@ namespace jl
 			bool leafNode;
 
 			// Utility functions for easily grabbing a child or an entry in the node
-			UserdataPtr entry(unsigned int index)
+			TType entry(unsigned int index)
 			{
 				return static_cast<Entry*>(children.at(index))->data;
 			};
@@ -74,7 +72,7 @@ namespace jl
 				return static_cast<Node*>(children.at(index));
 			};
 
-			const UserdataPtr entry(unsigned int index) const
+			const TType entry(unsigned int index) const
 			{
 				return static_cast<Entry*>(children.at(index))->data;
 			};
@@ -675,7 +673,7 @@ namespace jl
 			}
 	
 		};
-		bool remove(Node* node, UserdataPtr entryToRemove, const BoundingBox &entryBounds)
+		bool remove(Node* node, TIdentifier id, const BoundingBox &entryBounds)
 		{
 			//TODO add underflow treatment, remove single matching entry or ALL matching entries?
 			for(std::size_t i = 0; i < node->children.size(); i++)
@@ -687,7 +685,7 @@ namespace jl
 					// leaf node.
 					if(node->leafNode)
 					{
-						if(entryToRemove == static_cast<Entry*>(child)->data)
+						if(id == static_cast<Entry*>(child)->id)
 						{
 							node->children.erase(node->children.begin() + i);
 							return true;
@@ -696,11 +694,36 @@ namespace jl
 
 					// Recurse into other intersecting nodes
 					else
-						return remove(static_cast<Node*>(child), entryToRemove, entryBounds);
+						return remove(static_cast<Node*>(child), id, entryBounds);
 				}
 			}
 
 			return false;
+		};
+
+		TType* get(Node* node, TIdentifier id, const BoundingBox &queryBounds)
+		{
+			for(std::size_t i = 0; i < node->children.size(); i++)
+			{
+				RTreeChild *child = node->children.at(i);
+				if(queryBounds.intersects(child->bounds))
+				{
+					// Check all the entries against the one we want to retrieve if we're at a
+					// leaf node.
+					if(node->leafNode)
+					{
+						Entry *ent = static_cast<Entry*>(child);
+						if(id == ent->id)
+							return &ent->data;
+					}
+
+					// Recurse into other intersecting nodes
+					else
+						return get(static_cast<Node*>(child), id, queryBounds);
+				}
+			}
+
+			return nullptr;
 		};
 
 		void query(const Node &nodeToQuery, const BoundingBox &queryBounds, QueryResult &queryResult)
@@ -788,20 +811,28 @@ namespace jl
 
 	public:
 
-		void insert(UserdataPtr newEntry, const BoundingBox &entryBounds)
+		void insert(TIdentifier id, TType newEntry, const BoundingBox &entryBounds)
 		{
 			OverflowMap overflowMap;
 
 			Entry *ent = new Entry(newEntry);
 			ent->bounds = entryBounds;
+			ent->id = id;
 			insert(ent, 0, overflowMap);
 		};
 
-		bool remove(UserdataPtr entryToRemove, const BoundingBox &entryBounds)
+		bool remove(TIdentifier id, const BoundingBox &entryBounds)
 		{
-			return remove(m_rootNode, entryToRemove, entryBounds);
-		}; 
+			return remove(m_rootNode, id, entryBounds);
+		};
 
+		// Queries for an entry of id 'id' within the specified query bounds
+		TType* get(TIdentifier id, const BoundingBox &queryBounds)
+		{
+			return get(m_rootNode, id, queryBounds);
+		};
+
+		// Queries a specific region of the R-tree, returning all entries within the query bounds
 		QueryResult query(const BoundingBox &queryBounds)
 		{
 			// Store result in temporary list
@@ -821,6 +852,7 @@ namespace jl
 			return result;
 		};
 
+		// Prints a the R-tree hierarchy to the console
 		void printTree()
 		{
 			JL_INFO_LOG("ROOT (Level %i)", m_rootNode->level);
