@@ -193,7 +193,6 @@ int main(int argc, const char* argv[]){
 	//glCullFace(GL_BACK);
 	glDepthFunc(GL_LESS);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glLineWidth(2);
 
 
 	/*
@@ -220,7 +219,9 @@ int main(int argc, const char* argv[]){
 		float value = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
 
 		if(value <= 0.5)
-			value *= -1.f;
+			value *= -1.4f;
+
+		value *= static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
 
 		return value;
 	};
@@ -228,11 +229,15 @@ int main(int argc, const char* argv[]){
 	jl::BoundingBox box1(jl::Vector3f(1,2,0), 1, 1, 1);
 	jl::BoundingBox box2(jl::Vector3f(0,0,0), 1, 1, 1);
 
+	int customDateru = 152;
 
-	jl::RTree<int, 16, 32> leTree;
+	jl::RTree<int> leTree;
 	int varu = 1337;
 
-	const float rtreeSpread = 40.f;
+	leTree.insert(&customDateru, box2);
+	//if(leTree.remove(&customDateru, box2))
+	//	JL_INFO_LOG("REMOVAL");
+	const float rtreeSpread = 60.f;
 	for(int i = 0; i < 100; i++)
 	{
 		//JL_INFO_LOG("VALUE %f", randFloat()*rtreeSpread);

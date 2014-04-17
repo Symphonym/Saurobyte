@@ -290,12 +290,12 @@ namespace jl
 					{
 						// Create a copy of the entries in the node and add the new data node to it
 						Node *child = currentNode.child(i);
-						BoundingBox mbr = child->bounds;
+						BoundingBox childBounds = child->bounds;
 
-						BoundingBox biggerMbr = mbr;
+						BoundingBox biggerMbr = childBounds;
 						biggerMbr.enlarge(newBox); // MBR if we insert the new data
 
-						float newMBRDelta = biggerMbr.getArea() - mbr.getArea();
+						float newMBRDelta = biggerMbr.getArea() - childBounds.getArea();
 
 						// Check if MBR change when inserting into this child is smaller
 						if(newMBRDelta < lowestMBRNode.first)
@@ -305,7 +305,7 @@ namespace jl
 						else if(newMBRDelta == lowestMBRNode.first)
 						{
 							float currentArea = currentNode.children.at(lowestMBRNode.second)->bounds.getArea();
-							float newArea = mbr.getArea();
+							float newArea = childBounds.getArea();
 
 							// Inserting into this child yields a smaller area change
 							if(newArea < currentArea)
@@ -330,14 +330,26 @@ namespace jl
 		};
 
 		// Boundingbox axis comparator
-		template<int AxisIndex> struct AxisComparator
+		struct AxisComparator
 		{
+			const int AxisIndex;
+			const int LowerOrUpper;
+
+			explicit AxisComparator(const int axis, const int lowerOrUpper)
+				:
+				AxisIndex(axis),
+				LowerOrUpper(lowerOrUpper)
+			{};
 			bool operator () (const RTreeChild  *lhs, const RTreeChild *rhs) const
 			{
-				if(lhs->bounds.getMinPoint()[AxisIndex] == rhs->bounds.getMinPoint()[AxisIndex])
-					return lhs->bounds.getMaxPoint()[AxisIndex] < rhs->bounds.getMaxPoint()[AxisIndex];
-				else
+				if(LowerOrUpper == 0)
 					return lhs->bounds.getMinPoint()[AxisIndex] < rhs->bounds.getMinPoint()[AxisIndex];
+				else
+					return lhs->bounds.getMaxPoint()[AxisIndex] < rhs->bounds.getMaxPoint()[AxisIndex];
+				//if(lhs->bounds.getMinPoint()[AxisIndex] == rhs->bounds.getMinPoint()[AxisIndex])
+				//	return lhs->bounds.getMaxPoint()[AxisIndex] < rhs->bounds.getMaxPoint()[AxisIndex];
+				//else
+				//	return lhs->bounds.getMinPoint()[AxisIndex] < rhs->bounds.getMinPoint()[AxisIndex];
 			}
 		};
 
@@ -348,46 +360,88 @@ namespace jl
 			// This is how many ways we can split the axis
 			unsigned int splitDistributions = maxNodes - (2*minNodes) + 2;
 
-			float marginValue = 0;
 
-			float lowestOverlap = std::numeric_limits<float>::max();
-			float lowestArea = std::numeric_limits<float>::max();
+		
 
-			// Now lets test the 'goodness' of each split
-			for(unsigned int k = 1; k < splitDistributions; k++)
+			// 0 is sorting by lower
+			// 1 is sorting by upper
+			int split_sort = 0;
+			int split_axis = 0;
+
+			int split_k = 1;
+
+
+			float lowestMargin = std::numeric_limits<float>::max();
+
+			for(int axis = 0; axis < 3; axis++)
 			{
-				unsigned int firstEntries = (minNodes - 1) + k;
+				float marginValue = 0;
 
-				BoundingBox firstMbr = sortedAxisList.at(0)->bounds;
-				BoundingBox secondMbr = sortedAxisList.at(firstEntries)->bounds;
+				float lowestOverlap = std::numeric_limits<float>::max();
+				float lowestArea = std::numeric_limits<float>::max();
 
-				// We append 1 to the starting indexes since the first element is used to
-				// initialize the MBR
+				 // Best value for K on this axis
+				int best_KValue = 0;
 
-				// The first half of the split
-				for(unsigned int i = 1; i < firstEntries; i++)
-					firstMbr.enlarge(sortedAxisList.at(i)->bounds);
-
-				// The second half of the split
-				for(unsigned int i = firstEntries+1; i < maxNodes+1; i++)
-					secondMbr.enlarge(sortedAxisList.at(i)->bounds);
-
-				marginValue += firstMbr.getPerimeter() + secondMbr.getPerimeter();
-
-				float overlapValue = calculateOverlap(firstMbr, secondMbr);
-				float areaValue = firstMbr.getArea() + secondMbr.getArea();
-
-				// Aha, this distribution is the best yet!
-				if(overlapValue < lowestOverlap ||
-					(overlapValue == lowestOverlap && areaValue < lowestArea)) // Solve ties by area
+				for(int sorting = 0; sorting < 2; sorting++)
 				{
-					lowestOverlap = overlapValue;
-					lowestArea = areaValue;
-					optimalDistribution_K = k;
+
+					std::sort(sortedAxisList.begin(), sortedAxisList.end(), AxisComparator(axis, sorting));
+
+					// Now lets test the 'goodness' of each split
+					for(unsigned int k = 1; k < splitDistributions; k++)
+					{
+						unsigned int firstEntries = (minNodes - 1) + k;
+
+						BoundingBox firstMbr = sortedAxisList.at(0)->bounds;
+						BoundingBox secondMbr = sortedAxisList.at(firstEntries)->bounds;
+
+						// We append 1 to the starting indexes since the first element is used to
+						// initialize the MBR
+
+						// The first half of the split
+						for(unsigned int i = 1; i < firstEntries; i++)
+							firstMbr.enlarge(sortedAxisList.at(i)->bounds);
+
+						// The second half of the split
+						for(unsigned int i = firstEntries+1; i < maxNodes+1; i++)
+							secondMbr.enlarge(sortedAxisList.at(i)->bounds);
+
+						marginValue += firstMbr.getPerimeter() + secondMbr.getPerimeter();
+
+						float overlapValue = calculateOverlap(firstMbr, secondMbr);
+						float areaValue = firstMbr.getArea() + secondMbr.getArea();
+
+						// Aha, this distribution is the best yet!
+						if(overlapValue < lowestOverlap ||
+							(overlapValue == lowestOverlap && areaValue < lowestArea)) // Solve ties by area
+						{
+							split_sort = sorting;
+							lowestOverlap = overlapValue;
+							lowestArea = areaValue;
+							best_KValue = k;
+						}
+					}
+
+					if(marginValue < lowestMargin)
+					{
+						split_axis = axis;
+						split_k = best_KValue;
+						lowestMargin = marginValue;
+					}
 				}
 			}
 
-			return marginValue;
+			//JL_INFO_LOG("SPLIT AXIS %i", split_axis);
+			//JL_INFO_LOG("SORT %i", split_sort);
+			//JL_INFO_LOG("K VALUE %i", split_k);
+			//JL_INFO_LOG("MARGIN %f", lowestMargin);
+			
+			optimalDistribution_K = split_k;
+			std::sort(sortedAxisList.begin(), sortedAxisList.end(), AxisComparator(split_axis, split_sort));
+			
+
+			return 0;
 		};
 
 		// Split the node along the optimal axis and use the best distribution of children
@@ -407,12 +461,12 @@ namespace jl
 			//}
 
 			// Sort the axis vectors
-			std::sort(sortedX.begin(), sortedX.end(), AxisComparator<0>());
-			std::sort(sortedY.begin(), sortedY.end(), AxisComparator<1>());
-			std::sort(sortedZ.begin(), sortedZ.end(), AxisComparator<2>());
+			//std::sort(sortedX.begin(), sortedX.end(), AxisComparator<0>());
+			//std::sort(sortedY.begin(), sortedY.end(), AxisComparator<1>());
+			//std::sort(sortedZ.begin(), sortedZ.end(), AxisComparator<2>());
 
 			// Optimal distribution on each axis, 'k' value
-			unsigned int optimalDistribution_X = 0;
+			/*unsigned int optimalDistribution_X = 0;
 			unsigned int optimalDistribution_Y = 0;
 			unsigned int optimalDistribution_Z = 0;
 
@@ -450,16 +504,25 @@ namespace jl
 			{
 				JL_ERROR_LOG("R* tree splitting error, no optimal split could be found!");
 				return nullptr;
-			}
+			}*/
 
 			// Make a reference from the pointer, for convenience
-			std::vector<RTreeChild*> splitAxisRef = *splitAxisVector;
+			std::vector<RTreeChild*> sortedList = nodeToSplit->children;
+			unsigned int optimalDistribution_K = 0;
+
+			calculateOptimalSplit(sortedList, optimalDistribution_K);
+
+			// Calculate number of entries in the first split with the value of 'k' we determined to be the best
+			optimalDistribution_K = (minNodes - 1) + optimalDistribution_K;
+
+			
 
 			// Put entries of first group into the first node
 			nodeToSplit->children.clear();
+			nodeToSplit->children.reserve(optimalDistribution_K);
 
 			for(std::size_t i = 0; i < optimalDistribution_K; i++)
-				nodeToSplit->children.push_back(splitAxisRef.at(i));
+				nodeToSplit->children.push_back(sortedList.at(i));
 
 			// Recalculate MBR
 			nodeToSplit->bounds = calculateMBR(nodeToSplit->children);
@@ -473,7 +536,7 @@ namespace jl
 			newNode->level = nodeToSplit->level;
 
 			for(std::size_t i = optimalDistribution_K; i < maxNodes+1; i++)
-				newNode->children.push_back(splitAxisRef.at(i));
+				newNode->children.push_back(sortedList.at(i));
 
 			// Recalculate MBR
 			newNode->bounds = calculateMBR(newNode->children);
@@ -544,25 +607,10 @@ namespace jl
 					overflowMap.insert(overflowNode->level);
 					reinsert(overflowNode, overflowMap);
 				}
-
-				// Propagate upwards
-				//else if(overflowMap.find(overflowNode->level) != overflowMap.end())
-				//{
-				//	JL_INFO_LOG("Propagate");
-			//	/	overflowTreatment(desiredLevel+1,newEntry, pathIndex-1, searchPath, overflowMap);
-				//}
 				else
 				{
 
-					// If we're splitting root, use a temporary bounding box to store the bounds since root doesn't
-					// have a parent that stores its bounds.
-					//BoundingBox &bounds = overflowNode ==  m_rootNode ?
-					//	newRootBounds : parent->bounds.at(parentIndex);
-
 					Node* newSplitNode = splitNode(overflowNode);
-						//BoxNodePair(&overflowNode->bounds, overflowNode),
-						//BoxNodePair(&splitNodeBounds, splitSecondHalf));
-
 
 					// If we split the root, create a new root
 					if(overflowNode->level == m_rootNode->level)
@@ -587,6 +635,7 @@ namespace jl
 						parent->bounds = calculateMBR(parent->children);
 					}
 
+					// Propagate upwards
 					if(pathIndex-1 >= 0)
 						overflowTreatment(pathIndex-1, searchPath, overflowMap);
 				}
@@ -595,7 +644,7 @@ namespace jl
 			}
 		}
 
-
+		// TODO add ID oarameter, makes for easier specific deletion and query
 		void insert(RTreeChild *entry, int desiredLevel, OverflowMap &overflowMap)
 		{
 			NodeSearchPath searchPath = findSuitableNode(entry->bounds);
@@ -611,7 +660,6 @@ namespace jl
 			// Push another entry into the node
 			suitableNode->children.push_back(entry);
 			suitableNode->bounds = calculateMBR(suitableNode->children);
-			//suitableNode->bounds = 
 
 			// Run overflow treatment if we have M+1 entries
 			if(suitableNode->children.size() > maxNodes)
@@ -626,6 +674,33 @@ namespace jl
 				--pathIndex;
 			}
 	
+		};
+		bool remove(Node* node, UserdataPtr entryToRemove, const BoundingBox &entryBounds)
+		{
+			//TODO add underflow treatment, remove single matching entry or ALL matching entries?
+			for(std::size_t i = 0; i < node->children.size(); i++)
+			{
+				RTreeChild *child = node->children.at(i);
+				if(entryBounds.intersects(child->bounds))
+				{
+					// Check all the entries against the one we want to remove if we're at a
+					// leaf node.
+					if(node->leafNode)
+					{
+						if(entryToRemove == static_cast<Entry*>(child)->data)
+						{
+							node->children.erase(node->children.begin() + i);
+							return true;
+						}
+					}
+
+					// Recurse into other intersecting nodes
+					else
+						return remove(static_cast<Node*>(child), entryToRemove, entryBounds);
+				}
+			}
+
+			return false;
 		};
 
 		void query(const Node &nodeToQuery, const BoundingBox &queryBounds, QueryResult &queryResult)
@@ -721,6 +796,11 @@ namespace jl
 			ent->bounds = entryBounds;
 			insert(ent, 0, overflowMap);
 		};
+
+		bool remove(UserdataPtr entryToRemove, const BoundingBox &entryBounds)
+		{
+			return remove(m_rootNode, entryToRemove, entryBounds);
+		}; 
 
 		QueryResult query(const BoundingBox &queryBounds)
 		{

@@ -106,7 +106,7 @@ namespace jl
 	}
 	float BoundingBox::getPerimeter() const
 	{
-		return 4*m_size.x + 4*m_size.y + 4*m_size.z;
+		return 4*(m_size.x + m_size.y + m_size.z);
 	}
 
 	const Vector3f& BoundingBox::getMinPoint() const

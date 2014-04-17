@@ -14,7 +14,7 @@ function init(self)
 	local ents = scene:GetEntities()
 
 	for index, value in ipairs(ents) do
-		print("Entity " .. value:GetID() .. " inside (" .. scene:GetName() .. ") = " .. tostring(scene:Contains(value)))
+		--print("Entity " .. value:GetID() .. " inside (" .. scene:GetName() .. ") = " .. tostring(scene:Contains(value)))
 	end
 
 	RegisterAudio("forest.ogg", "SpookyShit")
