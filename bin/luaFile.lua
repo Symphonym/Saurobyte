@@ -37,6 +37,13 @@ function update(self, delta)
 		game:MoveCamera(0, -delta*10, 0)
 	end
 
+	if(IsKeyPressed("1")) then
+		game:MoveCamera(delta*10, 0, 0)
+	end
+	if(IsKeyPressed("2")) then
+		game:MoveCamera(-delta*10, 0, 0)
+	end
+
 
 	if(IsKeyPressed("T")) then
 		print("FPS " .. 1.0/delta)
@@ -46,7 +53,6 @@ function update(self, delta)
 end
 
 function events(self, eventName, ...)
-	print(self:GetID() .. " " .. eventName)
 	if(eventName == "KeyDown") then
 		local keyName, keyRepeat = ...
 		if(keyName == "K" and not keyRepeat) then

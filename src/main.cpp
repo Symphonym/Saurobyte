@@ -128,7 +128,7 @@ int main(int argc, const char* argv[]){
 	//ent.save("FancyCompiz");
 
 	jl::Entity& ent2 = game.createEntity();
-	ent2.addComponent<jl::MeshComponent, const std::vector<jl::MeshComponent::Triangle>& >(
+	/*ent2.addComponent<jl::MeshComponent, const std::vector<jl::MeshComponent::Triangle>& >(
 	{
 		{{-1.0f,-1.0f,-1.0f}, {0.583f, 0.771f, 0.014f}, {0.000059f, 1.0f-0.000004f}},
 		{{-1.0f,-1.0f, 1.0f}, {0.609f, 0.115f, 0.436f}, {0.000103f, 1.0f-0.336048f}},
@@ -167,8 +167,8 @@ int main(int argc, const char* argv[]){
 		{{-1.0f, 1.0f, 1.0f}, {0.820f, 0.883f, 0.371f}, {1.000004f, 1.0f-0.671847f}},
 		{{1.0f,-1.0f, 1.0f}, {0.982f, 0.099f, 0.879f}, {0.667979f, 1.0f-0.335851f}},
 	},
-	"panda.jpg");
-	//ent2.addComponent<jl::LuaComponent>("luaFile.lua");
+	"panda.jpg");*/
+	ent2.addComponent<jl::LuaComponent>("luaFile.lua");
 	ent2.addComponent<jl::TransformComponent>(0,1,0);
 	jl::Scene& sc = game.createScene("HUE");
 
@@ -192,7 +192,7 @@ int main(int argc, const char* argv[]){
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glDepthFunc(GL_LESS);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 
 	/*
@@ -212,23 +212,108 @@ int main(int argc, const char* argv[]){
 
 	*/
 
+	std::srand(std::time(0));
+
+	auto randFloat = [] () -> float
+	{
+		float value = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+
+		if(value <= 0.5)
+			value *= -1.f;
+
+		return value;
+	};
 
 	jl::BoundingBox box1(jl::Vector3f(1,2,0), 1, 1, 1);
 	jl::BoundingBox box2(jl::Vector3f(0,0,0), 1, 1, 1);
 
-	JL_INFO_LOG("INTERSECTION = %i", box1.intersects(box2));
 
 	jl::RTree<int> leTree;
 	int varu = 1337;
 
-	for(int i = 0; i < 75; i++)
-		leTree.insert(&varu, box2);
+	const float rtreeSpread = 10.f;
+	for(int i = 0; i < 9; i++)
+	{
+		leTree.insert(
+			&varu,
+			jl::BoundingBox(
+				jl::Vector3f(
+					randFloat()*rtreeSpread,
+					randFloat()*rtreeSpread,
+					randFloat()*rtreeSpread), 1, 1, 1));	
+	}
+	//leTree.insert(&varu, box1);
+	//leTree.insert(&varu, box2);
 
 	leTree.printTree();
 
 
-	JL_INFO_LOG("Query count: %i, Value %i", leTree.query(box2).size(), *leTree.query(box2)[0]);
-	JL_INFO_LOG("TOTAL AMOUNT OF BOUNDS: %i", leTree.getAllBounds().size());
+	//JL_INFO_LOG("Query count: %i, Value %i", leTree.query(box2).size(), *leTree.query(box2)[0]);
+	//JL_INFO_LOG("TOTAL AMOUNT OF BOUNDS: %i", leTree.getAllBounds().size());
+
+	auto queryTree = leTree.getAllBounds();
+	JL_INFO_LOG("QUERY COUNT %i", leTree.query(jl::BoundingBox(
+				jl::Vector3f(0, 0, 0), 20, 20, 20)).size());
+	for(std::size_t i = 0; i < queryTree.size(); i++)
+	{
+		jl::Entity &treeCube = game.createEntity();
+		jl::BoundingBox box = queryTree[i];
+		jl::Vector3f min = box.getMinPoint();
+		jl::Vector3f max = box.getMaxPoint();
+
+		jl::Vector3f topFrontLeft = jl::Vector3f(min.x, max.y, min.z);
+		jl::Vector3f topFrontRight = jl::Vector3f(max.x, max.y, min.z);
+		jl::Vector3f botFrontLeft = jl::Vector3f(min.x, min.y, min.z);
+		jl::Vector3f botFrontRight = jl::Vector3f(max.x, min.y, min.z);
+
+		jl::Vector3f topBackLeft = jl::Vector3f(min.x, max.y, max.z);
+		jl::Vector3f topBackRight = jl::Vector3f(max.x, max.y, max.z);
+		jl::Vector3f botBackLeft = jl::Vector3f(min.x, min.y, max.z);
+		jl::Vector3f botBackRight = jl::Vector3f(max.x, min.y, max.z);
+
+		std::vector<jl::MeshComponent::Triangle> *triangles = new std::vector<jl::MeshComponent::Triangle>(
+		{
+			{{botFrontLeft.x, botFrontLeft.y, botFrontLeft.z}, {0.583f, 0.771f, 0.014f}, {0.000059f, 1.0f-0.000004f}},
+			{{botBackLeft.x, botBackLeft.y, botBackLeft.z}, {0.609f, 0.115f, 0.436f}, {0.000103f, 1.0f-0.336048f}},
+			{{topBackLeft.x, topBackLeft.y, topBackLeft.z}, {0.327f, 0.483f, 0.844f}, {0.335973f, 1.0f-0.335903}},
+			{{topFrontRight.x, topFrontRight.y, topFrontRight.z}, {0.822f, 0.569f, 0.201f}, {1.000023f, 1.0f-0.000013f}},
+			{{botFrontLeft.x, botFrontLeft.y, botFrontLeft.z}, {0.667979f, 1.0f-0.335851f}},
+			{{topFrontLeft.x, topFrontLeft.y, topFrontLeft.z}, {0.310f, 0.747f, 0.185f}, {0.999958f, 1.0f-0.336064f}},
+			{{botBackRight.x, botBackRight.y, botBackRight.z}, {0.597f, 0.770f, 0.761f}, {0.667979f, 1.0f-0.335851f}},
+			{{botFrontLeft.x, botFrontLeft.y, botFrontLeft.z}, {0.559f, 0.436f, 0.730f}, {0.336024f, 1.0f-0.671877f}},
+			{{botFrontRight.x, botFrontRight.y, botFrontRight.z}, {0.359f, 0.583f, 0.152f}, {0.667969f, 1.0f-0.671889f}},
+			{{topFrontRight.x, topFrontRight.y, topFrontRight.z}, {0.483f, 0.596f, 0.789f}, {1.000023f, 1.0f-0.000013f}},
+			{{botFrontRight.x, botFrontRight.y, botFrontRight.z}, {0.559f, 0.861f, 0.639f}, {0.668104f, 1.0f-0.000013f}},
+			{{botFrontLeft.x, botFrontLeft.y, botFrontLeft.z}, {0.195f, 0.548f, 0.859f}, {0.667979f, 1.0f-0.335851f}},
+			{{botFrontLeft.x, botFrontLeft.y, botFrontLeft.z}, {0.014f, 0.184f, 0.576f}, {0.000059f, 1.0f-0.000004f}},
+			{{topBackLeft.x, topBackLeft.y, topBackLeft.z}, {0.771f, 0.328f, 0.970f}, {0.335973f, 1.0f-0.335903f}},
+			{{topFrontLeft.x, topFrontLeft.y, topFrontLeft.z}, {0.406f, 0.615f, 0.116f}, {0.336098f, 1.0f-0.000071f}},
+			{{botBackRight.x, botBackRight.y, botBackRight.z}, {0.676f, 0.977f, 0.133f}, {0.667979f, 1.0f-0.335851f}},
+			{{botBackLeft.x, botBackLeft.y, botBackLeft.z}, {0.971f, 0.572f, 0.833f}, {0.335973f, 1.0f-0.335903f}},
+			{{botFrontLeft.x, botFrontLeft.y, botFrontLeft.z}, {0.140f, 0.616f, 0.489f}, {0.336024f, 1.0f-0.671877f}},
+			{{topBackLeft.x, topBackLeft.y, topBackLeft.z}, {0.997f, 0.513f, 0.064f}, {1.000004f, 1.0f-0.671847f}},
+			{{botBackLeft.x, botBackLeft.y, botBackLeft.z}, {0.945f, 0.719f, 0.592f}, {0.999958f, 1.0f-0.336064f}},
+			{{botBackRight.x, botBackRight.y, botBackRight.z}, {0.543f, 0.021f, 0.978f}, {0.667979f, 1.0f-0.335851f}},
+			{{topBackRight.x, topBackRight.y, topBackRight.z}, {0.279f, 0.317f, 0.505f}, {0.668104f, 1.0f-0.000013f}},
+			{{botFrontRight.x, botFrontRight.y, botFrontRight.z}, {0.167f, 0.620f, 0.077f}, {0.335973f, 1.0f-0.335903f}},
+			{{topFrontRight.x, topFrontRight.y, topFrontRight.z}, {0.347f, 0.857f, 0.137f}, {0.667979f, 1.0f-0.335851f}},
+			{{botFrontRight.x, botFrontRight.y, botFrontRight.z}, {0.055f, 0.953f, 0.042f}, {0.335973f, 1.0f-0.335903f}},
+			{{topBackRight.x, topBackRight.y, topBackRight.z}, {0.714f, 0.505f, 0.345f}, {0.668104f, 1.0f-0.000013f}},
+			{{botBackRight.x, botBackRight.y, botBackRight.z}, {0.783f, 0.290f, 0.734f}, {0.336098f, 1.0f-0.000071f}},
+			{{topBackRight.x, topBackRight.y, topBackRight.z}, {0.722f, 0.645f, 0.174f}, {0.000103f, 1.0f-0.336048f}},
+			{{topFrontRight.x, topFrontRight.y, topFrontRight.z}, {0.302f, 0.455f, 0.848f}, {0.000004f, 1.0f-0.671870f}},
+			{{topFrontLeft.x, topFrontLeft.y, topFrontLeft.z}, {0.225f, 0.587f, 0.040f}, {0.336024f, 1.0f-0.671877f}},
+			{{topBackRight.x, topBackRight.y, topBackRight.z}, {0.517f, 0.713f, 0.338f}, {0.000103f, 1.0f-0.336048f}},
+			{{topFrontLeft.x, topFrontLeft.y, topFrontLeft.z}, {0.053f, 0.959f, 0.120f}, {0.336024f, 1.0f-0.671877f}},
+			{{topBackLeft.x, topBackLeft.y, topBackLeft.z}, {0.393f, 0.621f, 0.362f}, {0.335973f, 1.0f-0.335903f}},
+			{{topBackRight.x, topBackRight.y, topBackRight.z}, {0.673f, 0.211f, 0.457f}, {0.667969f, 1.0f-0.671889f}},
+			{{topBackLeft.x, topBackLeft.y, topBackLeft.z}, {0.820f, 0.883f, 0.371f}, {1.000004f, 1.0f-0.671847f}},
+			{{botBackRight.x, botBackRight.y, botBackRight.z}, {0.982f, 0.099f, 0.879f}, {0.667979f, 1.0f-0.335851f}},	
+		});
+
+		treeCube.addComponent<jl::MeshComponent, const std::vector<jl::MeshComponent::Triangle>& >(*triangles, "panda.jpg");
+		sc2.attach(treeCube);
+	}
 
 
 
