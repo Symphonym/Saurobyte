@@ -60,6 +60,11 @@ namespace jl
 		if(newBox.getMaxPoint().z > m_maxPoint.z)
 			m_maxPoint.z = newBox.getMaxPoint().z;
 
+		m_size = Vector3f(
+			m_maxPoint.x - m_minPoint.x,
+			m_maxPoint.y - m_minPoint.y,
+			m_maxPoint.z - m_minPoint.z);
+
 		return *this;
 	}
 

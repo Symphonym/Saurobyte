@@ -189,10 +189,11 @@ int main(int argc, const char* argv[]){
 
 	glEnable(GL_DEPTH_TEST);
 
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
+	//glEnable(GL_CULL_FACE);
+	//glCullFace(GL_BACK);
 	glDepthFunc(GL_LESS);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glLineWidth(2);
 
 
 	/*
@@ -228,24 +229,26 @@ int main(int argc, const char* argv[]){
 	jl::BoundingBox box2(jl::Vector3f(0,0,0), 1, 1, 1);
 
 
-	jl::RTree<int> leTree;
+	jl::RTree<int, 16, 32> leTree;
 	int varu = 1337;
 
-	const float rtreeSpread = 10.f;
-	for(int i = 0; i < 9; i++)
+	const float rtreeSpread = 40.f;
+	for(int i = 0; i < 100; i++)
 	{
+		//JL_INFO_LOG("VALUE %f", randFloat()*rtreeSpread);
+
 		leTree.insert(
 			&varu,
 			jl::BoundingBox(
 				jl::Vector3f(
 					randFloat()*rtreeSpread,
 					randFloat()*rtreeSpread,
-					randFloat()*rtreeSpread), 1, 1, 1));	
+					0), 1, 1, 1));	
 	}
 	//leTree.insert(&varu, box1);
 	//leTree.insert(&varu, box2);
 
-	leTree.printTree();
+	//leTree.printTree();
 
 
 	//JL_INFO_LOG("Query count: %i, Value %i", leTree.query(box2).size(), *leTree.query(box2)[0]);
@@ -271,50 +274,49 @@ int main(int argc, const char* argv[]){
 		jl::Vector3f botBackLeft = jl::Vector3f(min.x, min.y, max.z);
 		jl::Vector3f botBackRight = jl::Vector3f(max.x, min.y, max.z);
 
-		std::vector<jl::MeshComponent::Triangle> *triangles = new std::vector<jl::MeshComponent::Triangle>(
+		std::vector<jl::MeshComponent::Triangle> triangles =
 		{
-			{{botFrontLeft.x, botFrontLeft.y, botFrontLeft.z}, {0.583f, 0.771f, 0.014f}, {0.000059f, 1.0f-0.000004f}},
-			{{botBackLeft.x, botBackLeft.y, botBackLeft.z}, {0.609f, 0.115f, 0.436f}, {0.000103f, 1.0f-0.336048f}},
-			{{topBackLeft.x, topBackLeft.y, topBackLeft.z}, {0.327f, 0.483f, 0.844f}, {0.335973f, 1.0f-0.335903}},
-			{{topFrontRight.x, topFrontRight.y, topFrontRight.z}, {0.822f, 0.569f, 0.201f}, {1.000023f, 1.0f-0.000013f}},
-			{{botFrontLeft.x, botFrontLeft.y, botFrontLeft.z}, {0.667979f, 1.0f-0.335851f}},
-			{{topFrontLeft.x, topFrontLeft.y, topFrontLeft.z}, {0.310f, 0.747f, 0.185f}, {0.999958f, 1.0f-0.336064f}},
-			{{botBackRight.x, botBackRight.y, botBackRight.z}, {0.597f, 0.770f, 0.761f}, {0.667979f, 1.0f-0.335851f}},
-			{{botFrontLeft.x, botFrontLeft.y, botFrontLeft.z}, {0.559f, 0.436f, 0.730f}, {0.336024f, 1.0f-0.671877f}},
-			{{botFrontRight.x, botFrontRight.y, botFrontRight.z}, {0.359f, 0.583f, 0.152f}, {0.667969f, 1.0f-0.671889f}},
-			{{topFrontRight.x, topFrontRight.y, topFrontRight.z}, {0.483f, 0.596f, 0.789f}, {1.000023f, 1.0f-0.000013f}},
-			{{botFrontRight.x, botFrontRight.y, botFrontRight.z}, {0.559f, 0.861f, 0.639f}, {0.668104f, 1.0f-0.000013f}},
-			{{botFrontLeft.x, botFrontLeft.y, botFrontLeft.z}, {0.195f, 0.548f, 0.859f}, {0.667979f, 1.0f-0.335851f}},
-			{{botFrontLeft.x, botFrontLeft.y, botFrontLeft.z}, {0.014f, 0.184f, 0.576f}, {0.000059f, 1.0f-0.000004f}},
-			{{topBackLeft.x, topBackLeft.y, topBackLeft.z}, {0.771f, 0.328f, 0.970f}, {0.335973f, 1.0f-0.335903f}},
-			{{topFrontLeft.x, topFrontLeft.y, topFrontLeft.z}, {0.406f, 0.615f, 0.116f}, {0.336098f, 1.0f-0.000071f}},
-			{{botBackRight.x, botBackRight.y, botBackRight.z}, {0.676f, 0.977f, 0.133f}, {0.667979f, 1.0f-0.335851f}},
-			{{botBackLeft.x, botBackLeft.y, botBackLeft.z}, {0.971f, 0.572f, 0.833f}, {0.335973f, 1.0f-0.335903f}},
-			{{botFrontLeft.x, botFrontLeft.y, botFrontLeft.z}, {0.140f, 0.616f, 0.489f}, {0.336024f, 1.0f-0.671877f}},
-			{{topBackLeft.x, topBackLeft.y, topBackLeft.z}, {0.997f, 0.513f, 0.064f}, {1.000004f, 1.0f-0.671847f}},
-			{{botBackLeft.x, botBackLeft.y, botBackLeft.z}, {0.945f, 0.719f, 0.592f}, {0.999958f, 1.0f-0.336064f}},
-			{{botBackRight.x, botBackRight.y, botBackRight.z}, {0.543f, 0.021f, 0.978f}, {0.667979f, 1.0f-0.335851f}},
-			{{topBackRight.x, topBackRight.y, topBackRight.z}, {0.279f, 0.317f, 0.505f}, {0.668104f, 1.0f-0.000013f}},
-			{{botFrontRight.x, botFrontRight.y, botFrontRight.z}, {0.167f, 0.620f, 0.077f}, {0.335973f, 1.0f-0.335903f}},
-			{{topFrontRight.x, topFrontRight.y, topFrontRight.z}, {0.347f, 0.857f, 0.137f}, {0.667979f, 1.0f-0.335851f}},
-			{{botFrontRight.x, botFrontRight.y, botFrontRight.z}, {0.055f, 0.953f, 0.042f}, {0.335973f, 1.0f-0.335903f}},
-			{{topBackRight.x, topBackRight.y, topBackRight.z}, {0.714f, 0.505f, 0.345f}, {0.668104f, 1.0f-0.000013f}},
-			{{botBackRight.x, botBackRight.y, botBackRight.z}, {0.783f, 0.290f, 0.734f}, {0.336098f, 1.0f-0.000071f}},
-			{{topBackRight.x, topBackRight.y, topBackRight.z}, {0.722f, 0.645f, 0.174f}, {0.000103f, 1.0f-0.336048f}},
-			{{topFrontRight.x, topFrontRight.y, topFrontRight.z}, {0.302f, 0.455f, 0.848f}, {0.000004f, 1.0f-0.671870f}},
-			{{topFrontLeft.x, topFrontLeft.y, topFrontLeft.z}, {0.225f, 0.587f, 0.040f}, {0.336024f, 1.0f-0.671877f}},
-			{{topBackRight.x, topBackRight.y, topBackRight.z}, {0.517f, 0.713f, 0.338f}, {0.000103f, 1.0f-0.336048f}},
-			{{topFrontLeft.x, topFrontLeft.y, topFrontLeft.z}, {0.053f, 0.959f, 0.120f}, {0.336024f, 1.0f-0.671877f}},
-			{{topBackLeft.x, topBackLeft.y, topBackLeft.z}, {0.393f, 0.621f, 0.362f}, {0.335973f, 1.0f-0.335903f}},
-			{{topBackRight.x, topBackRight.y, topBackRight.z}, {0.673f, 0.211f, 0.457f}, {0.667969f, 1.0f-0.671889f}},
-			{{topBackLeft.x, topBackLeft.y, topBackLeft.z}, {0.820f, 0.883f, 0.371f}, {1.000004f, 1.0f-0.671847f}},
-			{{botBackRight.x, botBackRight.y, botBackRight.z}, {0.982f, 0.099f, 0.879f}, {0.667979f, 1.0f-0.335851f}},	
-		});
+			{{botFrontLeft.x, botFrontLeft.y, botFrontLeft.z}, {0,0,0}, {0.000059f, 1.0f-0.000004f}},
+			{{botBackLeft.x, botBackLeft.y, botBackLeft.z}, {0,0,0}, {0.000103f, 1.0f-0.336048f}},
+			{{topBackLeft.x, topBackLeft.y, topBackLeft.z}, {0,0,0}, {0.335973f, 1.0f-0.335903}},
+			{{topFrontRight.x, topFrontRight.y, topFrontRight.z}, {0,0,0}, {1.000023f, 1.0f-0.000013f}},
+			{{botFrontLeft.x, botFrontLeft.y, botFrontLeft.z}, {0,0,0}},
+			{{topFrontLeft.x, topFrontLeft.y, topFrontLeft.z}, {0,0,0}, {0.999958f, 1.0f-0.336064f}},
+			{{botBackRight.x, botBackRight.y, botBackRight.z}, {0,0,0}, {0.667979f, 1.0f-0.335851f}},
+			{{botFrontLeft.x, botFrontLeft.y, botFrontLeft.z}, {0,0,0}, {0.336024f, 1.0f-0.671877f}},
+			{{botFrontRight.x, botFrontRight.y, botFrontRight.z}, {0,0,0}, {0.667969f, 1.0f-0.671889f}},
+			{{topFrontRight.x, topFrontRight.y, topFrontRight.z}, {0,0,0}, {1.000023f, 1.0f-0.000013f}},
+			{{botFrontRight.x, botFrontRight.y, botFrontRight.z}, {0,0,0}, {0.668104f, 1.0f-0.000013f}},
+			{{botFrontLeft.x, botFrontLeft.y, botFrontLeft.z}, {0,0,0}, {0.667979f, 1.0f-0.335851f}},
+			{{botFrontLeft.x, botFrontLeft.y, botFrontLeft.z}, {0,0,0}, {0.000059f, 1.0f-0.000004f}},
+			{{topBackLeft.x, topBackLeft.y, topBackLeft.z}, {0,0,0}, {0.335973f, 1.0f-0.335903f}},
+			{{topFrontLeft.x, topFrontLeft.y, topFrontLeft.z}, {0,0,0}, {0.336098f, 1.0f-0.000071f}},
+			{{botBackRight.x, botBackRight.y, botBackRight.z}, {0,0,0}, {0.667979f, 1.0f-0.335851f}},
+			{{botBackLeft.x, botBackLeft.y, botBackLeft.z}, {0,0,0}, {0.335973f, 1.0f-0.335903f}},
+			{{botFrontLeft.x, botFrontLeft.y, botFrontLeft.z}, {0,0,0}, {0.336024f, 1.0f-0.671877f}},
+			{{topBackLeft.x, topBackLeft.y, topBackLeft.z}, {0,0,0}, {1.000004f, 1.0f-0.671847f}},
+			{{botBackLeft.x, botBackLeft.y, botBackLeft.z}, {0,0,0}, {0.999958f, 1.0f-0.336064f}},
+			{{botBackRight.x, botBackRight.y, botBackRight.z}, {0,0,0}, {0.667979f, 1.0f-0.335851f}},
+			{{topBackRight.x, topBackRight.y, topBackRight.z}, {0,0,0}, {0.668104f, 1.0f-0.000013f}},
+			{{botFrontRight.x, botFrontRight.y, botFrontRight.z}, {0,0,0}, {0.335973f, 1.0f-0.335903f}},
+			{{topFrontRight.x, topFrontRight.y, topFrontRight.z}, {0,0,0}, {0.667979f, 1.0f-0.335851f}},
+			{{botFrontRight.x, botFrontRight.y, botFrontRight.z}, {0,0,0}, {0.335973f, 1.0f-0.335903f}},
+			{{topBackRight.x, topBackRight.y, topBackRight.z}, {0,0,0}, {0.668104f, 1.0f-0.000013f}},
+			{{botBackRight.x, botBackRight.y, botBackRight.z}, {0,0,0}, {0.336098f, 1.0f-0.000071f}},
+			{{topBackRight.x, topBackRight.y, topBackRight.z}, {0,0,0}, {0.000103f, 1.0f-0.336048f}},
+			{{topFrontRight.x, topFrontRight.y, topFrontRight.z}, {0,0,0}, {0.000004f, 1.0f-0.671870f}},
+			{{topFrontLeft.x, topFrontLeft.y, topFrontLeft.z}, {0,0,0}, {0.336024f, 1.0f-0.671877f}},
+			{{topBackRight.x, topBackRight.y, topBackRight.z}, {0,0,0}, {0.000103f, 1.0f-0.336048f}},
+			{{topFrontLeft.x, topFrontLeft.y, topFrontLeft.z}, {0,0,0}, {0.336024f, 1.0f-0.671877f}},
+			{{topBackLeft.x, topBackLeft.y, topBackLeft.z}, {0,0,0}, {0.335973f, 1.0f-0.335903f}},
+			{{topBackRight.x, topBackRight.y, topBackRight.z}, {0,0,0}, {0.667969f, 1.0f-0.671889f}},
+			{{topBackLeft.x, topBackLeft.y, topBackLeft.z}, {0,0,0}, {1.000004f, 1.0f-0.671847f}},
+			{{botBackRight.x, botBackRight.y, botBackRight.z}, {0,0,0}, {0.667979f, 1.0f-0.335851f}},	
+		};
 
-		treeCube.addComponent<jl::MeshComponent, const std::vector<jl::MeshComponent::Triangle>& >(*triangles, "panda.jpg");
+		treeCube.addComponent<jl::MeshComponent, const std::vector<jl::MeshComponent::Triangle>& >(triangles, "whiteBG.jpg");
 		sc2.attach(treeCube);
 	}
-
 
 
 	/*JL_INFO_LOG("OPENAL VENDOR: %s", alGetString(AL_VERSION));

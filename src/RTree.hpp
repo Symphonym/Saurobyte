@@ -104,22 +104,25 @@ namespace jl
 		Node *m_rootNode;
 
 		// Calculate overlapping value of a new boundingbox against an existing array of boundingboxes
-		float calculateOverlap(const BoundingBox &box1, const BoundingBox &box2)
+		float calculateOverlap(const BoundingBox &box1, const BoundingBox &box2) const
 		{
 			// The newBox intersects with one of the other bounds
 			if(box1.intersects(box2))
 			{
 				// Get the bounds of the area that is shared
-				float width = std::fabs(box1.getSize().x - box2.getSize().x);
-				float height = std::fabs(box1.getSize().y - box2.getSize().y);
-				float depth = std::fabs(box1.getSize().z - box2.getSize().z);
+				float width = 
+					std::min(box2.getMaxPoint().x, box1.getMaxPoint().x) - std::max(box2.getMinPoint().x, box1.getMinPoint().x);
+				float height = 
+					std::min(box2.getMaxPoint().y, box1.getMaxPoint().y) - std::max(box2.getMinPoint().y, box1.getMinPoint().y);
+				float depth = 
+					std::min(box2.getMaxPoint().z, box1.getMaxPoint().z) - std::max(box2.getMinPoint().z, box1.getMinPoint().z);
 
 				return width*height*depth;
 			}
 
 			return 0;
 		}
-		float calculateOverlap(const BoundingBox &newBox, const ChildArray &children)
+		float calculateOverlap(const BoundingBox &newBox, const ChildArray &children) const
 		{
 			float overlapValue = 0;
 			for(std::size_t i = 0; i < children.size(); i++)
@@ -134,7 +137,7 @@ namespace jl
 		};
 
 		// Calculate minimum bounding rectangle for an array of children
-		BoundingBox calculateMBR(const ChildArray &children)
+		BoundingBox calculateMBR(const ChildArray &children) const
 		{
 			// Lowest point
 			float minX = std::numeric_limits<float>::max();
@@ -238,7 +241,7 @@ namespace jl
 					for(std::size_t i = 0; i < currentNode.children.size(); i++)
 					{
 						Node *child = currentNode.child(i);
-						BoundingBox mbr = child->bounds;
+						BoundingBox childBounds = child->bounds;
 						float overlapValue = calculateOverlap(newBox, child->children);
 
 						// Check if overlap value when inserting into this child is smaller
@@ -253,9 +256,10 @@ namespace jl
 							float currentMBRArea = currentMBR.getArea();
 							float currentMBRDelta = currentMBR.enlarge(newBox).getArea() - currentMBRArea;
 
+
 							// Change of MBR area with the newly considered node
-							float newMBRCurrentArea = mbr.getArea();
-							float newMBRDelta = mbr.enlarge(newBox).getArea() - newMBRCurrentArea;
+							float newMBRCurrentArea = childBounds.getArea();
+							float newMBRDelta = childBounds.enlarge(newBox).getArea() - newMBRCurrentArea;
 
 							// Inserting into this child yields a smaller MBR change
 							if(newMBRDelta < currentMBRDelta)
@@ -391,22 +395,21 @@ namespace jl
 		// returns the second half of the split
 		Node* splitNode(Node *nodeToSplit)
 		{
-			std::vector<RTreeChild*> sortedX;
-			std::vector<RTreeChild*> sortedY;
-			std::vector<RTreeChild*> sortedZ;
+			std::vector<RTreeChild*> sortedX = nodeToSplit->children;
+			std::vector<RTreeChild*> sortedY = nodeToSplit->children;
+			std::vector<RTreeChild*> sortedZ = nodeToSplit->children;
 
-			for(std::size_t i = 0; i < nodeToSplit->children.size(); i++)
-			{
-				sortedX.push_back(nodeToSplit->children.at(i));
-				sortedY.push_back(nodeToSplit->children.at(i));
-				sortedZ.push_back(nodeToSplit->children.at(i));
-			}
+			//for(std::size_t i = 0; i < nodeToSplit->children.size(); i++)
+			//{
+			//	sortedX.push_back(nodeToSplit->children.at(i));
+			//	sortedY.push_back(nodeToSplit->children.at(i));
+			//	sortedZ.push_back(nodeToSplit->children.at(i));
+			//}
 
 			// Sort the axis vectors
 			std::sort(sortedX.begin(), sortedX.end(), AxisComparator<0>());
 			std::sort(sortedY.begin(), sortedY.end(), AxisComparator<1>());
 			std::sort(sortedZ.begin(), sortedZ.end(), AxisComparator<2>());
-
 
 			// Optimal distribution on each axis, 'k' value
 			unsigned int optimalDistribution_X = 0;
@@ -455,30 +458,25 @@ namespace jl
 			// Put entries of first group into the first node
 			nodeToSplit->children.clear();
 
-			nodeToSplit->bounds = splitAxisRef.at(0)->bounds;
-			nodeToSplit->children.push_back(splitAxisRef.at(0));
-
-			for(std::size_t i = 1; i < optimalDistribution_K; i++)
-			{
+			for(std::size_t i = 0; i < optimalDistribution_K; i++)
 				nodeToSplit->children.push_back(splitAxisRef.at(i));
-				nodeToSplit->children.back()->bounds.enlarge(splitAxisRef.at(i)->bounds);
-			}
+
+			// Recalculate MBR
+			nodeToSplit->bounds = calculateMBR(nodeToSplit->children);
+
 
 			// Put entries of second group in the second node
 			Node *newNode = new Node();
-
-			newNode->bounds = splitAxisRef.at(optimalDistribution_K)->bounds;
-			newNode->children.push_back(splitAxisRef.at(optimalDistribution_K));
 
 			// Make sure both halves of the split are at the same level
 			newNode->leafNode = nodeToSplit->leafNode; 
 			newNode->level = nodeToSplit->level;
 
-			for(std::size_t i = optimalDistribution_K+1; i < maxNodes+1; i++)
-			{
+			for(std::size_t i = optimalDistribution_K; i < maxNodes+1; i++)
 				newNode->children.push_back(splitAxisRef.at(i));
-				newNode->children.back()->bounds.enlarge(splitAxisRef.at(i)->bounds);
-			}
+
+			// Recalculate MBR
+			newNode->bounds = calculateMBR(newNode->children);
 			return newNode;
 			
 		};
@@ -564,7 +562,6 @@ namespace jl
 					Node* newSplitNode = splitNode(overflowNode);
 						//BoxNodePair(&overflowNode->bounds, overflowNode),
 						//BoxNodePair(&splitNodeBounds, splitSecondHalf));
-					JL_INFO_LOG("SPLIT");
 
 
 					// If we split the root, create a new root
@@ -612,7 +609,6 @@ namespace jl
 			Node *parent = searchPath.at(pathIndex).second;
 
 			// Push another entry into the node
-			JL_INFO_LOG("INSERT NORMAL into level %i", suitableNode->level);
 			suitableNode->children.push_back(entry);
 			suitableNode->bounds = calculateMBR(suitableNode->children);
 			//suitableNode->bounds = 
@@ -655,14 +651,19 @@ namespace jl
 
 		void getAllBounds(const Node &nodeToQuery, std::vector<BoundingBox> &boundList) const
 		{
-			boundList.push_back(nodeToQuery.bounds);
 			for(std::size_t i = 0; i < nodeToQuery.children.size(); i++)
 			{
-				boundList.push_back(nodeToQuery.children.at(i)->bounds);
-
 				// Recurse into children and get their bounds
 				if(!nodeToQuery.leafNode)
+				{
+					if(nodeToQuery.level == 1)
+						boundList.push_back(nodeToQuery.children.at(i)->bounds);
+
+
 					getAllBounds(*nodeToQuery.child(i), boundList);
+				}
+				else
+					boundList.push_back(nodeToQuery.children.at(i)->bounds);
 			}
 		};
 
