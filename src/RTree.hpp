@@ -19,12 +19,13 @@ namespace jl
 		R*-tree implementation used for 3D spatial partitioning of entities
 		Based on: http://dbs.mathematik.uni-marburg.de/publications/myPapers/1990/BKSS90.pdf
 	*/
-	template<typename TType, typename TIdentifier = std::size_t, unsigned int minNodes = 4, unsigned int maxNodes = 8> class RTree
+	template<typename TType, unsigned int minNodes = 4, unsigned int maxNodes = 8> class RTree
 	{
 	private:
 
 		typedef std::vector<TType> QueryResult; 
 		typedef std::unordered_set<unsigned int> OverflowMap; // Set of level numbers
+		typedef std::size_t IdentifierType;
 
 
 		// Defined as 'p' in the paper, it's how many children we remove when reinserting
@@ -41,7 +42,7 @@ namespace jl
 		struct Entry : public RTreeChild
 		{
 			TType data;
-			TIdentifier id;
+			IdentifierType id;
 
 			Entry(TType newData)
 				:
@@ -90,7 +91,10 @@ namespace jl
 				children.reserve(minNodes);
 			}
 			~Node()
-			{}
+			{
+				for(std::size_t i = 0; i < children.size(); i++)
+					delete children.at(i);
+			}
 
 
 		};
@@ -100,6 +104,10 @@ namespace jl
 		typedef std::vector<std::pair<Node*, Node*> > NodeSearchPath;
 
 		Node *m_rootNode;
+
+		// ID's available for re-use
+		std::vector<IdentifierType> m_spareIDs;
+		IdentifierType m_idIndex;
 
 		// Calculate overlapping value of a new boundingbox against an existing array of boundingboxes
 		float calculateOverlap(const BoundingBox &box1, const BoundingBox &box2) const
@@ -383,7 +391,6 @@ namespace jl
 
 				for(int sorting = 0; sorting < 2; sorting++)
 				{
-
 					std::sort(sortedAxisList.begin(), sortedAxisList.end(), AxisComparator(axis, sorting));
 
 					// Now lets test the 'goodness' of each split
@@ -673,7 +680,7 @@ namespace jl
 			}
 	
 		};
-		bool remove(Node* node, TIdentifier id, const BoundingBox &entryBounds)
+		bool remove(Node* node, IdentifierType id, const BoundingBox &entryBounds)
 		{
 			//TODO add underflow treatment, remove single matching entry or ALL matching entries?
 			for(std::size_t i = 0; i < node->children.size(); i++)
@@ -688,6 +695,8 @@ namespace jl
 						if(id == static_cast<Entry*>(child)->id)
 						{
 							node->children.erase(node->children.begin() + i);
+							m_spareIDs.push_back(id);
+							delete child;
 							return true;
 						}
 					}
@@ -701,7 +710,7 @@ namespace jl
 			return false;
 		};
 
-		TType* get(Node* node, TIdentifier id, const BoundingBox &queryBounds)
+		TType* get(Node* node, IdentifierType id, const BoundingBox &queryBounds)
 		{
 			for(std::size_t i = 0; i < node->children.size(); i++)
 			{
@@ -786,48 +795,35 @@ namespace jl
 			}
 		};
 
-		void deleteTree(Node *node)
-		{
-			for(std::size_t i = 0; i < node->children.size(); i++)
-			{
-
-				// Recurse into children to delete them as well
-				if(!node->leafNode)
-					deleteTree(node->child(i));
-				else
-					delete node->children.at(i);
-
-				// The memory of entries are not managed by the rtree 
-			}
-
-			delete node;
-		};
-
-
-		void deleteTree()
-		{
-			deleteTree(m_rootNode);
-		}
 
 	public:
 
-		void insert(TIdentifier id, TType newEntry, const BoundingBox &entryBounds)
+		IdentifierType insert(TType newEntry, const BoundingBox &entryBounds)
 		{
 			OverflowMap overflowMap;
 
 			Entry *ent = new Entry(newEntry);
 			ent->bounds = entryBounds;
-			ent->id = id;
+
+			if(!m_spareIDs.empty())
+			{
+				ent->id = m_spareIDs.back();
+				m_spareIDs.pop_back();
+			}
+			else
+				ent->id = m_idIndex++;
+			
 			insert(ent, 0, overflowMap);
+			return ent->id;
 		};
 
-		bool remove(TIdentifier id, const BoundingBox &entryBounds)
+		bool remove(IdentifierType id, const BoundingBox &entryBounds)
 		{
 			return remove(m_rootNode, id, entryBounds);
 		};
 
 		// Queries for an entry of id 'id' within the specified query bounds
-		TType* get(TIdentifier id, const BoundingBox &queryBounds)
+		TType* get(IdentifierType id, const BoundingBox &queryBounds)
 		{
 			return get(m_rootNode, id, queryBounds);
 		};
@@ -863,7 +859,8 @@ namespace jl
 
 		RTree()
 			:
-			m_rootNode()
+			m_rootNode(),
+			m_idIndex(0)
 		{
 			m_rootNode = new Node();
 
@@ -875,7 +872,7 @@ namespace jl
 		};
 		~RTree()
 		{
-			deleteTree();
+			delete m_rootNode;
 		};
 
 	};

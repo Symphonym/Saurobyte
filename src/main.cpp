@@ -234,8 +234,8 @@ int main(int argc, const char* argv[]){
 	jl::RTree<int> leTree;
 	int varu = 1337;
 
-	leTree.insert(999, customDateru, box2);
-	JL_INFO_LOG("VALUE OF 999 %i", *leTree.get(999, box2));
+	std::size_t id = leTree.insert(customDateru, box2);
+	JL_INFO_LOG("VALUE OF 999 %i", *leTree.get(id, box2));
 	//if(leTree.remove(999, box2))
 	//	JL_INFO_LOG("REMOVAL");
 	const float rtreeSpread = 20.f;
@@ -244,13 +244,12 @@ int main(int argc, const char* argv[]){
 		//JL_INFO_LOG("VALUE %f", randFloat()*rtreeSpread);
 
 		leTree.insert(
-			i,
 			varu,
 			jl::BoundingBox(
 				jl::Vector3f(
 					randFloat()*rtreeSpread,
 					randFloat()*rtreeSpread,
-					randFloat()*rtreeSpread/2.f), 0.1f, 0.1f, 0.1f));	
+					randFloat()*rtreeSpread), 0.1f, 0.1f, 0.1f));	
 	}
 	//leTree.insert(&varu, box1);
 	//leTree.insert(&varu, box2);
