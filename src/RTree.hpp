@@ -61,7 +61,7 @@ namespace jl
 			ChildArray children;
 
 			// Whether or not this is a leaf node; the innermost node at level 0
-			bool leafNode;
+			bool isLeaf() const { return level == 0; };
 
 			// Utility functions for easily grabbing a child or an entry in the node
 			TType entry(unsigned int index)
@@ -84,8 +84,7 @@ namespace jl
 
 			Node()
 				:
-				level(0),
-				leafNode(false)
+				level(0)
 			{
 				// So we don't have to allocate more than we need, thus reducing performance
 				children.reserve(minNodes);
@@ -197,22 +196,22 @@ namespace jl
 			JL_INFO_LOG("%sChildren count is valid!", indent.c_str());
 
 
-			if(!node->leafNode && node->level == m_rootNode->level)
+			if(!node->isLeaf() && node->level == m_rootNode->level)
 				assert(node->children.size() >= 2);
 			JL_INFO_LOG("%sRoot children count is valid!", indent.c_str());
 
-			if(node->leafNode)
+			if(node->isLeaf())
 				assert(node->level == 0);
 			JL_INFO_LOG("%sSame level leaf is valid!", indent.c_str());
 
 			assert(node->bounds == calculateMBR(node->children));
-			JL_INFO_LOG("%sMBR size is correct and up-to-date!");
+			JL_INFO_LOG("%sMBR size is correct and up-to-date!", indent.c_str());
 
 
 			for(std::size_t i = 0; i < node->children.size(); i++)
 			{
 				// Recurse into children and validate them as well
-				if(!node->leafNode)
+				if(!node->isLeaf())
 					invariant(node->child(i), tabCount+1);
 			}
 		}
@@ -231,7 +230,7 @@ namespace jl
 			Node& currentNode = *searchPath.back().first;
 
 			// If root is a leaf, it is suitable for data insertion
-			if(currentNode.leafNode)
+			if(currentNode.isLeaf())
 				return searchPath;
 			else
 			{
@@ -484,7 +483,7 @@ namespace jl
 			Node *newNode = new Node();
 
 			// Make sure both halves of the split are at the same level
-			newNode->leafNode = nodeToSplit->leafNode; 
+			//newNode->isLeaf() = nodeToSplit->isLeaf(); 
 			newNode->level = nodeToSplit->level;
 
 			for(std::size_t i = optimalDistribution_K; i < maxNodes+1; i++)
@@ -538,7 +537,7 @@ namespace jl
 			// Reinsert the items, entries goes to the leaf level and children to their respective levels
 			for(std::size_t i = 0; i < toRemove.size(); i++)
 			{
-				if(node->leafNode)
+				if(node->isLeaf())
 					insert(toRemove.at(i).second, 0, overflowMap);
 				else
 					insert(toRemove.at(i).second, node->level, overflowMap);
@@ -602,12 +601,19 @@ namespace jl
 			Node *parent = searchPath.at(pathIndex).second;
 
 			if(underflowNode->level == m_rootNode->level)
+			{
+				// If the root node isn't leaf and has only 1 child, the child becomes the new root
+				if(!underflowNode->isLeaf() && underflowNode->children.size() == 1)
+				{
+					m_rootNode = underflowNode->child(0);
+					m_rootNode->level = underflowNode->level - 1;
+					delete underflowNode;
+				}
 				return;
+			}
 
 			if(underflowNode->children.size() < minNodes)
 			{
-
-
 				// Flags the children of the underflow node for reinsertion
 				for(std::size_t i = 0; i < underflowNode->children.size(); i++)
 					nodesToReinsert.push_back(std::make_pair(underflowNode->children.at(i), underflowNode->level));
@@ -617,7 +623,7 @@ namespace jl
 				// Find the underflowNode in its parent, and remove it from the parent
 				for(std::size_t i = 0; i < parent->children.size(); i++)
 				{
-					if(parent->child(i) == underflowNode)
+					if(parent->children.at(i) == underflowNode)
 					{
 						delete parent->children.at(i);
 						parent->children.erase(parent->children.begin() + i);
@@ -644,13 +650,6 @@ namespace jl
 				insert(nodesToReinsert.at(i).first, nodesToReinsert.at(i).second, overflowMap);
 			}
 
-			// If the root node has only 1 child, the child becomes the new root
-			if(m_rootNode->children.size() == 1)
-			{
-				Node *tmpNode = m_rootNode;
-				m_rootNode = tmpNode->child(0);
-				delete tmpNode;
-			}
 		}
 
 		void insert(RTreeChild *entry, int desiredLevel, OverflowMap &overflowMap)
@@ -658,8 +657,16 @@ namespace jl
 			NodeSearchPath searchPath = findSuitableNode(entry->bounds);
 
 			int pathIndex = searchPath.size() - 1;
-			while(searchPath.at(pathIndex).first->level != desiredLevel)
+			//if(pathIndex < 0)
+			//	pathIndex = 0;
+			JL_INFO_LOG("desiredLevel %i", desiredLevel);
+			JL_INFO_LOG("pathIndex pre loop %i", pathIndex);
+			while(searchPath.at(pathIndex).first->level < desiredLevel)
+			{
+				JL_INFO_LOG("pathIndex %i", pathIndex);
 				--pathIndex;
+				JL_INFO_LOG("pathIndex next %i", pathIndex);
+			}
 
 
 			Node *suitableNode = searchPath.at(pathIndex).first;
@@ -673,7 +680,7 @@ namespace jl
 			if(suitableNode->children.size() > maxNodes)
 				overflowTreatment(pathIndex, searchPath, overflowMap);
 
-			// Go through search path and update MBR's, start at the 'back' which is the leafNode
+			// Go through search path and update MBR's, start at the 'back' which is the isLeaf()
 			while(pathIndex >= 0)
 			{
 				Node *nodeInPath = searchPath.at(pathIndex).first;
@@ -683,17 +690,20 @@ namespace jl
 			}
 	
 		};
-		bool remove(Node* node, IdentifierType id, const BoundingBox &entryBounds, NodeSearchPath &searchPath)
+		bool remove(IdentifierType id, const BoundingBox &entryBounds, NodeSearchPath &searchPath)
 		{
+			Node *node = searchPath.back().first;
 			//TODO add underflow treatment, remove single matching entry or ALL matching entries?
+
 			for(std::size_t i = 0; i < node->children.size(); i++)
 			{
 				RTreeChild *child = node->children.at(i);
+
 				if(entryBounds.intersects(child->bounds))
 				{
 					// Check all the entries against the one we want to remove if we're at a
 					// leaf node.
-					if(node->leafNode)
+					if(node->isLeaf())
 					{
 						if(id == static_cast<Entry*>(child)->id)
 						{
@@ -711,7 +721,12 @@ namespace jl
 					else
 					{
 						searchPath.push_back(std::make_pair(static_cast<Node*>(child), node));
-						return remove(static_cast<Node*>(child), id, entryBounds, searchPath);
+						bool recurseReturn = remove(id, entryBounds, searchPath);
+
+						// If the entry was found and deleted, return true, otherwise keep
+						// checking the other children
+						if(recurseReturn)
+							return true;
 					}
 				}
 			}
@@ -728,7 +743,7 @@ namespace jl
 				{
 					// Check all the entries against the one we want to retrieve if we're at a
 					// leaf node.
-					if(node->leafNode)
+					if(node->isLeaf())
 					{
 						Entry *ent = static_cast<Entry*>(child);
 						if(id == ent->id)
@@ -754,7 +769,7 @@ namespace jl
 				if(child->bounds.intersects(queryBounds))
 				{
 					// Add intersecting entries from leaf node
-					if(nodeToQuery.leafNode)
+					if(nodeToQuery.isLeaf())
 						queryResult.push_back(nodeToQuery.entry(i));
 
 					// Recurse into non-leaf nodes
@@ -770,7 +785,7 @@ namespace jl
 			for(std::size_t i = 0; i < nodeToQuery.children.size(); i++)
 			{
 				// Recurse into children and get their bounds
-				if(!nodeToQuery.leafNode)
+				if(!nodeToQuery.isLeaf())
 				{
 					if(nodeToQuery.level == 1)
 						boundList.push_back(nodeToQuery.children.at(i)->bounds);
@@ -794,7 +809,7 @@ namespace jl
 			{
 
 				// Recurse into children and get their bounds
-				if(!node.leafNode)
+				if(!node.isLeaf())
 				{
 					JL_INFO_LOG("%sCHILD (Level %i)", indent.c_str(), node.child(i)->level);
 					printTree(*node.child(i), tabCount+1);
@@ -831,7 +846,7 @@ namespace jl
 		{
 			NodeSearchPath searchPath;
 			searchPath.push_back(std::make_pair(m_rootNode, nullptr));
-			return remove(m_rootNode, id, entryBounds, searchPath);
+			return remove(id, entryBounds, searchPath);
 		};
 
 		// Queries for an entry of id 'id' within the specified query bounds
@@ -875,9 +890,6 @@ namespace jl
 			m_idIndex(0)
 		{
 			m_rootNode = new Node();
-
-			// Root node will always be the leaf node at startup, as the tree is empty
-			m_rootNode->leafNode = true;
 
 			static_assert(minNodes >= 2, "R-trees cannot have a minimum node values less than 2");
 			static_assert(minNodes <= maxNodes/2, "R-trees cannot have a minimum node value above half the maximum value");

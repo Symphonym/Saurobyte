@@ -246,11 +246,13 @@ int main(int argc, const char* argv[]){
 					randFloat()*rtreeSpread,
 					randFloat()*rtreeSpread), 0.1f, 0.1f, 0.1f);
 
-		std::size_t id = leTree.insert(varu, box);	
+		std::size_t ide = leTree.insert(varu, box);	
 
-		if(leTree.remove(id, box))
+		if(leTree.remove(ide, box))
 			JL_INFO_LOG("REMOVAL");
 	}
+	//if(leTree.remove(id, box2))
+	//	JL_INFO_LOG("REMOVAL");
 	//leTree.insert(&varu, box1);
 	//leTree.insert(&varu, box2);
 
@@ -261,8 +263,7 @@ int main(int argc, const char* argv[]){
 	//JL_INFO_LOG("TOTAL AMOUNT OF BOUNDS: %i", leTree.getAllBounds().size());
 
 	auto queryTree = leTree.getAllBounds();
-	JL_INFO_LOG("QUERY COUNT %i", leTree.query(jl::BoundingBox(
-				jl::Vector3f(0, 0, 0), 20, 20, 20)).size());
+	JL_INFO_LOG("QUERY COUNT %i", leTree.query(err).size());
 	for(std::size_t i = 0; i < queryTree.size(); i++)
 	{
 		jl::Entity &treeCube = game.createEntity();
