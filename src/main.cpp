@@ -236,20 +236,20 @@ int main(int argc, const char* argv[]){
 
 	std::size_t id = leTree.insert(customDateru, box2);
 	JL_INFO_LOG("VALUE OF 999 %i", *leTree.get(id, box2));
-	//if(leTree.remove(999, box2))
-	//	JL_INFO_LOG("REMOVAL");
 	const float rtreeSpread = 20.f;
-	for(int i = 0; i < 100; i++)
+	jl::BoundingBox err(jl::Vector3f(0,0,0), rtreeSpread*4,rtreeSpread*4,rtreeSpread*4);
+	for(int i = 0; i < 10; i++)
 	{
 		//JL_INFO_LOG("VALUE %f", randFloat()*rtreeSpread);
+		jl::BoundingBox box(jl::Vector3f(
+					randFloat()*rtreeSpread,
+					randFloat()*rtreeSpread,
+					randFloat()*rtreeSpread), 0.1f, 0.1f, 0.1f);
 
-		leTree.insert(
-			varu,
-			jl::BoundingBox(
-				jl::Vector3f(
-					randFloat()*rtreeSpread,
-					randFloat()*rtreeSpread,
-					randFloat()*rtreeSpread), 0.1f, 0.1f, 0.1f));	
+		std::size_t id = leTree.insert(varu, box);	
+
+		if(leTree.remove(id, box))
+			JL_INFO_LOG("REMOVAL");
 	}
 	//leTree.insert(&varu, box1);
 	//leTree.insert(&varu, box2);

@@ -92,8 +92,8 @@ namespace jl
 			}
 			~Node()
 			{
-				for(std::size_t i = 0; i < children.size(); i++)
-					delete children.at(i);
+				//for(std::size_t i = 0; i < children.size(); i++)
+				//	delete children.at(i);
 			}
 
 
@@ -102,6 +102,10 @@ namespace jl
 		// Search path trace for the findSuitableNode algorithm
 		// Pairs of nodes and their parent nodes
 		typedef std::vector<std::pair<Node*, Node*> > NodeSearchPath;
+
+		// List of entries to reinsert when underflowTreatment deletes underflowed nodes
+		// Children together with the level of their parent
+		typedef std::vector<std::pair<RTreeChild*, int> > ChildReinsertQueue;
 
 		Node *m_rootNode;
 
@@ -437,11 +441,6 @@ namespace jl
 				}
 			}
 
-			//JL_INFO_LOG("SPLIT AXIS %i", split_axis);
-			//JL_INFO_LOG("SORT %i", split_sort);
-			//JL_INFO_LOG("K VALUE %i", split_k);
-			//JL_INFO_LOG("MARGIN %f", lowestMargin);
-			
 			optimalDistribution_K = split_k;
 			std::sort(sortedAxisList.begin(), sortedAxisList.end(), AxisComparator(split_axis, split_sort));
 			
@@ -458,58 +457,6 @@ namespace jl
 			std::vector<RTreeChild*> sortedY = nodeToSplit->children;
 			std::vector<RTreeChild*> sortedZ = nodeToSplit->children;
 
-			//for(std::size_t i = 0; i < nodeToSplit->children.size(); i++)
-			//{
-			//	sortedX.push_back(nodeToSplit->children.at(i));
-			//	sortedY.push_back(nodeToSplit->children.at(i));
-			//	sortedZ.push_back(nodeToSplit->children.at(i));
-			//}
-
-			// Sort the axis vectors
-			//std::sort(sortedX.begin(), sortedX.end(), AxisComparator<0>());
-			//std::sort(sortedY.begin(), sortedY.end(), AxisComparator<1>());
-			//std::sort(sortedZ.begin(), sortedZ.end(), AxisComparator<2>());
-
-			// Optimal distribution on each axis, 'k' value
-			/*unsigned int optimalDistribution_X = 0;
-			unsigned int optimalDistribution_Y = 0;
-			unsigned int optimalDistribution_Z = 0;
-
-			float marginValue_X = calculateOptimalSplit(sortedX, optimalDistribution_X);
-			float marginValue_Y = calculateOptimalSplit(sortedY, optimalDistribution_Y);
-			float marginValue_Z = calculateOptimalSplit(sortedZ, optimalDistribution_Z);
-
-			float smallestMargin = std::min({marginValue_X, marginValue_Y, marginValue_Z});
-
-			// Axis to split, and distribution to use
-			std::vector<RTreeChild*> *splitAxisVector = nullptr;
-			unsigned int optimalDistribution_K = 0;
-
-			// Determine split axis
-			if(smallestMargin == marginValue_X)
-			{
-				splitAxisVector = &sortedX;
-				optimalDistribution_K = optimalDistribution_X;
-			}
-			else if(smallestMargin == marginValue_Y)
-			{
-				splitAxisVector = &sortedY;
-				optimalDistribution_K = optimalDistribution_Y;
-			}
-			else if(smallestMargin == marginValue_Z)
-			{
-				splitAxisVector = &sortedZ;
-				optimalDistribution_Z = optimalDistribution_Z;
-			}
-
-			// Calculate number of entries in the first split with the value of 'k' we determined to be the best
-			optimalDistribution_K = (minNodes - 1) + optimalDistribution_K;
-
-			if(splitAxisVector == nullptr)
-			{
-				JL_ERROR_LOG("R* tree splitting error, no optimal split could be found!");
-				return nullptr;
-			}*/
 
 			// Make a reference from the pointer, for convenience
 			std::vector<RTreeChild*> sortedList = nodeToSplit->children;
@@ -649,7 +596,63 @@ namespace jl
 			}
 		}
 
-		// TODO add ID oarameter, makes for easier specific deletion and query
+		void underflowTreatment(int pathIndex, NodeSearchPath &searchPath, ChildReinsertQueue &nodesToReinsert)
+		{
+			Node *underflowNode = searchPath.at(pathIndex).first;
+			Node *parent = searchPath.at(pathIndex).second;
+
+			if(underflowNode->level == m_rootNode->level)
+				return;
+
+			if(underflowNode->children.size() < minNodes)
+			{
+
+
+				// Flags the children of the underflow node for reinsertion
+				for(std::size_t i = 0; i < underflowNode->children.size(); i++)
+					nodesToReinsert.push_back(std::make_pair(underflowNode->children.at(i), underflowNode->level));
+
+				underflowNode->children.clear();
+
+				// Find the underflowNode in its parent, and remove it from the parent
+				for(std::size_t i = 0; i < parent->children.size(); i++)
+				{
+					if(parent->child(i) == underflowNode)
+					{
+						delete parent->children.at(i);
+						parent->children.erase(parent->children.begin() + i);
+						break;
+					}
+				}
+
+			}
+			else
+				underflowNode->bounds = calculateMBR(underflowNode->children);
+
+			// Propagate underflowTreatment up
+			underflowTreatment(pathIndex-1, searchPath, nodesToReinsert);
+		}
+		void underflowTreatment(int pathIndex, NodeSearchPath &searchPath)
+		{
+			ChildReinsertQueue nodesToReinsert;
+			underflowTreatment(pathIndex, searchPath, nodesToReinsert);
+
+			// Reinsert all the children whose parent were deleted
+			for(std::size_t i = 0; i < nodesToReinsert.size(); i++)
+			{
+				OverflowMap overflowMap;
+				insert(nodesToReinsert.at(i).first, nodesToReinsert.at(i).second, overflowMap);
+			}
+
+			// If the root node has only 1 child, the child becomes the new root
+			if(m_rootNode->children.size() == 1)
+			{
+				Node *tmpNode = m_rootNode;
+				m_rootNode = tmpNode->child(0);
+				delete tmpNode;
+			}
+		}
+
 		void insert(RTreeChild *entry, int desiredLevel, OverflowMap &overflowMap)
 		{
 			NodeSearchPath searchPath = findSuitableNode(entry->bounds);
@@ -680,7 +683,7 @@ namespace jl
 			}
 	
 		};
-		bool remove(Node* node, IdentifierType id, const BoundingBox &entryBounds)
+		bool remove(Node* node, IdentifierType id, const BoundingBox &entryBounds, NodeSearchPath &searchPath)
 		{
 			//TODO add underflow treatment, remove single matching entry or ALL matching entries?
 			for(std::size_t i = 0; i < node->children.size(); i++)
@@ -697,13 +700,19 @@ namespace jl
 							node->children.erase(node->children.begin() + i);
 							m_spareIDs.push_back(id);
 							delete child;
+
+							underflowTreatment(searchPath.size()-1, searchPath);
+
 							return true;
 						}
 					}
 
 					// Recurse into other intersecting nodes
 					else
-						return remove(static_cast<Node*>(child), id, entryBounds);
+					{
+						searchPath.push_back(std::make_pair(static_cast<Node*>(child), node));
+						return remove(static_cast<Node*>(child), id, entryBounds, searchPath);
+					}
 				}
 			}
 
@@ -805,6 +814,7 @@ namespace jl
 			Entry *ent = new Entry(newEntry);
 			ent->bounds = entryBounds;
 
+			// Check for reuseable ID's
 			if(!m_spareIDs.empty())
 			{
 				ent->id = m_spareIDs.back();
@@ -819,7 +829,9 @@ namespace jl
 
 		bool remove(IdentifierType id, const BoundingBox &entryBounds)
 		{
-			return remove(m_rootNode, id, entryBounds);
+			NodeSearchPath searchPath;
+			searchPath.push_back(std::make_pair(m_rootNode, nullptr));
+			return remove(m_rootNode, id, entryBounds, searchPath);
 		};
 
 		// Queries for an entry of id 'id' within the specified query bounds
