@@ -25,6 +25,8 @@ namespace jl
 
 		explicit AudioChunk(AudioBufferHandle buffer, const std::string &fileName);
 
+		void setBuffer(AudioBufferHandle buffer, const std::string &filePath);
+
 		virtual void setLooping(bool looping);
 		virtual void setOffset(float secondOffset);
 

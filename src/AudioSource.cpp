@@ -25,6 +25,8 @@ namespace jl
 
 		if(alIsSource(m_source) && m_isValidSource)
 		{
+		JL_INFO_LOG("DELETERINO SOUNDERINO");
+
 			alDeleteSources(1, &m_source);
 			m_isValidSource = false; // Just because
 		}
@@ -143,6 +145,7 @@ namespace jl
 		// Generate a new audio source
 		if(!m_isValidSource)
 		{
+			alGetError(); // Clear errors
 			alGenSources(1, &m_source);
 			ALenum sourceError = alGetError();
 

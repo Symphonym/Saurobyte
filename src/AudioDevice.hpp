@@ -29,8 +29,13 @@ namespace jl
 		AudioDevice();
 		~AudioDevice();
 
-		// Performs complete audio cleanup, deleting unused buffers and audio sources
-		static void audioCleanup();
+		// Deleletes unused audio memory
+		static void bufferCleanup();
+
+		// Attempts to remove a cached stream/sound that's not unused in order
+		// to make room for a new sound/stream
+		static void freeForSound(AudioSource *source);
+		static void freeForStream(AudioSource *source);
 
 	public:
 

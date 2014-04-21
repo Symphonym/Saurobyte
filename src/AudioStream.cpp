@@ -18,17 +18,7 @@ namespace jl
 	{
 		alGenBuffers(m_buffers.size(), &m_buffers[0]);
 
-		// Open file and save initial data
-		m_file = sf_open(filePath.c_str(), SFM_READ, &m_fileInfo);
-
-		if(m_file == NULL)
-			JL_WARNING_LOG("Could not open audio file for streaming '%s'", filePath.c_str());
-
-		m_fileName = filePath;
-		m_duration = static_cast<float>(m_fileInfo.frames)/static_cast<float>(m_fileInfo.samplerate);
-
-		if(m_file != NULL)
-			fillBuffers();
+		setStreamingFile(filePath);
 	}
 	AudioStream::~AudioStream()
 	{
@@ -39,6 +29,32 @@ namespace jl
 			sf_close(m_file);
 			m_file = nullptr;
 		}
+	}
+
+	void AudioStream::setStreamingFile(const std::string &filePath)
+	{
+		stop();
+
+		// Remove any buffers queued onto the source
+		alSourcei(m_source, AL_BUFFER, 0);
+
+		if(m_file != nullptr)
+		{
+			sf_close(m_file);
+			m_file = nullptr;
+		}
+
+		// Open file and save initial data
+		m_file = sf_open(filePath.c_str(), SFM_READ, &m_fileInfo);
+
+		if(m_file == nullptr)
+			JL_WARNING_LOG("Could not open audio file for streaming '%s'", filePath.c_str());
+
+		m_fileName = filePath;
+		m_duration = static_cast<float>(m_fileInfo.frames)/static_cast<float>(m_fileInfo.samplerate);
+
+		if(m_file != nullptr)
+			fillBuffers();
 	}
 
 	void AudioStream::setLooping(bool looping)

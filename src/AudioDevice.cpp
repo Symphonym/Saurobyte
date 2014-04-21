@@ -140,16 +140,27 @@ namespace jl
 
 	StreamHandle AudioDevice::createStream(const std::string &name)
 	{
-		// Perform cleanup before creating new streams
-		audioCleanup();
-
 		auto itr = m_audioFiles.find(name);
 		if(itr != m_audioFiles.end())
 		{
+			// Try to find an unused stream
+			for(std::size_t i = 0; i < m_streams.size(); i++)
+			{
+				StreamHandle &handle = m_streams[i];
+				if(handle.use_count() == 1 && !handle->isPlaying())
+				{
+					handle->setStreamingFile(itr->second.fileName);
+					freeForStream(handle.get());
+					JL_INFO_LOG("REUSE STREAM");
+					return handle;
+				}
+			}
+
 			// Create new audio source
 			m_streams.push_back(
 				StreamHandle(new AudioStream(itr->second.fileName)));
 
+			freeForStream(m_streams.back().get());
 			return m_streams.back();
 		}
 		else
@@ -172,9 +183,6 @@ namespace jl
 
 	SoundHandle AudioDevice::createSound(const std::string &name)
 	{
-		// Perform cleanup before creating new sounds
-		audioCleanup();
-
 		auto itr = m_audioFiles.find(name);
 		if(itr != m_audioFiles.end())
 		{
@@ -208,10 +216,23 @@ namespace jl
 				sf_close(file);
 			}
 
+			// Try to find an unused sound
+			for(std::size_t i = 0; i < m_sounds.size(); i++)
+			{
+				SoundHandle &handle = m_sounds[i];
+				if(handle.use_count() == 1 && !handle->isPlaying())
+				{
+					handle->setBuffer(itr->second.buffer, itr->second.fileName);
+					freeForSound(handle.get());
+					return handle;
+				}
+			}
+
 			// Create new audio source
 			m_sounds.push_back(
 				SoundHandle(new AudioChunk(itr->second.buffer, itr->second.fileName)));
 
+			freeForSound(m_sounds.back().get());
 			return m_sounds.back();
 		}
 		else
@@ -232,27 +253,11 @@ namespace jl
 		return handle;
 	}
 
-	void AudioDevice::audioCleanup()
+	void AudioDevice::freeForSound(AudioSource *source)
 	{
-		// Perform cleanup if interval has passed
-		if(SDL_TICKS_PASSED(SDL_GetTicks(), m_lastCleanupTick))
+		if(!source->isValid())
 		{
-			// Set tick for next cleanup
-			m_lastCleanupTick = SDL_GetTicks() + CleanupMSInterval;
-
-			std::vector<std::size_t> soundIndicesToRemove, streamIndicesToRemove;
-			std::size_t soundsRemoved = 0;
-
-			// Clean sounds
-			for(std::size_t i = 0; i < m_sounds.size(); i++)
-			{
-				SoundHandle &handle = m_sounds[i];
-				if(handle.use_count() == 1 && !handle->isPlaying())
-				{
-					soundIndicesToRemove.push_back(i);
-					++soundsRemoved;
-				}
-			}
+			std::size_t indiceToRemove = 0;
 
 			// Clean streams
 			for(std::size_t i = 0; i < m_streams.size(); i++)
@@ -260,34 +265,61 @@ namespace jl
 				StreamHandle &handle = m_streams[i];
 				if(handle.use_count() == 1 && !handle->isPlaying())
 				{
-					streamIndicesToRemove.push_back(i);
-					++soundsRemoved;
+					indiceToRemove = i;
+					m_streams.erase(m_streams.begin() + indiceToRemove);
+					JL_DEBUG_LOG("A stream was deleted to make room for a sound");
+					break;
 				}
 			}
-			for(auto& index : soundIndicesToRemove)
-				m_sounds.erase(m_sounds.begin() + index);
-			for(auto& index : streamIndicesToRemove)
-				m_streams.erase(m_streams.begin() + index);
-
-
-			std::size_t buffersRemoved = 0;
-
-			// Clean buffers
-			for(auto itr = m_audioFiles.begin(); itr != m_audioFiles.end(); itr++)
-			{
-				if(itr->second.buffer.use_count() == 1)
-				{
-					if(alIsBuffer(*itr->second.buffer))
-						alDeleteBuffers(1, itr->second.buffer.get());
-
-					*itr->second.buffer = 0;
-					++buffersRemoved;
-				}
-			}
-
-			JL_DEBUG_LOG("Removed %i audio sources", soundsRemoved);
-			JL_DEBUG_LOG("Removed %i audio buffers", buffersRemoved);
+			if(!source->revalidateSource())
+				JL_WARNING_LOG("Source revalidation failed after forced audio cleanup.");
 		}
+
+		bufferCleanup();
+	}
+	void AudioDevice::freeForStream(AudioSource *source)
+	{
+		if(!source->isValid())
+		{
+			std::size_t indiceToRemove = 0;
+
+			// Clean sounds
+			for(std::size_t i = 0; i < m_sounds.size(); i++)
+			{
+				SoundHandle &handle = m_sounds[i];
+				if(handle.use_count() == 1 && !handle->isPlaying())
+				{
+					indiceToRemove = i;
+					m_sounds.erase(m_sounds.begin() + indiceToRemove);
+					JL_DEBUG_LOG("A sound was deleted to make room for a stream");
+					break;
+				}
+			}
+			if(!source->revalidateSource())
+				JL_WARNING_LOG("Source revalidation failed after forced audio cleanup.");
+		}
+
+		bufferCleanup();
+	}
+	void AudioDevice::bufferCleanup()
+	{
+		std::size_t buffersRemoved = 0;
+
+		// Clean buffers
+		for(auto itr = m_audioFiles.begin(); itr != m_audioFiles.end(); itr++)
+		{
+			if(itr->second.buffer.use_count() == 1)
+			{
+				if(alIsBuffer(*itr->second.buffer))
+					alDeleteBuffers(1, itr->second.buffer.get());
+
+				*itr->second.buffer = 0;
+				++buffersRemoved;
+			}
+		}
+
+		if(buffersRemoved > 0)
+			JL_DEBUG_LOG("Removed %i audio buffers", buffersRemoved);
 	}
 
 	void AudioDevice::stopAllAudio()
@@ -295,8 +327,6 @@ namespace jl
 		stopStreams();
 		stopSounds();
 		JL_DEBUG_LOG("Stopped all audio playback");
-
-		audioCleanup();
 	}
 	void AudioDevice::stopStreams()
 	{

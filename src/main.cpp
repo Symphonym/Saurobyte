@@ -327,8 +327,7 @@ int main(int argc, const char* argv[]){
 	}
 
 
-	/*JL_INFO_LOG("OPENAL VENDOR: %s", alGetString(AL_VERSION));
-
+	JL_INFO_LOG("OPENAL VENDOR: %s", alGetString(AL_VERSION));
 	jl::AudioListener::setVolume(0.1f);
 
 	//jl::AudioDevice::registerAudio("Ove Melaa - ItaloLoopDikkoDikko_1.ogg", "Swag");
@@ -338,9 +337,11 @@ int main(int argc, const char* argv[]){
 	{
 		//jl::StreamHandle aaa = jl::AudioDevice::playStream("dadad");
 		//aaa->setPitch(2);
+
+
 		jl::SoundHandle sounderu = jl::AudioDevice::playSound("Swag");
 				sounderu->setOffset(5);
-				sounderu->setLooping(true);
+				//sounderu->setLooping(true);
 				sounderu->setRelativeToListener(true);
 				float x = 0;
 		while(true)
@@ -354,15 +355,15 @@ int main(int argc, const char* argv[]){
 			}
 			else if(SDL_GetMouseState(NULL,NULL) & SDL_BUTTON(2))
 			{
-				jl::SoundHandle source = jl::AudioDevice::playSound("Swag");
-				source->setOffset(5);
-				source->setLooping(true);
+				jl::AudioDevice::playStream("Swag");
+				//source->setOffset(5);
+				//source->setLooping(true);
 			}
 			if(SDL_GetKeyboardState(NULL)[SDL_SCANCODE_A])
 				break;
 			SDL_Delay(100);
 		}
-	}*/
+	}
 	game.gameLoop();
 
 

@@ -609,6 +609,10 @@ namespace jl
 					m_rootNode->level = underflowNode->level - 1;
 					delete underflowNode;
 				}
+
+				// Update root MBR just so invariant calls won't trigger an error
+				m_rootNode->bounds = calculateMBR(m_rootNode->children);
+
 				return;
 			}
 
@@ -635,6 +639,8 @@ namespace jl
 				}
 
 			}
+			//else TODO this needed?
+				//underflowNode->bounds = calculateMBR(underflowNode->children);
 
 			// Propagate underflowTreatment up
 			underflowTreatment(pathIndex-1, searchPath, nodesToReinsert);
@@ -703,6 +709,7 @@ namespace jl
 							m_spareIDs.push_back(id);
 							delete child;
 
+							// Update MBR of parent
 							node->bounds = calculateMBR(node->children);
 
 							underflowTreatment(searchPath.size()-1, searchPath);

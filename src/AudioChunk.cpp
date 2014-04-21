@@ -15,6 +15,18 @@ namespace jl
 
 	}
 
+	void AudioChunk::setBuffer(AudioBufferHandle buffer, const std::string &filePath)
+	{
+		stop();
+		alSourcei(m_source, AL_BUFFER, 0);
+
+		m_buffer = buffer;
+		m_fileName = filePath;
+
+		// Queue our buffer
+		alSourceQueueBuffers(m_source, 1, buffer.get());
+	}
+
 	void AudioChunk::setLooping(bool looping)
 	{
 		alSourcei(m_source, AL_LOOPING, looping ? AL_TRUE : AL_FALSE);
