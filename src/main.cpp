@@ -248,11 +248,12 @@ int main(int argc, const char* argv[]){
 
 		std::size_t ide = leTree.insert(varu, box);	
 
-		if(leTree.remove(ide, box))
-			JL_INFO_LOG("REMOVAL");
+		//if(leTree.remove(ide, box))
+		//	JL_INFO_LOG("REMOVAL");
 	}
-	//if(leTree.remove(id, box2))
-	//	JL_INFO_LOG("REMOVAL");
+	for(int i = 0; i < 5; i++)
+		if(leTree.remove(i, err))
+			JL_INFO_LOG("REMOVAL");
 	//leTree.insert(&varu, box1);
 	//leTree.insert(&varu, box2);
 

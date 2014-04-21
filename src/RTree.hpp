@@ -627,13 +627,14 @@ namespace jl
 					{
 						delete parent->children.at(i);
 						parent->children.erase(parent->children.begin() + i);
+
+						// Update MBR of parent
+						parent->bounds = calculateMBR(parent->children);
 						break;
 					}
 				}
 
 			}
-			else
-				underflowNode->bounds = calculateMBR(underflowNode->children);
 
 			// Propagate underflowTreatment up
 			underflowTreatment(pathIndex-1, searchPath, nodesToReinsert);
@@ -657,16 +658,8 @@ namespace jl
 			NodeSearchPath searchPath = findSuitableNode(entry->bounds);
 
 			int pathIndex = searchPath.size() - 1;
-			//if(pathIndex < 0)
-			//	pathIndex = 0;
-			JL_INFO_LOG("desiredLevel %i", desiredLevel);
-			JL_INFO_LOG("pathIndex pre loop %i", pathIndex);
 			while(searchPath.at(pathIndex).first->level < desiredLevel)
-			{
-				JL_INFO_LOG("pathIndex %i", pathIndex);
 				--pathIndex;
-				JL_INFO_LOG("pathIndex next %i", pathIndex);
-			}
 
 
 			Node *suitableNode = searchPath.at(pathIndex).first;
@@ -693,7 +686,6 @@ namespace jl
 		bool remove(IdentifierType id, const BoundingBox &entryBounds, NodeSearchPath &searchPath)
 		{
 			Node *node = searchPath.back().first;
-			//TODO add underflow treatment, remove single matching entry or ALL matching entries?
 
 			for(std::size_t i = 0; i < node->children.size(); i++)
 			{
@@ -710,6 +702,8 @@ namespace jl
 							node->children.erase(node->children.begin() + i);
 							m_spareIDs.push_back(id);
 							delete child;
+
+							node->bounds = calculateMBR(node->children);
 
 							underflowTreatment(searchPath.size()-1, searchPath);
 
@@ -846,7 +840,9 @@ namespace jl
 		{
 			NodeSearchPath searchPath;
 			searchPath.push_back(std::make_pair(m_rootNode, nullptr));
-			return remove(id, entryBounds, searchPath);
+			bool re = remove(id, entryBounds, searchPath);
+			invariant("POST REMOVE");
+			return re;
 		};
 
 		// Queries for an entry of id 'id' within the specified query bounds
@@ -871,6 +867,8 @@ namespace jl
 		std::vector<BoundingBox> getAllBounds() const
 		{
 			std::vector<BoundingBox> result;
+			if(m_rootNode->isLeaf())
+				result.push_back(m_rootNode->bounds);
 			getAllBounds(*m_rootNode, result);
 			return result;
 		};
