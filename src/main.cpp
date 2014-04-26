@@ -360,6 +360,7 @@ int main(int argc, const char* argv[]){
 							jl::AudioHandle sounderu = jl::AudioDevice::playSound("Swag");
 			sounderu->setPosition(jl::Vector3f(0, 100, 0));
 			sounderu->setVolume(0.5f);
+			sounderu->setLooping(true);
 				//source->setOffset(5);
 				//source->setLooping(true);
 			}

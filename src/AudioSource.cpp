@@ -157,7 +157,6 @@ namespace jl
 		{
 			ALfloat volume = 0;
 			alGetSourcef(m_source, AL_GAIN, &volume);
-
 			return volume;
 		}
 		else

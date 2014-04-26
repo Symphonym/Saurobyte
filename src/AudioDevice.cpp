@@ -108,27 +108,6 @@ namespace jl
 			default : return 0;
 		}
 	}
-	std::string AudioDevice::getOpenALError(ALenum errorCode)
-	{
-		switch(errorCode)
-		{
-			case AL_INVALID_NAME:
-				return "AL_INVALID_NAME";
-			case AL_INVALID_ENUM:
-				return "AL_INVALID_ENUM";
-			case AL_INVALID_VALUE:
-				return "AL_INVALID_VALUE";
-			case AL_INVALID_OPERATION:
-				return "AL_INVALID_OPERATION";
-			case AL_OUT_OF_MEMORY:
-				return "AL_OUT_OF_MEMORY";
-			case AL_NO_ERROR:
-				return "AL_NO_ERROR";
-
-			default:
-				return "Unknown error code: " + std::to_string(errorCode);
-		}
-	}
 
 	void AudioDevice::registerAudio(const std::string &fileName, const std::string &name)
 	{
@@ -233,51 +212,7 @@ namespace jl
 		return handle;
 	}
 
-	void AudioDevice::freeForSound(AudioSource *source)
-	{
-		if(!source->isValid())
-		{
-			std::size_t indiceToRemove = 0;
 
-			// Clean streams
-			for(std::size_t i = 0; i < m_streams.size(); i++)
-			{
-				StreamHandle &handle = m_streams[i];
-				if(handle.use_count() == 1 && !handle->isPlaying())
-				{
-					indiceToRemove = i;
-					m_streams.erase(m_streams.begin() + indiceToRemove);
-					JL_DEBUG_LOG("A stream was deleted to make room for a sound");
-					break;
-				}
-			}
-		}
-
-		bufferCleanup();
-	}
-	void AudioDevice::freeForStream(AudioSource *source)
-	{
-		/*if(!source->isValid())
-		{
-			std::size_t indiceToRemove = 0;
-
-			// Clean sounds
-			for(std::size_t i = 0; i < m_sounds.size(); i++)
-			{
-				SoundHandle &handle = m_sounds[i];
-				if(handle.use_count() == 1 && !handle->isPlaying())
-				{
-					indiceToRemove = i;
-					m_sounds.erase(m_sounds.begin() + indiceToRemove);
-					JL_DEBUG_LOG("A sound was deleted to make room for a stream");
-					break;
-				}
-			}
-			source->revalidateSource();
-		}*/
-
-		bufferCleanup();
-	}
 	void AudioDevice::bufferCleanup()
 	{
 		std::size_t buffersRemoved = 0;
@@ -389,7 +324,6 @@ namespace jl
 			else
 				lowestPriorityCount += 1;
 		}
-		JL_INFO_LOG("SAME PRIO %i", lowestPriorityCount);
 
 		// Only one sound of the lowest available priority was found, return it
 		if(lowestPriorityCount == 0)
@@ -403,9 +337,8 @@ namespace jl
 			});
 
 		// Check how many elements are tied on the same volume level
-		unsigned int lowestVolume = m_sounds[0].second->getVolume();
+		float lowestVolume = m_sounds[0].second->getVolume();
 		unsigned int lowestVolumeCount = 0;
-		JL_INFO_LOG("LOWEST VOLME %i", lowestVolume);
 		for(std::size_t i = 0; i < m_sounds.size(); i++)
 		{
 			if(m_sounds[i].second->getVolume() != lowestVolume)
@@ -413,8 +346,6 @@ namespace jl
 			else
 				lowestVolumeCount += 1;
 		}
-
-		JL_INFO_LOG("SAME VOL %i", lowestVolumeCount);
 
 		// Only one sound of the lowest volume was found, return it
 		if(lowestVolumeCount == 0)
@@ -429,9 +360,8 @@ namespace jl
 			});
 
 		// Check how many elements are tied on the same playback left
-		unsigned int furthestDistance = glm::distance(m_sounds[0].second->getPosition(), AudioListener::getPosition());
+		float furthestDistance = glm::distance(m_sounds[0].second->getPosition(), AudioListener::getPosition());
 		unsigned int furthestDistanceCount = 0;
-		JL_INFO_LOG("FURTHEST DISTACE %f", furthestDistance);
 		for(std::size_t i = 0; i < m_sounds.size(); i++)
 		{
 			float curDistance = glm::distance(m_sounds[i].second->getPosition(), AudioListener::getPosition());
@@ -445,7 +375,6 @@ namespace jl
 		if(furthestDistanceCount == 0)
 			return eraseAndReturn();
 
-		JL_INFO_LOG("USING PALYBACK");
 		// Sort tied distances by their playback time left
 		std::sort(m_sounds.begin(), m_sounds.begin() + furthestDistanceCount,
 			[](const SoundData &lhs, const SoundData &rhs) -> bool
@@ -462,31 +391,15 @@ namespace jl
 
 	void AudioDevice::stopAllAudio()
 	{
-		stopStreams();
-		stopSounds();
-		JL_DEBUG_LOG("Stopped all audio playback");
-	}
-	void AudioDevice::stopStreams()
-	{
-		for(auto& value : m_streams)
-			value->stop();
-	}
-	void AudioDevice::stopSounds()
-	{
 		for(auto& value : m_sounds)
 			value.second->stop();
+		JL_DEBUG_LOG("Stopped all audio playback");
 	}
 
-	std::size_t AudioDevice::getSoundCount()
-	{
-		return m_sounds.size();
-	}
-	std::size_t AudioDevice::getStreamCount()
-	{
-		return m_streams.size();
-	}
+
+
 	std::size_t AudioDevice::getTotalSoundCount()
 	{
-		return m_sounds.size() + m_streams.size();
+		return m_sounds.size();
 	}
 };

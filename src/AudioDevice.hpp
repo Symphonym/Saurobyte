@@ -30,13 +30,8 @@ namespace jl
 		AudioDevice();
 		~AudioDevice();
 
-		// Deleletes unused audio memory
+		// Deleletes unused audio memory, TODO
 		static void bufferCleanup();
-
-		// Attempts to remove a cached stream/sound that's not unused in order
-		// to make room for a new sound/stream
-		static void freeForSound(AudioSource *source);
-		static void freeForStream(AudioSource *source);
 
 		// Grabs an OpenAL source handle to use
 		static unsigned int grabAudioSource();
@@ -54,7 +49,6 @@ namespace jl
 		// set these values to audios put in that channel TODO
 
 		static int getFormatFromChannels(unsigned int channelCount);
-		static std::string getOpenALError(ALenum error);
 
 		static void registerAudio(const std::string &fileName, const std::string &name);
 
@@ -68,13 +62,7 @@ namespace jl
 		// Stops all running sounds
 		static void stopAllAudio();
 
-		// Stops only streams/sounds respectively
-		static void stopStreams();
-		static void stopSounds();
-
 		// Get size of sound pools
-		static std::size_t getSoundCount();
-		static std::size_t getStreamCount();
 		static std::size_t getTotalSoundCount();
 	};
 };
