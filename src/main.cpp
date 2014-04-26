@@ -326,33 +326,40 @@ int main(int argc, const char* argv[]){
 		sc2.attach(treeCube);
 	}
 
-
 	JL_INFO_LOG("OPENAL VENDOR: %s", alGetString(AL_VERSION));
-	jl::AudioListener::setVolume(0.1f);
+	jl::AudioListener::setVolume(0.001f);
 
 	//jl::AudioDevice::registerAudio("Ove Melaa - ItaloLoopDikkoDikko_1.ogg", "Swag");
 	jl::AudioDevice::registerAudio("Ove Melaa - ItaloLoopDikkoDikko_1.ogg", "Swag");
 	JL_INFO_LOG("SSSSSSSSSSSSSSSSSSS jl AudioFile %i", sizeof(jl::AudioChunk));
-
 	{
+		for(int i = 0; i < 300; i++)
+		{
+			jl::AudioHandle sounderu = jl::AudioDevice::playSound("Swag");
+			sounderu->setVolume(0.5f);
+		}
 
-		jl::AudioHandle sounderu = jl::AudioDevice::playSound("Swag");
-				sounderu->setOffset(5);
+		// TODO fix leastImportantSource algorithm of AudioDevice
+
+		//jl::AudioHandle sounderu = jl::AudioDevice::playSound("Swag");
+				//sounderu->setOffset(5);
 				//sounderu->setLooping(true);
-				sounderu->setRelativeToListener(true);
-				float x = 0;
+				//sounderu->setRelativeToListener(true);
+				//float x = 0;
 		while(true)
 		{
 			SDL_PumpEvents();
 			if(SDL_GetMouseState(NULL,NULL) & SDL_BUTTON(1))
 			{
 				//jl::AudioDevice::stopAllAudio();
-				x+= 0.1f;
-				sounderu->setPosition(jl::Vector3f(x,0,0));
+				//x+= 0.1f;
+				//sounderu->setPosition(jl::Vector3f(x,0,0));
 			}
 			else if(SDL_GetMouseState(NULL,NULL) & SDL_BUTTON(2))
 			{
-				jl::AudioDevice::playSound("Swag");
+							jl::AudioHandle sounderu = jl::AudioDevice::playSound("Swag");
+			sounderu->setPosition(jl::Vector3f(0, 100, 0));
+			sounderu->setVolume(0.5f);
 				//source->setOffset(5);
 				//source->setLooping(true);
 			}

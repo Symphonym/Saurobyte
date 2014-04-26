@@ -50,5 +50,9 @@ namespace jl
 		{
 			return listenerVolume;
 		}
+		const Vector3f& getPosition()
+		{
+			return listenerPosition;
+		}
 	};
 };

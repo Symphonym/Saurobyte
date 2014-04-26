@@ -251,7 +251,6 @@ namespace jl
 					break;
 				}
 			}
-			source->revalidateSource();
 		}
 
 		bufferCleanup();
@@ -382,7 +381,7 @@ namespace jl
 
 		// Check how many elements are tied at the same lowest priority
 		PriorityType lowestPriority = m_sounds[0].first;
-		unsigned int lowestPriorityCount = 1;
+		unsigned int lowestPriorityCount = 0;
 		for(std::size_t i = 0; i < m_sounds.size(); i++)
 		{
 			if(m_sounds[i].first != lowestPriority)
@@ -390,9 +389,10 @@ namespace jl
 			else
 				lowestPriorityCount += 1;
 		}
+		JL_INFO_LOG("SAME PRIO %i", lowestPriorityCount);
 
 		// Only one sound of the lowest available priority was found, return it
-		if(lowestPriorityCount == 1)
+		if(lowestPriorityCount == 0)
 			return eraseAndReturn();
 
 		// Sort tied priorities by volume
@@ -404,7 +404,8 @@ namespace jl
 
 		// Check how many elements are tied on the same volume level
 		unsigned int lowestVolume = m_sounds[0].second->getVolume();
-		unsigned int lowestVolumeCount = 1;
+		unsigned int lowestVolumeCount = 0;
+		JL_INFO_LOG("LOWEST VOLME %i", lowestVolume);
 		for(std::size_t i = 0; i < m_sounds.size(); i++)
 		{
 			if(m_sounds[i].second->getVolume() != lowestVolume)
@@ -413,30 +414,45 @@ namespace jl
 				lowestVolumeCount += 1;
 		}
 
+		JL_INFO_LOG("SAME VOL %i", lowestVolumeCount);
+
 		// Only one sound of the lowest volume was found, return it
-		if(lowestVolumeCount == 1)
+		if(lowestVolumeCount == 0)
 			return eraseAndReturn();
 
-
-		// Sort tied volumes by time left on playback
+		// Sort tied volumes by their distance to the listener
 		std::sort(m_sounds.begin(), m_sounds.begin() + lowestVolumeCount,
+			[](const SoundData &lhs, const SoundData &rhs) -> bool
+			{
+				return glm::distance(lhs.second->getPosition(), AudioListener::getPosition()) >
+					 glm::distance(rhs.second->getPosition(), AudioListener::getPosition());
+			});
+
+		// Check how many elements are tied on the same playback left
+		unsigned int furthestDistance = glm::distance(m_sounds[0].second->getPosition(), AudioListener::getPosition());
+		unsigned int furthestDistanceCount = 0;
+		JL_INFO_LOG("FURTHEST DISTACE %f", furthestDistance);
+		for(std::size_t i = 0; i < m_sounds.size(); i++)
+		{
+			float curDistance = glm::distance(m_sounds[i].second->getPosition(), AudioListener::getPosition());
+			if(curDistance != furthestDistance)
+				break;
+			else
+				furthestDistanceCount += 1;
+		}
+
+		// Only one sound had furthest distance away, return it
+		if(furthestDistanceCount == 0)
+			return eraseAndReturn();
+
+		JL_INFO_LOG("USING PALYBACK");
+		// Sort tied distances by their playback time left
+		std::sort(m_sounds.begin(), m_sounds.begin() + furthestDistanceCount,
 			[](const SoundData &lhs, const SoundData &rhs) -> bool
 			{
 				return (lhs.second->getDuration()-lhs.second->getOffset()) <
 					(rhs.second->getDuration()-rhs.second->getOffset());
 			});
-
-		// Check how many elements are tied on the same volume level
-		unsigned int lowestPlayback = m_sounds[0].second->getDuration()-m_sounds[0].second->getOffset();
-		unsigned int lowestPlaybackCount = 1;
-		for(std::size_t i = 0; i < m_sounds.size(); i++)
-		{
-			float curPlaybackLeft = m_sounds[i].second->getDuration()-m_sounds[i].second->getOffset();
-			if(curPlaybackLeft != lowestPlayback)
-				break;
-			else
-				lowestPlaybackCount += 1;
-		}
 
 		// The sound at the bottom of the sorted list will be used no matter what,
 		// enough effort has been given to make sure it's fitting for overwriting

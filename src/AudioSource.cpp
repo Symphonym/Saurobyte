@@ -11,6 +11,7 @@ namespace jl
 		:
 		m_isValidSource(false),
 		m_thread(nullptr),
+		m_position(0,0,0),
 		m_source(0),
 		m_audioStatus(AudioStatus::Stopped)
 	{
@@ -20,6 +21,7 @@ namespace jl
 		:
 		m_isValidSource(true),
 		m_thread(nullptr),
+		m_position(0,0,0),
 		m_source(source),
 		m_audioStatus(AudioStatus::Stopped)
 	{
@@ -112,71 +114,59 @@ namespace jl
 
 	void AudioSource::setPitch(float pitch)
 	{
-		alSourcef(m_source, AL_PITCH, pitch);
+		if(m_isValidSource)
+			alSourcef(m_source, AL_PITCH, pitch);
 	}
 	void AudioSource::setPosition(Vector3f position)
 	{
-		alSource3f(m_source, AL_POSITION, position.x, position.y, position.z);
+		if(m_isValidSource)
+		{
+			m_position = position;
+			alSource3f(m_source, AL_POSITION, position.x, position.y, position.z);
+		}
 	}
 	void AudioSource::setVelocity(Vector3f velocity)
 	{
-		alSource3f(m_source, AL_VELOCITY, velocity.x, velocity.y, velocity.z);
+		if(m_isValidSource)
+			alSource3f(m_source, AL_VELOCITY, velocity.x, velocity.y, velocity.z);
 	}
 	void AudioSource::setDirection(Vector3f direction)
 	{
-		alSource3f(m_source, AL_DIRECTION, direction.x, direction.y, direction.z);
+		if(m_isValidSource)
+			alSource3f(m_source, AL_DIRECTION, direction.x, direction.y, direction.z);
 	}
 	void AudioSource::setRelativeToListener(bool relative)
 	{
-		alSourcei(m_source, AL_SOURCE_RELATIVE, relative ? AL_TRUE : AL_FALSE);
+		if(m_isValidSource)
+			alSourcei(m_source, AL_SOURCE_RELATIVE, relative ? AL_TRUE : AL_FALSE);
 	}
 	void AudioSource::setLooping(bool looping)
 	{
-		alSourcei(m_source, AL_LOOPING, looping ? AL_TRUE : AL_FALSE);
+		if(m_isValidSource)
+			alSourcei(m_source, AL_LOOPING, looping ? AL_TRUE : AL_FALSE);
 	}
 	void AudioSource::setVolume(float volume)
 	{
-		alSourcef(m_source, AL_GAIN, volume);
-	}
-
-	bool AudioSource::revalidateSource()
-	{
-		// Generate a new audio source
-		if(!m_isValidSource)
-		{
-			alGetError(); // Clear errors
-			alGenSources(1, &m_source);
-			ALenum sourceError = alGetError();
-
-			if (sourceError != AL_NO_ERROR)
-			{
-				//JL_WARNING_LOG(
-				//	"OpenAL failed to generate a new source. This audio is very unlikely to play. (%s)",
-				//	AudioDevice::getOpenALError(sourceError).c_str());
-
-				return false;
-			}
-			else if(sourceError == AL_NO_ERROR)
-			{
-				m_isValidSource = true;
-
-				// Rewind the active buffer
-				alSourceRewind(m_source);
-				alSourcei(m_source, AL_BUFFER, 0); // Clear buffers
-
-				return true;
-			}
-		}
-
-		return false;
+		if(m_isValidSource)
+			alSourcef(m_source, AL_GAIN, volume);
 	}
 
 	float AudioSource::getVolume() const
 	{
-		ALfloat volume = 0;
-		alGetSourcef(m_source, AL_GAIN, &volume);
+		if(m_isValidSource)
+		{
+			ALfloat volume = 0;
+			alGetSourcef(m_source, AL_GAIN, &volume);
 
-		return volume;
+			return volume;
+		}
+		else
+			return 0;
+
+	}
+	const Vector3f& AudioSource::getPosition() const
+	{
+		return m_position;
 	}
 
 	bool AudioSource::isPlaying() const

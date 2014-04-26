@@ -35,6 +35,8 @@ namespace jl
 
 		SDL_Thread *m_thread;
 
+		Vector3f m_position;
+
 	protected:
 
 		// OpenAL source handle
@@ -59,10 +61,6 @@ namespace jl
 		void setRelativeToListener(bool relative);
 		void setVolume(float volume);
 
-		// If the internal is invalid, this function may be called in an attempt to
-		// recreate it. It returns true if the source could be recreated, false otherwise.
-		bool revalidateSource();
-
 		// AudioSources must implement their own functionality in the following
 		virtual void setLooping(bool looping) = 0;
 		virtual void setOffset(float secondOffset) = 0;
@@ -72,6 +70,7 @@ namespace jl
 		virtual bool isLooping() const = 0;
 
 		float getVolume() const;
+		const Vector3f& getPosition() const;
 
 		bool isPlaying() const;
 

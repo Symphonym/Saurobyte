@@ -14,6 +14,7 @@ namespace jl
 
 
 		float getVolume();
+		const Vector3f& getPosition();
 	};
 };
 
