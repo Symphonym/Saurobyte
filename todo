@@ -2,7 +2,7 @@
 -- Todo list
 
 		* Networking (Some kind of component maybe)
-		* Octree, or similar
+CHECK	* Octree, or similar
 		* Template function to send messages
 CHECK	* Use smart ptrs
 		* Sound class in Lua
@@ -10,7 +10,8 @@ CHECK	* Use smart ptrs
 CHECK	* Looping with streams
 		* Offset with streams
 CHECK	* Lua acessing components, transform specifically
-		* Re-use sounds be swapping buffers and files intead of sources, use spare pool and delete if bigger than real pool
+CHECK	* Re-use sounds be swapping buffers and files intead of sources, use spare pool and delete if bigger than real pool
 		* Global script running constantly, maybe
 		* Lua play streams
 		* Sound component
+		* Optimize sound/stream reusage

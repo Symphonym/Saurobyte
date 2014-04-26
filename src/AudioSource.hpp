@@ -33,9 +33,6 @@ namespace jl
 		// Whether or not the source was generated successfully
 		bool m_isValidSource;
 
-		// Ticks after which the next cleanup is supposd to happen
-		unsigned int m_audioCleanupTick;
-
 		SDL_Thread *m_thread;
 
 	protected:
@@ -47,7 +44,8 @@ namespace jl
 
 	public:
 
-		explicit AudioSource();
+		AudioSource();
+		explicit AudioSource(unsigned int source);
 		virtual ~AudioSource();
 
 		void play();
@@ -68,6 +66,12 @@ namespace jl
 		// AudioSources must implement their own functionality in the following
 		virtual void setLooping(bool looping) = 0;
 		virtual void setOffset(float secondOffset) = 0;
+
+		virtual float getOffset() const = 0;
+		virtual float getDuration() const = 0;
+		virtual bool isLooping() const = 0;
+
+		float getVolume() const;
 
 		bool isPlaying() const;
 

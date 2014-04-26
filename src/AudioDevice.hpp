@@ -7,6 +7,7 @@
 #include <memory>
 #include "AudioChunk.hpp"
 #include "AudioStream.hpp"
+#include "Priority.hpp"
 
 namespace jl
 {
@@ -37,6 +38,15 @@ namespace jl
 		static void freeForSound(AudioSource *source);
 		static void freeForStream(AudioSource *source);
 
+		// Grabs an OpenAL source handle to use
+		static unsigned int grabAudioSource();
+
+		// Fins the least important source that is currently active
+		static unsigned int leastImportantSource();
+
+		// Wipe the specified source's data to default
+		static void wipeSource(unsigned int source);
+
 	public:
 
 		// Add channel support
@@ -48,11 +58,11 @@ namespace jl
 
 		static void registerAudio(const std::string &fileName, const std::string &name);
 
-		static StreamHandle createStream(const std::string &name);
-		static StreamHandle playStream(const std::string &name);
+		static AudioHandle createStream(const std::string &name, PriorityType priority = Priority::Medium);
+		static AudioHandle playStream(const std::string &name, PriorityType priority = Priority::Medium);
 
-		static SoundHandle createSound(const std::string &name);
-		static SoundHandle playSound(const std::string &name);
+		static AudioHandle createSound(const std::string &name, PriorityType priority = Priority::Medium);
+		static AudioHandle playSound(const std::string &name, PriorityType priority = Priority::Medium);
 
 
 		// Stops all running sounds

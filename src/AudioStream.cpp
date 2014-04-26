@@ -7,9 +7,18 @@
 namespace jl
 {
 
-
-	AudioStream::AudioStream(const std::string &filePath)
+	AudioStream::AudioStream()
 		:
+		m_file(nullptr),
+		m_fileInfo(),
+		m_fileName(""),
+		m_loop(false),
+		m_duration(0)
+	{
+	}
+	AudioStream::AudioStream(unsigned int source, const std::string &filePath)
+		:
+		AudioSource(source),
 		m_file(nullptr),
 		m_fileInfo(),
 		m_fileName(filePath),
@@ -66,6 +75,20 @@ namespace jl
 		//TODO alSourcef(m_source, AL_SEC_OFFSET, secondOffset);
 	}
 
+	float AudioStream::getOffset() const
+	{
+		return 0;
+	}
+	float AudioStream::getDuration() const
+	{
+		return m_duration;
+	}
+	bool AudioStream::isLooping() const
+	{
+		return m_loop;
+	}
+
+
 	void AudioStream::onUpdate()
 	{
 		ALint processedBuffers = 0;
@@ -113,6 +136,7 @@ namespace jl
 			--processedBuffers;
 		}
 	}
+
 
 	void AudioStream::fillBuffers()
 	{

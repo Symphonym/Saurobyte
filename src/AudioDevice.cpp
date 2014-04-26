@@ -1,12 +1,15 @@
 #include "AudioDevice.hpp"
 #include "AudioSource.hpp"
 #include "AudioChunk.hpp"
+#include "AudioListener.hpp"
 #include "Logger.hpp"
 
 #include <unordered_map>
 #include <string>
 #include <vector>
 #include <memory>
+#include <limits>
+#include <algorithm>
 #include <SDL2/SDL_thread.h>
 #include <SDL2/SDL_timer.h>
 #include <SndFile/sndfile.h>
@@ -25,8 +28,10 @@ namespace jl
 
 		std::unordered_map<std::string, AudioData> m_audioFiles;
 
+		typedef std::pair<PriorityType, AudioHandle> SoundData;
+
 		// Active audio sources
-		std::vector<SoundHandle> m_sounds;
+		std::vector<SoundData> m_sounds;
 		std::vector<StreamHandle> m_streams;
 
 		// Sounds can be played through channels which allows their volume
@@ -138,50 +143,37 @@ namespace jl
 		}
 	}
 
-	StreamHandle AudioDevice::createStream(const std::string &name)
+	AudioHandle AudioDevice::createStream(const std::string &name, PriorityType priority)
 	{
 		auto itr = m_audioFiles.find(name);
 		if(itr != m_audioFiles.end())
 		{
-			// Try to find an unused stream
-			for(std::size_t i = 0; i < m_streams.size(); i++)
-			{
-				StreamHandle &handle = m_streams[i];
-				if(handle.use_count() == 1 && !handle->isPlaying())
-				{
-					handle->setStreamingFile(itr->second.fileName);
-					freeForStream(handle.get());
-					JL_INFO_LOG("REUSE STREAM");
-					return handle;
-				}
-			}
+			unsigned int newSource = grabAudioSource();
 
-			// Create new audio source
-			m_streams.push_back(
-				StreamHandle(new AudioStream(itr->second.fileName)));
+			// Create new stream
+			m_sounds.push_back(
+				std::make_pair(
+					priority,
+					AudioHandle(new AudioStream(newSource, itr->second.fileName))));
 
-			freeForStream(m_streams.back().get());
-			return m_streams.back();
+			//freeForStream(m_streams.back().get());
+			return m_sounds.back().second;
 		}
 		else
 		{
 			JL_WARNING_LOG("Couldn't find any stream by the name '%s'", name.c_str());
-			return StreamHandle();
+			return AudioHandle(new AudioStream());
 		}
 	}
-	StreamHandle AudioDevice::playStream(const std::string &name)
+	AudioHandle AudioDevice::playStream(const std::string &name, PriorityType priority)
 	{
-		StreamHandle handle = createStream(name);
-
-		if(handle)
-			handle->play();
-		else
-			JL_WARNING_LOG("Attempted to play non-existant stream!");
+		AudioHandle handle = createStream(name, priority);
+		handle->play();
 
 		return handle;
 	}
 
-	SoundHandle AudioDevice::createSound(const std::string &name)
+	AudioHandle AudioDevice::createSound(const std::string &name, PriorityType priority)
 	{
 		auto itr = m_audioFiles.find(name);
 		if(itr != m_audioFiles.end())
@@ -196,7 +188,7 @@ namespace jl
 				if(file == NULL)
 				{
 					JL_WARNING_LOG("Could not open audio file '%s'", itr->second.fileName.c_str());
-					return SoundHandle();
+					return AudioHandle(new AudioChunk());
 				}
 
 				// Create new buffer
@@ -216,39 +208,27 @@ namespace jl
 				sf_close(file);
 			}
 
-			// Try to find an unused sound
-			for(std::size_t i = 0; i < m_sounds.size(); i++)
-			{
-				SoundHandle &handle = m_sounds[i];
-				if(handle.use_count() == 1 && !handle->isPlaying())
-				{
-					handle->setBuffer(itr->second.buffer, itr->second.fileName);
-					freeForSound(handle.get());
-					return handle;
-				}
-			}
+			unsigned int newSource = grabAudioSource();
 
-			// Create new audio source
 			m_sounds.push_back(
-				SoundHandle(new AudioChunk(itr->second.buffer, itr->second.fileName)));
+				std::make_pair(
+					priority,
+					AudioHandle(new AudioChunk(newSource, itr->second.buffer, itr->second.fileName))
+				));
 
-			freeForSound(m_sounds.back().get());
-			return m_sounds.back();
+			return m_sounds.back().second;
+
 		}
 		else
 		{
 			JL_WARNING_LOG("Couldn't find any sound by the name '%s'", name.c_str());
-			return SoundHandle(nullptr);
+			return AudioHandle(new AudioChunk());
 		}
 	}
-	SoundHandle AudioDevice::playSound(const std::string &name)
+	AudioHandle AudioDevice::playSound(const std::string &name, PriorityType priority)
 	{
-		SoundHandle handle = createSound(name);
-
-		if(handle)
-			handle->play();
-		else
-			JL_WARNING_LOG("Attempted to play non-existant sound!");
+		AudioHandle handle = createSound(name, priority);
+		handle->play();
 
 		return handle;
 	}
@@ -271,15 +251,14 @@ namespace jl
 					break;
 				}
 			}
-			if(!source->revalidateSource())
-				JL_WARNING_LOG("Source revalidation failed after forced audio cleanup.");
+			source->revalidateSource();
 		}
 
 		bufferCleanup();
 	}
 	void AudioDevice::freeForStream(AudioSource *source)
 	{
-		if(!source->isValid())
+		/*if(!source->isValid())
 		{
 			std::size_t indiceToRemove = 0;
 
@@ -295,9 +274,8 @@ namespace jl
 					break;
 				}
 			}
-			if(!source->revalidateSource())
-				JL_WARNING_LOG("Source revalidation failed after forced audio cleanup.");
-		}
+			source->revalidateSource();
+		}*/
 
 		bufferCleanup();
 	}
@@ -322,6 +300,150 @@ namespace jl
 			JL_DEBUG_LOG("Removed %i audio buffers", buffersRemoved);
 	}
 
+	void AudioDevice::wipeSource(unsigned int source)
+	{
+		// Rewind the active buffer, might just rewind the source, I don't know :I
+		alSourceRewind(source);
+		alSourcei(source, AL_BUFFER, 0); // Clear buffers
+
+		// Reset data to defaults
+		alSourcei(source, AL_LOOPING, AL_FALSE);
+		alSourcei(source, AL_SOURCE_RELATIVE, AL_FALSE);
+		alSourcef(source, AL_GAIN, 1);
+		alSourcef(source, AL_PITCH, 1.f);
+		alSource3f(source, AL_POSITION, 0, 0, 0);
+		alSource3f(source, AL_VELOCITY, 0, 0, 0);
+		alSource3f(source, AL_DIRECTION, 0, 0, 0);
+
+	}
+
+	unsigned int AudioDevice::grabAudioSource()
+	{
+		unsigned int newSource = -1;
+
+		// Try to find an unused source
+		for(std::size_t i = 0; i < m_sounds.size(); i++)
+		{
+			AudioHandle &handle = m_sounds[i].second;
+			if(!handle->isPlaying())
+			{
+				newSource = handle->m_source;
+
+				handle->m_source = 0;
+				handle->m_isValidSource = false;
+				m_sounds.erase(m_sounds.begin() + i);
+				break;
+			}
+		}
+
+		// No source could be recycled, try alternative means
+		if(newSource == -1)
+		{
+			alGetError(); // Clear errors
+			alGenSources(1, &newSource);
+
+			ALenum sourceError = alGetError();
+
+			// If a new source couldn't be generated, force source reusage
+			if (sourceError != AL_NO_ERROR)
+				newSource = leastImportantSource();
+		}
+
+		// Wipe old data off source before returning it
+		wipeSource(newSource);
+		return newSource;
+	}
+
+
+	unsigned int AudioDevice::leastImportantSource()
+	{
+
+		// Little utility function for erasing the element at the front of the
+		// sound list and grab its source.
+		auto eraseAndReturn = [] () -> unsigned int
+		{
+			AudioHandle &handle = m_sounds[0].second;
+			handle->stop();
+			unsigned int newSource = handle->m_source;
+
+			handle->m_source = 0;
+			handle->m_isValidSource = false;
+			m_sounds.erase(m_sounds.begin());
+
+			return newSource;
+		};
+
+		// Sort sounds by priority
+		std::sort(m_sounds.begin(), m_sounds.end(),
+			[](const SoundData &lhs, const SoundData &rhs) -> bool
+			{
+				return lhs.first < rhs.first;
+			});
+
+		// Check how many elements are tied at the same lowest priority
+		PriorityType lowestPriority = m_sounds[0].first;
+		unsigned int lowestPriorityCount = 1;
+		for(std::size_t i = 0; i < m_sounds.size(); i++)
+		{
+			if(m_sounds[i].first != lowestPriority)
+				break;
+			else
+				lowestPriorityCount += 1;
+		}
+
+		// Only one sound of the lowest available priority was found, return it
+		if(lowestPriorityCount == 1)
+			return eraseAndReturn();
+
+		// Sort tied priorities by volume
+		std::sort(m_sounds.begin(), m_sounds.begin() + lowestPriorityCount,
+			[](const SoundData &lhs, const SoundData &rhs) -> bool
+			{
+				return lhs.second->getVolume() < rhs.second->getVolume();
+			});
+
+		// Check how many elements are tied on the same volume level
+		unsigned int lowestVolume = m_sounds[0].second->getVolume();
+		unsigned int lowestVolumeCount = 1;
+		for(std::size_t i = 0; i < m_sounds.size(); i++)
+		{
+			if(m_sounds[i].second->getVolume() != lowestVolume)
+				break;
+			else
+				lowestVolumeCount += 1;
+		}
+
+		// Only one sound of the lowest volume was found, return it
+		if(lowestVolumeCount == 1)
+			return eraseAndReturn();
+
+
+		// Sort tied volumes by time left on playback
+		std::sort(m_sounds.begin(), m_sounds.begin() + lowestVolumeCount,
+			[](const SoundData &lhs, const SoundData &rhs) -> bool
+			{
+				return (lhs.second->getDuration()-lhs.second->getOffset()) <
+					(rhs.second->getDuration()-rhs.second->getOffset());
+			});
+
+		// Check how many elements are tied on the same volume level
+		unsigned int lowestPlayback = m_sounds[0].second->getDuration()-m_sounds[0].second->getOffset();
+		unsigned int lowestPlaybackCount = 1;
+		for(std::size_t i = 0; i < m_sounds.size(); i++)
+		{
+			float curPlaybackLeft = m_sounds[i].second->getDuration()-m_sounds[i].second->getOffset();
+			if(curPlaybackLeft != lowestPlayback)
+				break;
+			else
+				lowestPlaybackCount += 1;
+		}
+
+		// The sound at the bottom of the sorted list will be used no matter what,
+		// enough effort has been given to make sure it's fitting for overwriting
+		return eraseAndReturn();
+
+	}
+
 	void AudioDevice::stopAllAudio()
 	{
 		stopStreams();
@@ -336,7 +458,7 @@ namespace jl
 	void AudioDevice::stopSounds()
 	{
 		for(auto& value : m_sounds)
-			value->stop();
+			value.second->stop();
 	}
 
 	std::size_t AudioDevice::getSoundCount()

@@ -335,11 +335,8 @@ int main(int argc, const char* argv[]){
 	JL_INFO_LOG("SSSSSSSSSSSSSSSSSSS jl AudioFile %i", sizeof(jl::AudioChunk));
 
 	{
-		//jl::StreamHandle aaa = jl::AudioDevice::playStream("dadad");
-		//aaa->setPitch(2);
 
-
-		jl::SoundHandle sounderu = jl::AudioDevice::playSound("Swag");
+		jl::AudioHandle sounderu = jl::AudioDevice::playSound("Swag");
 				sounderu->setOffset(5);
 				//sounderu->setLooping(true);
 				sounderu->setRelativeToListener(true);
@@ -355,7 +352,7 @@ int main(int argc, const char* argv[]){
 			}
 			else if(SDL_GetMouseState(NULL,NULL) & SDL_BUTTON(2))
 			{
-				jl::AudioDevice::playStream("Swag");
+				jl::AudioDevice::playSound("Swag");
 				//source->setOffset(5);
 				//source->setLooping(true);
 			}

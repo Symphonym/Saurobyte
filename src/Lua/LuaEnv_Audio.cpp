@@ -8,7 +8,7 @@ namespace jl
 		// First arg is name of sound
 		std::string soundName = luaL_checkstring(state, 1);
 
-		SoundHandle sound = AudioDevice::playSound(soundName);
+		AudioHandle sound = AudioDevice::playSound(soundName);
 
 		if(sound)
 			lua_pushboolean(state, true);
@@ -22,7 +22,7 @@ namespace jl
 		// First arg is name of sound
 		std::string soundName = luaL_checkstring(state, 1);
 
-		StreamHandle sound = AudioDevice::playStream(soundName);
+		AudioHandle sound = AudioDevice::playStream(soundName);
 
 		if(sound)
 			lua_pushboolean(state, true);

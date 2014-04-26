@@ -20,15 +20,21 @@ namespace jl
 		AudioBufferHandle m_buffer;
 
 		std::string m_fileName;
+		float m_duration;
 
 	public:
 
-		explicit AudioChunk(AudioBufferHandle buffer, const std::string &fileName);
+		AudioChunk();
+		explicit AudioChunk(unsigned int source, AudioBufferHandle buffer, const std::string &fileName);
 
 		void setBuffer(AudioBufferHandle buffer, const std::string &filePath);
 
 		virtual void setLooping(bool looping);
 		virtual void setOffset(float secondOffset);
+
+		virtual float getOffset() const;
+		virtual float getDuration() const;
+		virtual bool isLooping() const;
 
 		std::string getFileName() const;
 

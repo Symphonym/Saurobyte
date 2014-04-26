@@ -34,13 +34,18 @@ namespace jl
 
 	public:
 
-		explicit AudioStream(const std::string &filePath);
+		AudioStream();
+		explicit AudioStream(unsigned int source, const std::string &filePath);
 		~AudioStream();
 
 		void setStreamingFile(const std::string &filePath);
 
 		virtual void setLooping(bool looping);
 		virtual void setOffset(float secondOffset);
+
+		virtual float getOffset() const;
+		virtual float getDuration() const;
+		bool isLooping() const;
 	};
 };
 

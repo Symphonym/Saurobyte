@@ -10,13 +10,21 @@ namespace jl
 	AudioSource::AudioSource()
 		:
 		m_isValidSource(false),
-		m_audioCleanupTick(0),
 		m_thread(nullptr),
 		m_source(0),
 		m_audioStatus(AudioStatus::Stopped)
 	{
+
+	}
+	AudioSource::AudioSource(unsigned int source)
+		:
+		m_isValidSource(true),
+		m_thread(nullptr),
+		m_source(source),
+		m_audioStatus(AudioStatus::Stopped)
+	{
 		// Create source
-		revalidateSource();
+		//revalidateSource();
 	}
 
 	AudioSource::~AudioSource()
@@ -25,7 +33,7 @@ namespace jl
 
 		if(alIsSource(m_source) && m_isValidSource)
 		{
-		JL_INFO_LOG("DELETERINO SOUNDERINO");
+			JL_INFO_LOG("DELETERINO SOUNDERINO");
 
 			alDeleteSources(1, &m_source);
 			m_isValidSource = false; // Just because
@@ -36,7 +44,6 @@ namespace jl
 	{
 		if(m_isValidSource && !isPlaying())
 		{
-			m_audioCleanupTick = SDL_GetTicks();
 			auto threadFunc = [] (void *data) -> int
 			{	
 				AudioSource *audio = static_cast<AudioSource*>(data);
@@ -55,33 +62,25 @@ namespace jl
 			m_thread = SDL_CreateThread(threadFunc, threadName.c_str(), this);
 			onPlay();
 		}
-		else if(!m_isValidSource)
-			JL_WARNING_LOG("You are attemping to play an invalid sound!");
 	}
 	void AudioSource::pause()
 	{
 		if(m_isValidSource && isPlaying())
 		{
-			m_audioCleanupTick = SDL_GetTicks();
 			m_audioStatus = AudioSource::Paused;
 			alSourcePause(m_source);
 			onPause();
 		}
-		else if(!m_isValidSource)
-			JL_WARNING_LOG("You are attemping to pause an invalid sound!");
 	}
 	void AudioSource::stop()
 	{
 		if(m_isValidSource && (isPlaying() || m_audioStatus == AudioStatus::Paused))
 		{
-			m_audioCleanupTick = SDL_GetTicks();
 			m_audioStatus = AudioSource::Stopped;
 			SDL_WaitThread(m_thread, NULL);
 			alSourceStop(m_source);
 			onStop();
 		}
-		else if(!m_isValidSource)
-			JL_WARNING_LOG("You are attemping to stop an invalid sound!");
 	}
 	int AudioSource::updateData()
 	{
@@ -137,7 +136,7 @@ namespace jl
 	}
 	void AudioSource::setVolume(float volume)
 	{
-		alSourcei(m_source, AL_GAIN, volume);
+		alSourcef(m_source, AL_GAIN, volume);
 	}
 
 	bool AudioSource::revalidateSource()
@@ -151,9 +150,9 @@ namespace jl
 
 			if (sourceError != AL_NO_ERROR)
 			{
-				JL_WARNING_LOG(
-					"OpenAL failed to generate a new source. This audio is very unlikely to play. (%s)",
-					AudioDevice::getOpenALError(sourceError).c_str());
+				//JL_WARNING_LOG(
+				//	"OpenAL failed to generate a new source. This audio is very unlikely to play. (%s)",
+				//	AudioDevice::getOpenALError(sourceError).c_str());
 
 				return false;
 			}
@@ -170,6 +169,14 @@ namespace jl
 		}
 
 		return false;
+	}
+
+	float AudioSource::getVolume() const
+	{
+		ALfloat volume = 0;
+		alGetSourcef(m_source, AL_GAIN, &volume);
+
+		return volume;
 	}
 
 	bool AudioSource::isPlaying() const
