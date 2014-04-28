@@ -9,13 +9,13 @@ os.rmdir("bin/"..executableLibaryDir)
 
 -- Define operating system and move libs to binary dir
 if(operatingSystem == "linux") then
-	table.insert(osDefines, "OS_LINUX")
+	table.insert(osDefines, "JL_OS_LINUX")
 	os.execute("cp -r ./lib/linux/ ./bin/lib/")
 elseif(operatingSystem == "windows") then
-	table.insert(osDefines, "OS_WINDOWS")
+	table.insert(osDefines, "JL_OS_WINDOWS")
 	os.execute("cp -r ./lib/windows/ ./bin/lib/")
 elseif(operatingSystem == "macosx") then
-	table.insert(osDefines, "OS_MACOSX")
+	table.insert(osDefines, "JL_OS_MACOSX")
 	os.execute("cp -r ./lib/mac/ ./bin/lib/")
 end
 

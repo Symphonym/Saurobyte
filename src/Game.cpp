@@ -60,7 +60,7 @@ namespace jl
 		setLogging(GameLogging::Info_Error);
 
 		// Add the built in systems
-		addSystem<LuaSystem>();
+		m_systemPool.addSystem(new LuaSystem(this));
 
 		// Expose Lua API
 		LuaEnv_Game::exposeToLua(this);

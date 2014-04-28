@@ -10,8 +10,9 @@ CHECK	* Use smart ptrs
 CHECK	* Looping with streams
 		* Offset with streams
 CHECK	* Lua acessing components, transform specifically
-CHECK	* Re-use sounds be swapping buffers and files intead of sources, use spare pool and delete if bigger than real pool
+DELETED	* Re-use sounds be swapping buffers and files intead of sources, use spare pool and delete if bigger than real pool
 		* Global script running constantly, maybe
 		* Lua play streams
 		* Sound component
-		* Optimize sound/stream reusage
+CHECK	* Optimize sound/stream reusage
+		* Document function prototypes, cause I just installed DocBlockr, best shit 2014

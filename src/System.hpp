@@ -37,41 +37,85 @@ namespace jl
 
 		virtual ~BaseSystem() {};
 
-		// Map an entity component requirement to the specified name for easier future access.
+		/**
+		 * Adds a combination of component types that this system will process
+		 * @param componentIDs Vector of the component ID's in this component combination
+		 */
 		void addRequirement(const std::vector<TypeID> &componentIDs);
 
-		// Remove an entity from the System, making the System no longer
-		// monitor it. The bool indicates whether or not the cause of removal
-		// was the entity being killed/shutdown.
+		/**
+		 * Removes an entity from the system, removing it from the processing cycle of the system
+		 * @param entity    The entity to remove
+		 * @param wasKilled Whether or not the cause of removal was entity termination
+		 */
 		void removeEntity(Entity &entity, bool wasKilled);
 
-		// Updates an already monitored entity if components have changed to
-		// whether or not the requirements still hold
+		/**
+		 * Updates the status of an entity within the system, making sure it has the sought after components
+		 * @param entity The entity to update
+		 */
 		void refreshEntity(Entity &entity);
 
+		/**
+		 * Sets the active status of the system, inactive systems will not run the processing cycle
+		 * @param active Boolean for whether or not the system should be active
+		 */
 		void setActive(bool active);
 
-		// pre and postProcess allows for setup/cleanup before or
-		// after entities are processed by the system.
+		/**
+		 * Called before processEntity is called
+		 */
 		virtual void preProcess() {};
+		/**
+		 * Called each frame on each entity that is processed by this system
+		 * @param entity The entity that the system is currently processing
+		 */
 		virtual void processEntity(Entity &entity) = 0;
+		/**
+		 * Called after processEntity is called
+		 */
 		virtual void postProcess() {};
 
 
-		// Called when entities are added/removed to the system, allowing for
-		// setup or cleanup
+		/**
+		 * Called when an entity is added for processing in the system
+		 * @param entity The added entity
+		 */
 		virtual void onAttach(Entity &entity) {};
+		/**
+		 * Called when an entity is removed from further processing in the system
+		 * @param entity The removed entity
+		 */
 		virtual void onDetach(Entity &entity) {};
-		// Called when a system is completely cleared of Entities, used mostly for
-		// cleanup
+		/**
+		 * Called when the system is cleared from all of its entities (e.g switching scenes), allowing for cleanup
+		 */
 		virtual void onClear() {};
-		// Called when an entity in the System is killed as its being detached
+		/**
+		 * Called before onDetach if the removal reason was entity termination
+		 * @param entity The entity that was killed
+		 */
 		virtual void onKill(Entity &entity) {};
 
+		/**
+		 * Clear the system of all its entities
+		 */
 		void clearSystem();
 
+		/**
+		 * Get the unique type identifier of this system, indicating what type of system it is
+		 * @return The unique identifier
+		 */
 		TypeID getTypeID() const;
+		/**
+		 * Returns whether or not the system is active
+		 * @return Active status
+		 */
 		bool isActive() const;
+
+		/**
+		 * Returns a read-only map of all the entities in the system
+		 */
 		const std::unordered_map<EntityID, Entity*>& getEntities() const;
 
 	};

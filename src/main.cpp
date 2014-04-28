@@ -38,65 +38,7 @@
 #include "Components/MeshComponent.hpp"
 #include "Components/TransformComponent.hpp"
 
-struct Compiz : public jl::Component<Compiz>
-{
-	int compizVariable;
 
-	Compiz()
-		:
-		jl::Component<Compiz>(),
-		compizVariable(0)
-	{}
-
-	virtual int onLuaGet(const std::string &valueName, lua_State *state)
-	{
-		if(valueName == "Variable")
-		{
-			lua_pushnumber(state, compizVariable);
-			return 1;
-		}
-		else
-		{
-			lua_pushnil(state);
-			return 1;
-		}
-
-	};
-	virtual void onLuaSet(const std::string &valueName, lua_State *state)
-	{
-		if(valueName == "Variable")
-			compizVariable = luaL_checknumber(state, 1);
-	};
-
-	virtual std::string getName() const
-	{
-		return "Compiz";
-	}
-};
-
-struct Dem : public jl::System<Dem>
-{
-	Dem(jl::Game *game)
-		:
-		jl::System<Dem>(game)
-	{
-		subscribe("SWAGY");
-		addRequirement({jl::TypeIdGrabber::getUniqueTypeID<Compiz>()});
-	}
-
-	virtual void processEntity(jl::Entity &entity)
-	{
-		//broadcast(new jl::Message("SWAGES"));
-		//SDL_Log("Processing %i", entity.getID());
-		//if(entity.getComponent<Compiz>()->compizVariable == 1337)
-		//	entity.removeComponent<Compiz>();
-	}
-
-	virtual void onMessage(jl::Message *message)
-	{
-		SDL_Log("SWAG GOT %s", message->name.c_str());
-	};
-};
 
 bool audioRunner = true;
 int main(int argc, const char* argv[]){
@@ -113,17 +55,12 @@ int main(int argc, const char* argv[]){
 	//WHICH CAN BE POLLED BY SYSTEMS AND WHATNOT
 
 	jl::Game game("HERRO", 800, 600);
-	game.addSystem<Dem>();
-	game.addSystem<jl::MeshSystem>();
 	game.setLogging(jl::GameLogging::Debug);
 
+	jl::SystemPool& sysPool = game.getSystemPool();
+	sysPool.addSystem(new jl::MeshSystem(&game));
+
 	jl::Entity& ent = game.createEntity();
-	Compiz *zz = new Compiz();
-	//ent.addComponent<Compiz>();
-	ent.addComponent(jl::TypeIdGrabber::getUniqueTypeID<Compiz>(), zz);
-	ent.addComponent(jl::TypeIdGrabber::getUniqueTypeID<Compiz>(), zz);
-	ent.addComponent(jl::TypeIdGrabber::getUniqueTypeID<Compiz>(), zz);
-	//ent.addComponent<jl::LuaComponent>("luaFile.lua");
 
 	//ent.save("FancyCompiz");
 
@@ -326,6 +263,7 @@ int main(int argc, const char* argv[]){
 		sc2.attach(treeCube);
 	}
 
+	
 	JL_INFO_LOG("OPENAL VENDOR: %s", alGetString(AL_VERSION));
 	jl::AudioListener::setVolume(0.001f);
 

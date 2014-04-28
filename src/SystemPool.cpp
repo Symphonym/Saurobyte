@@ -16,7 +16,7 @@ namespace jl
 		m_systemPool.clear();
 	}
 
-	void SystemPool::addSystem(TypeID id, BaseSystem *newSystem)
+	void SystemPool::addSystem(BaseSystem *newSystem)
 	{
 		// Make sure the system doesn't exist, then add it
 		auto iter = m_systemPool.find(newSystem->getTypeID());

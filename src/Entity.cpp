@@ -20,14 +20,14 @@ namespace jl
 	void Entity::addComponent(TypeID id, BaseComponent *component)
 	{
 		// Make sure the component doesn't exist, then add it
-		auto itr = m_components.find(component->typeID);
+		auto itr = m_components.find(component->getTypeID());
 
 		// Due to the nature of unique_ptr, existing components will be
 		// overwrited, so make sure we're not adding the same component twice.
 		if(itr != m_components.end() && component == itr->second.get())
 			return;
 
-		m_components[component->typeID] = ComponentPtr(component);
+		m_components[component->getTypeID()] = ComponentPtr(component);
 
 		// Save component by name as well, used by Lua
 		m_luaComponents[component->getName()] = component;
@@ -103,7 +103,7 @@ namespace jl
 	{
 		// Clone the entity copy's components
 		for(auto iter = entity.m_components.begin(); iter != entity.m_components.end(); iter++)
-			this->addComponent(iter->second->typeID, iter->second->clone());
+			this->addComponent(iter->second->getTypeID(), iter->second->clone());
 
 		refresh();
 	}

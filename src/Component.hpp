@@ -20,16 +20,20 @@ namespace jl
 	class BaseComponent
 	{
 
+	private:
+
+		const TypeID m_typeID;
+
 	protected:
 
 		BaseComponent(TypeID typeID) 
 			:
-			typeID(typeID)
+			m_typeID(typeID)
 		{};
+
 
 	public:
 
-		const TypeID typeID;
 
 		virtual ~BaseComponent() {};
 
@@ -39,6 +43,8 @@ namespace jl
 
 		// Components must provide a name for Lua usage
 		virtual std::string getName() const = 0;
+
+		TypeID getTypeID() const;
 
 		// Cloning function that must be overridden by deriving classes
 		virtual BaseComponent* clone()  = 0;

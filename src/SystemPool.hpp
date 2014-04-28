@@ -27,11 +27,7 @@ namespace jl
 		SystemPool(Game *game);
 		~SystemPool();
 
-		template<typename TType, typename ...TArgs> TType* addSystem(TArgs&... args)
-		{
-			addSystem(TypeIdGrabber::getUniqueTypeID<TType>(), new TType(m_game, args...));
-		};
-		void addSystem(TypeID id, BaseSystem *newSystem);
+		void addSystem(BaseSystem *newSystem);
 
 
 		template<typename TType> void removeSystem()

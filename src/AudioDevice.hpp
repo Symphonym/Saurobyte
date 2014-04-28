@@ -36,7 +36,7 @@ namespace jl
 		// Grabs an OpenAL source handle to use
 		static unsigned int grabAudioSource();
 
-		// Fins the least important source that is currently active
+		// Finds the least important source that is currently active
 		static unsigned int leastImportantSource();
 
 		// Wipe the specified source's data to default

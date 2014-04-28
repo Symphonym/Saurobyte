@@ -61,12 +61,6 @@ namespace jl
 		Entity& createEntity(const std::string &templateName);
 		Scene& createScene(const std::string &name);
 
-		// Adding systems
-		template<typename TType, typename ...TArgs> void addSystem(TArgs&... args)
-		{
-			m_systemPool.addSystem<TType>(args...);
-		};
-
 		// Scene managing
 		void changeScene(const std::string &sceneName);
 		Scene* getActiveScene();

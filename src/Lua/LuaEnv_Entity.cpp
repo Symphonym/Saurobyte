@@ -78,7 +78,7 @@ namespace jl
 		BaseComponent *comp = entity->getComponent(valueName);
 		if(comp != nullptr)
 		{
-			entity->removeComponent(comp->typeID);
+			entity->removeComponent(comp->getTypeID());
 			lua_pushboolean(state, 1);
 		}
 		else
