@@ -19,6 +19,9 @@ elseif(operatingSystem == "macosx") then
 	os.execute("cp -r ./lib/mac/ ./bin/lib/")
 end
 
+-- Make sure we're exporting symbols on Windows
+table.insert(osDefines, "JL_API_EXPORT")
+
 
 Project_Name = "jlEngine"
 Solution_Name = "jlEngine_Solution"
