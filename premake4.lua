@@ -9,22 +9,21 @@ os.rmdir("bin/"..executableLibaryDir)
 
 -- Define operating system and move libs to binary dir
 if(operatingSystem == "linux") then
-	table.insert(osDefines, "JL_OS_LINUX")
+	table.insert(osDefines, "SAUROBYTE_OS_LINUX")
 	os.execute("cp -r ./lib/linux/ ./bin/lib/")
 elseif(operatingSystem == "windows") then
-	table.insert(osDefines, "JL_OS_WINDOWS")
+	table.insert(osDefines, "SAUROBYTE_OS_WINDOWS")
 	os.execute("cp -r ./lib/windows/ ./bin/lib/")
 elseif(operatingSystem == "macosx") then
-	table.insert(osDefines, "JL_OS_MACOSX")
+	table.insert(osDefines, "SAUROBYTE_OS_MACOSX")
 	os.execute("cp -r ./lib/mac/ ./bin/lib/")
 end
 
 -- Make sure we're exporting symbols on Windows
-table.insert(osDefines, "JL_API_EXPORT")
+table.insert(osDefines, "SAUROBYTE_API_EXPORT")
 
-
-Project_Name = "jlEngine"
-Solution_Name = "jlEngine_Solution"
+Project_Name = "Saurobyte"
+Solution_Name = "Saurobyte_Solution"
 
 -- A solution contains projects, and defines the available configurations
 solution(Solution_Name)

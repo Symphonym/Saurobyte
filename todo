@@ -16,3 +16,4 @@ DELETED	* Re-use sounds be swapping buffers and files intead of sources, use spa
 		* Sound component
 CHECK	* Optimize sound/stream reusage
 		* Document function prototypes, cause I just installed DocBlockr, best shit 2014
+		* Rewrite everything with new name and convert into library
