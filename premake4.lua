@@ -1,72 +1,91 @@
+dofile("./luautil.lua")
+
+Saurobyte_OperatingSystem = os.get()
+
+Saurobyte_BuildDir = "build/"
+Saurobyte_OutputDir = Saurobyte_BuildDir.."lib/"
+Saurobyte_OutputIncDir = Saurobyte_BuildDir.."inc/"
+Saurobyte_ExampleDir = "examples/"
+Saurobyte_Dep_LibDir = "dependencies/lib/"..Saurobyte_OperatingSystem.."/"
+Saurobyte_Dep_IncDir = "dependencies/inc/"
+Saurobyte_BaseSourceDir = "src/"
+Saurobyte_SourceDir = Saurobyte_BaseSourceDir.."Saurobyte/"
 
 
-local operatingSystem = os.get()
-local osDefines = {}
+Saurobyte_Premake_BuildDir = Saurobyte_BuildDir.."premake"
 
--- Delete library files in binary folder
-local executableLibaryDir = "lib"
-os.rmdir("bin/"..executableLibaryDir)
+Saurobyte_Solution_Name = "Saurobyte_Solution"
+Saurobyte_Project_Name = "Saurobyte"
 
--- Define operating system and move libs to binary dir
-if(operatingSystem == "linux") then
-	table.insert(osDefines, "SAUROBYTE_OS_LINUX")
-	os.execute("cp -r ./lib/linux/ ./bin/lib/")
-elseif(operatingSystem == "windows") then
-	table.insert(osDefines, "SAUROBYTE_OS_WINDOWS")
-	os.execute("cp -r ./lib/windows/ ./bin/lib/")
-elseif(operatingSystem == "macosx") then
-	table.insert(osDefines, "SAUROBYTE_OS_MACOSX")
-	os.execute("cp -r ./lib/mac/ ./bin/lib/")
-end
+-- Remove all previous binary output
+os.rmdir(path.getdirectory(Saurobyte_OutputDir))
+os.mkdir(path.getdirectory(Saurobyte_OutputDir))
 
--- Make sure we're exporting symbols on Windows
-table.insert(osDefines, "SAUROBYTE_API_EXPORT")
+os.rmdir(path.getdirectory(Saurobyte_OutputIncDir))
+os.mkdir(path.getdirectory(Saurobyte_OutputIncDir))
 
-Project_Name = "Saurobyte"
-Solution_Name = "Saurobyte_Solution"
+-- Copy all dependencies to output dir
+os.copydir(Saurobyte_Dep_LibDir, Saurobyte_OutputDir)
+
+-- Copy Saurobyte headers to output dir
+os.copydir(path.getdirectory(Saurobyte_BaseSourceDir), path.getdirectory(Saurobyte_OutputIncDir), "**.hpp")
 
 -- A solution contains projects, and defines the available configurations
-solution(Solution_Name)
-	
+solution(Saurobyte_Solution_Name)
+	location(Saurobyte_Premake_BuildDir)
 	configurations({ "Debug", "Release" })
-		location("build")
-		includedirs({"inc"})
-		libdirs("lib/linux")
-		defines(osDefines)
 
-	-- Set rpath and C++11 for GCC
+	-- Export symbols when compiling
+	defines("SAUROBYTE_API_EXPORT")
+
+	configuration("linux")
+		defines("SAUROBYTE_OS_LINUX")
+	configuration("windows")
+		defines("SAUROBYTE_OS_WINDOWS")
+	configuration("macosx")
+		defines("SAUROBYTE_OS_MACOSX")
+
+
+	-- Set C++11 for GCC
 	configuration({"linux", "gmake"})
-		buildoptions({"-std=c++0x"})
-		linkoptions("-Wl,-R\\$$ORIGIN/"..executableLibaryDir.."/")
+		buildoptions({"-std=c++11"})
 
 
 	-- Set project options
-	project(Project_Name)
-		kind("WindowedApp")
+	project(Saurobyte_Project_Name)
+		kind("SharedLib")
 		language("C++")
-		includedirs({"src"})
-		targetdir("bin")
-		
+		includedirs(
+		{
+			Saurobyte_BaseSourceDir, -- Saurobyte headers
+			Saurobyte_Dep_IncDir -- Dependency headers
+		})
+		libdirs(Saurobyte_OutputDir)
+		targetdir(Saurobyte_OutputDir)
+
+
 		-- Set source files
-		files({"src/*.hpp", "src/*.cpp",
-			"src/Systems/*.hpp", "src/Systems/*.cpp",
-			"src/Components/*.hpp", "src/Components/*.cpp",
-			"src/Lua/*.hpp", "src/Lua/*.cpp"})
+		files({
+			Saurobyte_SourceDir.."*.hpp", Saurobyte_SourceDir.."*.cpp", -- Base files
+			Saurobyte_SourceDir.."Systems/*.hpp", Saurobyte_SourceDir.."Systems/*.cpp", -- Systems
+			Saurobyte_SourceDir.."Components/*.hpp", Saurobyte_SourceDir.."Components/*.cpp", -- Components
+			Saurobyte_SourceDir.."Math/*.hpp", Saurobyte_SourceDir.."Math/*.cpp", -- Math
+			Saurobyte_SourceDir.."Lua/*.hpp", Saurobyte_SourceDir.."Lua/*.cpp"}) -- Lua API
 
-		-- Link common libraries
-		links({"SDL2", "SDL2_image", "lua", "dl", "openal", "sndfile"})
-
-		-- Link platform specific libraries
-
-		-- Link OpenGL on Linux
+		-- Link libraries per platform
 		configuration("linux")
-			links({"GL", "GLEW"})
+			links({"GL", "GLEW", "SDL2", "SDL2_image", "lua5.2", "openal", "sndfile"})
 
 		configuration("Debug")
 			flags({"Symbols"})
 
 		configuration("Release")
 			flags({"Optimize"})
+
+
+-- Compile examples
+include(Saurobyte_ExampleDir)
+
 
 -- Compile release action
 newaction(
@@ -75,10 +94,8 @@ newaction(
 	description = "Compiles the program",
 	execute = function ()
 
-		if(operatingSystem == "linux") then
-			print("\n<<< Compiling (release) project >>>> \n")
-			os.execute("make config=release -C./build/")
-		end
+		print("\n<<< Compiling (release) project >>>> \n")
+		os.execute("make config=release -C./"..Saurobyte_Premake_BuildDir)
 	end
 })
 
@@ -88,11 +105,8 @@ newaction(
 	trigger = "compile-debug",
 	description = "Compiles the program",
 	execute = function ()
-
-		if(operatingSystem == "linux") then
-			print("\n<<< Compiling (debug) project >>>> \n")
-			os.execute("make config=debug -C./build/")
-		end
+		print("\n<<< Compiling (debug) project >>>> \n")
+		os.execute("make config=debug -C./"..Saurobyte_Premake_BuildDir)
 	end
 })
 
@@ -108,7 +122,7 @@ newaction(
 
 		if(operatingSystem == "linux") then
 			print("\n<<< Running (release) project >>>> \n")
-			os.execute("cd ./bin && ./"..Project_Name)
+			os.execute("cd ./bin && ./"..Saurobyte_Project_Name)
 		end
 	end
 })
@@ -122,7 +136,7 @@ newaction(
 
 		if(operatingSystem == "linux") then
 			print("\n<<< Running (debug) project >>>> \n")
-			os.execute("cd ./bin && gdb -tui ./"..Project_Name)
+			os.execute("cd ./bin && gdb -tui ./"..Saurobyte_Project_Name)
 		end
 	end
 })

@@ -1,4 +1,4 @@
-/*#include <iostream>
+#include <iostream>
 #include <string>
 #include <sstream>
 #include <SDL2/SDL.h>
@@ -36,12 +36,12 @@
 #include <Saurobyte/Components/LuaComponent.hpp>
 #include <Saurobyte/Systems/MeshSystem.hpp>
 #include <Saurobyte/Components/MeshComponent.hpp>
-#include <Saurobyte/Components/TransformComponent.hpp>*/
+#include <Saurobyte/Components/TransformComponent.hpp>
 
 
 
-//bool audioRunner = true;
-//int main(int argc, const char* argv[]){
+bool audioRunner = true;
+int main(int argc, const char* argv[]){
 	
 	/*if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
 	{
@@ -405,5 +405,5 @@
 	//SDL_Quit();
 	//IMG_Quit();
 
-	//return 0;
-//}
+	return 0;
+}

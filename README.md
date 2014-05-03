@@ -11,3 +11,17 @@ make it as easy to use as possible while maintaining a healthy amount of feature
 * Lua scripting (Parts of the engine is exposed to Lua)
 * R*-trees for spatial partitioning
 * 3D audio using OpenAL
+
+## Dependencies
+Saurobyte depends on a few other libraries as well, which are dynamically linked to make
+updating the engine more flexible. Libraries marked with an asterisk (*) are included
+included with the project. Other libraries has to be installed on the system that tries to run
+or compile the program.
+
+* OpenGL
+* OpenAL Soft (*)
+* Sndfile (*)
+* Lua5.2 (*)
+* SDL2 (*)
+* SDL2_image (*)
+* GLEW

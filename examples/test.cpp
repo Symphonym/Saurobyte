@@ -1,20 +1,12 @@
-/*#include <iostream>
+#include <iostream>
 #include <string>
 #include <sstream>
-#include <SDL2/SDL.h>
-#include <GL/glew.h>
-#include <SDL2/SDL_opengl.h>
-#include <SDL2/SDL_image.h>
 #include <vector>
 #include <cstring>
 #include <unordered_map>
 #include <thread>
 #include <memory>
-
-#define GLM_FORCE_RADIANS
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
+/*
 #include <Saurobyte/Shader.hpp>
 #include <Saurobyte/ShaderProgram.hpp>
 #include <Saurobyte/OpenGLWindow.hpp>
@@ -31,33 +23,42 @@
 #include <Saurobyte/AudioFile.hpp>
 #include <Saurobyte/AudioDevice.hpp>
 #include <Saurobyte/BoundingBox.hpp>
-#include <Saurobyte/RTree.hpp>
-
+*/
+#include <Saurobyte/Math/Vector2.hpp>
+#include <Saurobyte/Logger.hpp>
+/*
 #include <Saurobyte/Components/LuaComponent.hpp>
 #include <Saurobyte/Systems/MeshSystem.hpp>
 #include <Saurobyte/Components/MeshComponent.hpp>
 #include <Saurobyte/Components/TransformComponent.hpp>*/
+//#include <Saurobyte/Game.hpp>
 
 
+bool audioRunner = true;
+int main(int argc, const char* argv[]){
 
-//bool audioRunner = true;
-//int main(int argc, const char* argv[]){
+	Saurobyte::Vector2f vec(2, 2);
+	vec = vec * 10.f;
+	SAUROBYTE_I_LOG("Initializing test! X=", vec.x, " Y=", vec.y, "Length=", vec.length());
+	//SAUROBYTE_INFO_LOG("Initializing test! X=%f  Y=%f   Length=%f", vec.x, vec.y, vec.length());
+	//SAUROBYTE_INFO_LOG("NORMALIZE test! X=%f  Y=%f   Length=%f", vec.normalized().x, vec.normalized().y, vec.normalized().length());
+	//SAUROBYTE_INFO_LOG("Initializing test! X=%f  Y=%f   Length=%f", vec.x, vec.y, vec.length());
+	//SAUROBYTE_THROW_ERROR("This shit went cray");
 	
-	/*if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
-	{
-		SDL_Log("%s returned an error. SDL_Error: %s", "SDL_Init", SDL_GetError());
-		return 1;
-	}
+	//if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
+	///{
+	//	SDL_Log("%s returned an error. SDL_Error: %s", "SDL_Init", SDL_GetError());
+	//	return 1;
+	//}
 
-	IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG);
 
 	//REPLACE MESSAGING WITH GLOBAL EVENT SYSTEM IN GAME CLASS WHERE SHIT IS PUSHED TO AND
 	//WHICH CAN BE POLLED BY SYSTEMS AND WHATNOT
 
-	jl::Game game("HERRO", 800, 600);
-	game.setLogging(jl::GameLogging::Debug);
+	//jl::Game game("HERRO", 800, 600);
+	//game.setLogging(jl::GameLogging::Debug);
 
-	jl::SystemPool& sysPool = game.getSystemPool();
+	/*jl::SystemPool& sysPool = game.getSystemPool();
 	sysPool.addSystem(new jl::MeshSystem(&game));
 
 	jl::Entity& ent = game.createEntity();
@@ -104,8 +105,8 @@
 		{{-1.0f, 1.0f, 1.0f}, {0.820f, 0.883f, 0.371f}, {1.000004f, 1.0f-0.671847f}},
 		{{1.0f,-1.0f, 1.0f}, {0.982f, 0.099f, 0.879f}, {0.667979f, 1.0f-0.335851f}},
 	},
-	"panda.jpg");*/
-/*	ent2.addComponent<jl::LuaComponent>("luaFile.lua");
+	"panda.jpg");
+	ent2.addComponent<jl::LuaComponent>("luaFile.lua");
 	ent2.addComponent<jl::TransformComponent>(0,1,0);
 	jl::Scene& sc = game.createScene("HUE");
 
@@ -129,7 +130,7 @@
 	//glEnable(GL_CULL_FACE);
 	//glCullFace(GL_BACK);
 	glDepthFunc(GL_LESS);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);*/
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 
 	/*
@@ -147,9 +148,9 @@
 		and are not deleted until the end of the application unless the user
 		says otherwise.
 
-	*/
-/*
-	std::srand(std::time(0));
+	
+*/
+	/*std::srand(std::time(0));
 
 	auto randFloat = [] () -> float
 	{
@@ -167,12 +168,12 @@
 	jl::BoundingBox box2(jl::Vector3f(0,0,0), 1, 1, 1);
 
 	int customDateru = 152;
-
+	
 	jl::RTree<int> leTree;
 	int varu = 1337;
 
 	std::size_t id = leTree.insert(customDateru, box2);
-	SAUROBYTE_INFO_LOG("VALUE OF 999 %i", *leTree.get(id, box2));
+	//SAUROBYTE_INFO_LOG("VALUE OF 999 %i", *leTree.get(id, box2));
 	const float rtreeSpread = 20.f;
 	jl::BoundingBox err(jl::Vector3f(0,0,0), rtreeSpread*4,rtreeSpread*4,rtreeSpread*4);
 	for(int i = 0; i < 10; i++)
@@ -189,8 +190,8 @@
 		//	SAUROBYTE_INFO_LOG("REMOVAL");
 	}
 	for(int i = 0; i < 5; i++)
-		if(leTree.remove(i, err))
-			SAUROBYTE_INFO_LOG("REMOVAL");*/
+		if(leTree.remove(i, err))*/
+			//SAUROBYTE_INFO_LOG("REMOVAL");
 	//leTree.insert(&varu, box1);
 	//leTree.insert(&varu, box2);
 
@@ -199,10 +200,10 @@
 
 	//SAUROBYTE_INFO_LOG("Query count: %i, Value %i", leTree.query(box2).size(), *leTree.query(box2)[0]);
 	//SAUROBYTE_INFO_LOG("TOTAL AMOUNT OF BOUNDS: %i", leTree.getAllBounds().size());
-
-	/*auto queryTree = leTree.getAllBounds();
-	SAUROBYTE_INFO_LOG("QUERY COUNT %i", leTree.query(err).size());
-	for(std::size_t i = 0; i < queryTree.size(); i++)
+		
+	//auto queryTree = leTree.getAllBounds();
+	//SAUROBYTE_INFO_LOG("QUERY COUNT %i", leTree.query(err).size());
+	/*for(std::size_t i = 0; i < queryTree.size(); i++)
 	{
 		jl::Entity &treeCube = game.createEntity();
 		jl::BoundingBox box = queryTree[i];
@@ -306,8 +307,8 @@
 				break;
 			SDL_Delay(100);
 		}
-	}
-	game.gameLoop();*/
+	}*/
+	//game.gameLoop();
 
 
 	/*SDL_Event event;
@@ -403,7 +404,6 @@
 	}*/
 
 	//SDL_Quit();
-	//IMG_Quit();
 
-	//return 0;
-//}
+	return 0;
+}
