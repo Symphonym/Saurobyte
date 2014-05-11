@@ -5,7 +5,7 @@
 #include <memory>
 #include <Saurobyte/AudioSource.hpp>
 
-namespace jl
+namespace Saurobyte
 {
 
 	// Audio buffer handle used for statically played sounds in order

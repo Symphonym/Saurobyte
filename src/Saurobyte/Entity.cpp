@@ -1,13 +1,14 @@
 #include <Saurobyte/Entity.hpp>
 #include <Saurobyte/Game.hpp>
 
-namespace jl
+namespace Saurobyte
 {
 	Entity::Entity(EntityID id, Game *game)
 		:
 		m_isActive(true),
 		m_id(id),
-		m_game(game)
+		m_game(game),
+		m_scene(nullptr)
 	{
 
 	}
@@ -123,6 +124,10 @@ namespace jl
 	bool Entity::isActive() const
 	{
 		return m_isActive;
+	}
+	bool Entity::inScene() const
+	{
+		return m_scene != nullptr;
 	}
 
 };

@@ -1,7 +1,8 @@
 #include <Saurobyte/Lua/LuaEnv_Input.hpp>
 #include <Saurobyte/Game.hpp>
+#include <SDL2/SDL.h>
 
-namespace jl
+namespace Saurobyte
 {		
 
 	int LuaEnv_Input::GetMousePos(lua_State *state)

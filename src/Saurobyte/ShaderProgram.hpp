@@ -7,7 +7,7 @@
 
 #include <Saurobyte/Shader.hpp>
 
-namespace jl
+namespace Saurobyte
 	{
 
 	class ShaderProgram

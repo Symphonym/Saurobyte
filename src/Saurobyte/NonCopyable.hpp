@@ -1,7 +1,7 @@
 #ifndef JL_NONCOPYABLE_HPP
 #define JL_NONCOPYABLE_HPP
 
-namespace jl
+namespace Saurobyte
 {
 	/*
 		NonCopyable

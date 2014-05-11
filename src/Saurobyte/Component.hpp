@@ -7,7 +7,7 @@
 #include <Saurobyte/IdentifierTypes.hpp>
 
 
-namespace jl
+namespace Saurobyte
 {
 
 	/*

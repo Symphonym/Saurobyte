@@ -5,7 +5,7 @@
 #include <Saurobyte/Logger.hpp>
 #include <Saurobyte/AudioDevice.hpp>
 
-namespace jl
+namespace Saurobyte
 {
 	AudioSource::AudioSource()
 		:
@@ -35,8 +35,6 @@ namespace jl
 
 		if(alIsSource(m_source) && m_isValidSource)
 		{
-			SAUROBYTE_INFO_LOG("DELETERINO SOUNDERINO");
-
 			alDeleteSources(1, &m_source);
 			m_isValidSource = false; // Just because
 		}

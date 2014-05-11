@@ -2,9 +2,10 @@
 #define JL_VERTEX_HPP
 
 #include <SDL2/SDL_opengl.h>
-#include <Saurobyte/Math.hpp>
+#include <Saurobyte/Math/Vector3.hpp>
+#include <Saurobyte/Math/Vector2.hpp>
 
-namespace jl
+namespace Saurobyte
 {
 	class Vertex
 	{
@@ -21,9 +22,9 @@ namespace jl
 
 		// Default constructor made through default arguments
 		explicit Vertex(
-			const Vector3f &position = {0,0,0},
-			const Vector3f &color = {1,1,1},
-			const Vector2f &texCoords = {2,2});
+			const Vector3f &position = Vector3f(0,0,0),
+			const Vector3f &color = Vector3f(1,1,1),
+			const Vector2f &texCoords = Vector2f(2,2));
 
 	};
 };

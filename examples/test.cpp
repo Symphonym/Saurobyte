@@ -24,7 +24,7 @@
 #include <Saurobyte/AudioDevice.hpp>
 #include <Saurobyte/BoundingBox.hpp>
 */
-#include <Saurobyte/Math/Vector2.hpp>
+#include <Saurobyte/Math/Vector3.hpp>
 #include <Saurobyte/Logger.hpp>
 /*
 #include <Saurobyte/Components/LuaComponent.hpp>
@@ -37,9 +37,9 @@
 bool audioRunner = true;
 int main(int argc, const char* argv[]){
 
-	Saurobyte::Vector2f vec(2, 2);
+	Saurobyte::Vector3f vec(2, 2);
 	vec = vec * 10.f;
-	SAUROBYTE_I_LOG("Initializing test! X=", vec.x, " Y=", vec.y, "Length=", vec.length());
+	SAUROBYTE_INFO_LOG("Initializing test! X=", vec.x, " Y=", vec.y, "Length=", vec.length());
 	//SAUROBYTE_INFO_LOG("Initializing test! X=%f  Y=%f   Length=%f", vec.x, vec.y, vec.length());
 	//SAUROBYTE_INFO_LOG("NORMALIZE test! X=%f  Y=%f   Length=%f", vec.normalized().x, vec.normalized().y, vec.normalized().length());
 	//SAUROBYTE_INFO_LOG("Initializing test! X=%f  Y=%f   Length=%f", vec.x, vec.y, vec.length());

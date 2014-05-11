@@ -3,8 +3,10 @@
 #include <Saurobyte/Message.hpp>
 #include <Saurobyte/Game.hpp>
 #include <Saurobyte/Components/MeshComponent.hpp>
+#include <Saurobyte/OpenGLWindow.hpp>
+#include <SDL2/SDL.h>
 
-namespace jl
+namespace Saurobyte
 {
 
 
@@ -26,7 +28,7 @@ namespace jl
 	{
 	}
 
-	void MeshSystem::onMessage(jl::Message *message)
+	void MeshSystem::onMessage(Message *message)
 	{
 
 		
@@ -44,7 +46,7 @@ namespace jl
 		SDL_GetMouseState(&mouseX, &mouseY);
 
 		// Give mousepos to shader
-		glUniform2f(mousePosLoc, mouseX, game->getWindow().getHeight()-mouseY);
+		glUniform2f(mousePosLoc, mouseX, game->getWindow().getSize().y-mouseY);
 
 		glm::mat4 transform = glm::mat4(1) * game->getScenePool().getActiveScene()->getCamera().getTransform();
 		glUniformMatrix4fv(transforMatLoc, 1, GL_FALSE, &transform[0][0]);

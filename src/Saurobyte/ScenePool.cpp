@@ -3,7 +3,7 @@
 #include <Saurobyte/Message.hpp>
 #include <Saurobyte/Logger.hpp>
 
-namespace jl
+namespace Saurobyte
 {
 	ScenePool::ScenePool(Game *game)
 		:
@@ -24,7 +24,7 @@ namespace jl
 		if(itr == m_scenePool.end())
 		{
 			m_scenePool[name] = ScenePtr(new Scene(name));
-			SAUROBYTE_DEBUG_LOG("Created new scene '%s'", name.c_str());
+			SAUROBYTE_DEBUG_LOG("Created new scene '", name, "'");
 			
 			if(m_activeScene == nullptr)
 				changeScene(name);
@@ -63,7 +63,7 @@ namespace jl
 				if(scene == m_activeScene)
 					m_game->getSystemPool().emptySystems();
 
-				SAUROBYTE_DEBUG_LOG("Deleting scene '%s'", scene->getName().c_str());
+				SAUROBYTE_DEBUG_LOG("Deleting scene '", scene->getName(), "'");
 				delete scene;
 			}
 			else if(action == SceneActions::Change)
@@ -71,7 +71,7 @@ namespace jl
 				// Clear systems from entities
 				m_game->getSystemPool().emptySystems();
 
-				SAUROBYTE_DEBUG_LOG("Changing to scene '%s'", scene->getName().c_str());
+				SAUROBYTE_DEBUG_LOG("Changing to scene '", scene->getName(), "'");
 
 				// Refresh entities of new Scene, instantly
 				for(auto itr = scene->getEntities().begin(); itr != scene->getEntities().end(); itr++)

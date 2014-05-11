@@ -2,11 +2,11 @@
 #define JL_AUDIOSOURCE_HPP
 
 #include <string>
-#include <Saurobyte/Math.hpp>
 #include <Saurobyte/NonCopyable.hpp>
+#include <Saurobyte/Math/Vector3.hpp>
 
 class SDL_Thread;
-namespace jl
+namespace Saurobyte
 {
 	class AudioSource : public NonCopyable
 	{

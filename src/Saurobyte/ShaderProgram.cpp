@@ -3,7 +3,7 @@
 #include <cstring>
 #include <Saurobyte/Logger.hpp>
 
-namespace jl
+namespace Saurobyte
 {
 
 	ShaderProgram::ShaderProgram()
@@ -40,7 +40,7 @@ namespace jl
 			std::vector<char> logMessage(infoLogLength);
 
 			glGetProgramInfoLog(m_shaderProgram, infoLogLength, NULL, &logMessage[0]);
-			SAUROBYTE_ERROR_LOG("Shader linker error:\n%s", &logMessage[0]);
+			SAUROBYTE_ERROR_LOG("Shader linker error:\n", &logMessage[0]);
 		}
 
 		// Detach all shaders post-linking so it doesn't hold any future delete requests

@@ -2,7 +2,7 @@
 #include <Saurobyte/MessageCentral.hpp>
 #include <Saurobyte/Message.hpp>
 
-namespace jl
+namespace Saurobyte
 {
 		MessageHandler::MessageHandler(MessageCentral *center)
 			:

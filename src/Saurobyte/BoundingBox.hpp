@@ -1,9 +1,9 @@
 #ifndef JL_BOUNDINGBOX_HPP
 #define JL_BOUNDINGBOX_HPP
 
-#include <Saurobyte/Math.hpp>
+#include <Saurobyte/Math/Vector3.hpp>
 
-namespace jl
+namespace Saurobyte
 {
 	/*
 		BoundingBox
@@ -22,7 +22,7 @@ namespace jl
 	public:
 
 		// Default constructor is 1x1x1 cube centered at origo
-		explicit BoundingBox(const Vector3f &center = {0,0,0}, float width = 1, float height = 1, float depth = 1);
+		explicit BoundingBox(const Vector3f &center = Vector3f(0,0,0), float width = 1, float height = 1, float depth = 1);
 		explicit BoundingBox(const Vector3f &minPoint, const Vector3f &maxPoint);
 
 		// Checks whether or not this bounding box collides with another, sharing the

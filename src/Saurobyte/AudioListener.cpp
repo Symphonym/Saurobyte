@@ -1,7 +1,7 @@
 #include <Saurobyte/AudioListener.hpp>
 #include <AL/al.h>
 
-namespace jl
+namespace Saurobyte
 {
 	namespace
 	{

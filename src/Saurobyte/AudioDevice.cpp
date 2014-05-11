@@ -14,7 +14,7 @@
 #include <SDL2/SDL_timer.h>
 #include <SndFile/sndfile.h>
 
-namespace jl
+namespace Saurobyte
 {
 	namespace
 	{
@@ -58,27 +58,21 @@ namespace jl
 		m_device = alcOpenDevice(NULL);
 
 		if(!m_device)
-		{
-			SAUROBYTE_ERROR_LOG("Could not Initialize OpenAL device");
-			SAUROBYTE_THROW_ERROR("OpenAL error\n\nOpenAL failed to initialize an audio \ndevice, sound playback impossible.");
-		}
+			SAUROBYTE_FATAL_LOG("Could not Initialize OpenAL device");
 
 		m_context = alcCreateContext(m_device, NULL);
 
 		if(!m_context || !alcMakeContextCurrent(m_context))
-		{
-			SAUROBYTE_ERROR_LOG("Could not create and set OpenAL context.");
-			SAUROBYTE_THROW_ERROR("OpenAL error\n\nOpenAL failed to create a \ncontext, sound playback impossible.");
-		}
+			SAUROBYTE_FATAL_LOG("Could not create and set OpenAL context.");
 
-		SAUROBYTE_INFO_LOG("OpenAL Vendor: %s", alGetString(AL_VENDOR));
-		SAUROBYTE_INFO_LOG("OpenAL Version: %s", alGetString(AL_VERSION));
+		SAUROBYTE_INFO_LOG("OpenAL Vendor: ", alGetString(AL_VENDOR));
+		SAUROBYTE_INFO_LOG("OpenAL Version: ", alGetString(AL_VERSION));
 
 		ALCint maxMono = 0, maxStereo = 0;
 		alcGetIntegerv(m_device, ALC_MONO_SOURCES, 1, &maxMono);
 		alcGetIntegerv(m_device, ALC_STEREO_SOURCES, 1, &maxStereo);
-		SAUROBYTE_INFO_LOG("OpenAL supports a maximum of %i mono sources.", maxMono);
-		SAUROBYTE_INFO_LOG("OpenAL supports a maximum of %i stereo sources.", maxStereo);
+		SAUROBYTE_INFO_LOG("OpenAL supports a maximum of ", maxMono, " mono sources.");
+		SAUROBYTE_INFO_LOG("OpenAL supports a maximum of ", maxStereo," stereo sources.");
 		//SAUROBYTE_INFO_LOG("OpenAL opened device: %s", alcGetString(m_device, ALC_DEFAULT_DEVICE_SPECIFIER));
 	}
 	AudioDevice::~AudioDevice()
@@ -140,7 +134,7 @@ namespace jl
 		}
 		else
 		{
-			SAUROBYTE_WARNING_LOG("Couldn't find any stream by the name '%s'", name.c_str());
+			SAUROBYTE_WARNING_LOG("Couldn't find any stream by the name '", name, "'");
 			return AudioHandle(new AudioStream());
 		}
 	}
@@ -166,7 +160,7 @@ namespace jl
 
 				if(file == NULL)
 				{
-					SAUROBYTE_WARNING_LOG("Could not open audio file '%s'", itr->second.fileName.c_str());
+					SAUROBYTE_WARNING_LOG("Could not open audio file '", itr->second.fileName, "'");
 					return AudioHandle(new AudioChunk());
 				}
 
@@ -200,7 +194,7 @@ namespace jl
 		}
 		else
 		{
-			SAUROBYTE_WARNING_LOG("Couldn't find any sound by the name '%s'", name.c_str());
+			SAUROBYTE_WARNING_LOG("Couldn't find any sound by the name '", name, "'");
 			return AudioHandle(new AudioChunk());
 		}
 	}
@@ -231,7 +225,7 @@ namespace jl
 		}
 
 		if(buffersRemoved > 0)
-			SAUROBYTE_DEBUG_LOG("Removed %i audio buffers", buffersRemoved);
+			SAUROBYTE_DEBUG_LOG("Removed ", buffersRemoved, " audio buffers");
 	}
 
 	void AudioDevice::wipeSource(unsigned int source)
@@ -355,16 +349,16 @@ namespace jl
 		std::sort(m_sounds.begin(), m_sounds.begin() + lowestVolumeCount,
 			[](const SoundData &lhs, const SoundData &rhs) -> bool
 			{
-				return glm::distance(lhs.second->getPosition(), AudioListener::getPosition()) >
-					 glm::distance(rhs.second->getPosition(), AudioListener::getPosition());
+				return lhs.second->getPosition().distance(AudioListener::getPosition()) >
+					 rhs.second->getPosition().distance(AudioListener::getPosition());
 			});
 
 		// Check how many elements are tied on the same playback left
-		float furthestDistance = glm::distance(m_sounds[0].second->getPosition(), AudioListener::getPosition());
+		float furthestDistance = m_sounds[0].second->getPosition().distance(AudioListener::getPosition());
 		unsigned int furthestDistanceCount = 0;
 		for(std::size_t i = 0; i < m_sounds.size(); i++)
 		{
-			float curDistance = glm::distance(m_sounds[i].second->getPosition(), AudioListener::getPosition());
+			float curDistance = m_sounds[i].second->getPosition().distance(AudioListener::getPosition());
 			if(curDistance != furthestDistance)
 				break;
 			else

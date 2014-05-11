@@ -2,7 +2,7 @@
 #define JL_MUTEXLOCK_HPP
 
 class SDL_mutex;
-namespace jl
+namespace Saurobyte
 {
 	class MutexLock
 	{

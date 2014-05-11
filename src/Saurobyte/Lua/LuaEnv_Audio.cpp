@@ -1,7 +1,7 @@
 #include <Saurobyte/Lua/LuaEnv_Audio.hpp>
 #include <Saurobyte/Game.hpp>
 
-namespace jl
+namespace Saurobyte
 {
 	int LuaEnv_Audio::PlaySound(lua_State *state)
 	{

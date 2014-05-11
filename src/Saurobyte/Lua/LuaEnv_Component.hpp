@@ -3,7 +3,7 @@
 
 
 class lua_State;
-namespace jl
+namespace Saurobyte
 {
 	class Game;
 	class LuaEnv_Component

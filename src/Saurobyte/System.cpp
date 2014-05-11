@@ -2,7 +2,7 @@
 #include <Saurobyte/Entity.hpp>
 #include <Saurobyte/Game.hpp>
 
-namespace jl
+namespace Saurobyte
 {
 
 	BaseSystem::BaseSystem(Game *gameInstance, TypeID typeID)

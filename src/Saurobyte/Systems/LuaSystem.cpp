@@ -3,8 +3,9 @@
 #include <Saurobyte/Entity.hpp>
 #include <Saurobyte/Message.hpp>
 #include <Saurobyte/Game.hpp>
+#include <Saurobyte/OpenGLWindow.hpp>
 
-namespace jl
+namespace Saurobyte
 {
 
 
@@ -39,7 +40,7 @@ namespace jl
 	{
 	}
 
-	void LuaSystem::onMessage(jl::Message *message)
+	void LuaSystem::onMessage(Message *message)
 	{
 		if(message->name == "ReloadLua")
 		{
@@ -65,7 +66,7 @@ namespace jl
 					int eventFuncIndex = lua_gettop(state);
 
 					// Push self
-					LuaEnvironment::pushObjectToLua<Entity>(state, itr->second[i], "jl.Entity");
+					LuaEnvironment::pushObject<Entity>(state, itr->second[i], "jl.Entity");
 
 					// Push event name
 					lua_pushstring(state, message->name.c_str());
@@ -77,9 +78,9 @@ namespace jl
 						if(message->isType<SDL_Event>())
 						{
 							const SDL_Event& sdlEvent = static_cast<MessageData<SDL_Event>*>(message)->data;
-							argCount += m_luaEnv.pushArgsToLua(
-								LuaArg<std::string>{SDL_GetScancodeName(sdlEvent.key.keysym.scancode)},
-								LuaArg<bool>{sdlEvent.key.repeat});
+							argCount += m_luaEnv.pushArgs(
+								std::string(SDL_GetScancodeName(sdlEvent.key.keysym.scancode)),
+								static_cast<bool>(sdlEvent.key.repeat));
 							
 						}
 					}
@@ -116,10 +117,10 @@ namespace jl
 			lua_getglobal(state, "update");
 
 			// Push self
-			LuaEnvironment::pushObjectToLua<Entity>(state, &entity, "jl.Entity");
+			LuaEnvironment::pushObject<Entity>(state, &entity, "jl.Entity");
 
 			// Push delta time as argument TODO
-			lua_pushnumber(state, game->getWindow().getDelta());
+			// TODO lua_pushnumber(state, game->getWindow().getDelta());
 
 			if(!lua_isnil(state, -2))
 			{
@@ -178,7 +179,7 @@ namespace jl
 		int killFuncIndex = lua_gettop(state);
 
 		// Push self
-		LuaEnvironment::pushObjectToLua<Entity>(state, &entity, "jl.Entity");
+		LuaEnvironment::pushObject<Entity>(state, &entity, "jl.Entity");
 
 		if(!lua_isnil(state, killFuncIndex))
 			if(lua_pcall(state, 1, 0, 0))
@@ -206,7 +207,7 @@ namespace jl
 		int initFuncIndex = lua_gettop(state);
 
 		// Push self
-		LuaEnvironment::pushObjectToLua<Entity>(state, &entity, "jl.Entity");
+		LuaEnvironment::pushObject<Entity>(state, &entity, "jl.Entity");
 
 		if(!lua_isnil(state, initFuncIndex))
 			if(lua_pcall(state, 1, 0, 0))

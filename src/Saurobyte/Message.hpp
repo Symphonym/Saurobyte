@@ -3,8 +3,9 @@
 
 #include <string>
 #include <Saurobyte/IdentifierTypes.hpp>
+#include <Saurobyte/Logger.hpp>
 
-namespace jl
+namespace Saurobyte
 {
 	/*
 		Message
@@ -50,6 +51,35 @@ namespace jl
 			Message(messageName, TypeIdGrabber::getUniqueTypeID<TDataType>()),
 			data(newData)
 		{}
+	};
+
+	template<typename TDataType> struct MessageReader
+	{
+	private:
+
+		MessageData<TDataType> *msg;
+
+	public:
+
+		MessageReader()
+			: msg(nullptr)
+		{
+		}
+
+		bool read(Message *msg)
+		{
+			if(msg->isType<TDataType>())
+			{
+				msg = static_cast<MessageData<TDataType>*>(msg);
+				return true;
+			}
+			else
+				return false;
+		};
+		MessageData<TDataType>* operator->()
+		{
+			return msg;
+		};
 	};
 
 	/*

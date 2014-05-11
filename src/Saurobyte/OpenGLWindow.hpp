@@ -6,7 +6,7 @@
 #include <vector>
 #include <Saurobyte/FrameCounter.hpp>
 
-namespace jl
+namespace Saurobyte
 {
 
 	class OpenGLWindow

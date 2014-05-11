@@ -1,6 +1,6 @@
 #include <Saurobyte/Camera.hpp>	
 
-namespace jl
+namespace Saurobyte
 {
 
 	Camera::Camera()

@@ -7,7 +7,7 @@
 #include <Saurobyte/IdentifierTypes.hpp>
 #include <Saurobyte/Camera.hpp>
 
-namespace jl
+namespace Saurobyte
 {
 	class Entity;
 	class Scene

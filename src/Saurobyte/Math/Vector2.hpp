@@ -136,7 +136,8 @@ namespace Saurobyte
 		};
 
 		/**
-		 * Returns a normalized copy of this vector
+		 * Normalizes a copy of this vector
+		 * @return A normalized copy of this vector
 		 */
 		Vector2<TType> normalized() const
 		{
@@ -161,6 +162,16 @@ namespace Saurobyte
 		float dot(const Vector2<TType> &rhs) const
 		{
 			return x*rhs.x + y*rhs.y;
+		};
+		/**
+		 * Performs linear interpolation between this vector and the rhs vector
+		 * @param  rhs     The other vector
+		 * @param  percent Percentage determining the interpolation amount 
+		 * @return         The resulting vector that has been interpolated
+		 */
+		Vector2<TType> lerp(const Vector2<TType> &rhs, float percent) const
+		{
+			return (*this + percent*(rhs - *this));
 		};
 		/**
 		 * Calclates the length of this vector, as measured from 0,0

@@ -4,7 +4,7 @@
 #include <string>
 #include <unordered_set>
 
-namespace jl
+namespace Saurobyte
 {
 	class Message;
 	class MessageCentral;

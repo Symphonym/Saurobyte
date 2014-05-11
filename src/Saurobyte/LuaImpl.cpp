@@ -24,36 +24,21 @@
  */
 
 
-#ifndef SAUROBYTE_UTIL_HPP
-#define SAUROBYTE_UTIL_HPP
-
-#include <string>
-#include <sstream>
+#include <Saurobyte/LuaImpl.hpp>
 
 namespace Saurobyte
 {
-
-
-	inline void appendToStream(std::ostream &stream) {};
-	template<typename TType, typename... TArgs> void appendToStream(std::ostream &stream, TType &first, const TArgs&... args)
+	namespace internal
 	{
-		stream << first;
-		appendToStream(stream, args...);
+		LuaImpl::LuaImpl()
+		{
+			// Create lua state and environment
+			state = luaL_newstate();
+			luaL_openlibs(state);
+		}
+		LuaImpl::~LuaImpl()
+		{
+			lua_close(state);
+		}
 	};
-
-	/**
-	 * Converts all arguments into a string using a string stream
-	 * @param  args Arguments to convert into the string in the order they are provided
-	 * @return      The string with all the arguments concatenated
-	 */
-	template<typename... TArgs> std::string toStr(const TArgs&... args)
-	{
-		std::ostringstream ss;
-		appendToStream(ss, args...);
-		return ss.str();
-	}
-
-	void sleep(unsigned int sleepInMs);
 };
-
-#endif

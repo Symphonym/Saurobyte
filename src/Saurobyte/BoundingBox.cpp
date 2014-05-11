@@ -1,12 +1,12 @@
 #include <Saurobyte/BoundingBox.hpp>
 
-namespace jl
+namespace Saurobyte
 {
 	BoundingBox::BoundingBox(const Vector3f &center, float width, float height, float depth)
 		:
-		m_minPoint({center.x - width/2.f, center.y - height/2.f, center.z - depth/2.f}),
-		m_maxPoint({center.x + width/2.f, center.y + height/2.f, center.z + depth/2.f}),
-		m_size({width, height, depth}),
+		m_minPoint(Vector3f(center.x - width/2.f, center.y - height/2.f, center.z - depth/2.f)),
+		m_maxPoint(Vector3f(center.x + width/2.f, center.y + height/2.f, center.z + depth/2.f)),
+		m_size(Vector3f(width, height, depth)),
 		m_center(center)
 	{
 
@@ -16,8 +16,8 @@ namespace jl
 		:
 		m_minPoint(minPoint),
 		m_maxPoint(maxPoint),
-		m_size({maxPoint.x-minPoint.x, maxPoint.y-minPoint.y, maxPoint.z-minPoint.z}),
-		m_center({maxPoint.x - m_size.x/2.f, maxPoint.y - m_size.y/2.f, maxPoint.z - m_size.z/2.f})
+		m_size(Vector3f(maxPoint.x-minPoint.x, maxPoint.y-minPoint.y, maxPoint.z-minPoint.z)),
+		m_center(Vector3f(maxPoint.x - m_size.x/2.f, maxPoint.y - m_size.y/2.f, maxPoint.z - m_size.z/2.f))
 	{
 
 	}

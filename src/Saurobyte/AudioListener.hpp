@@ -1,8 +1,8 @@
 #ifndef JL_AUDIOLISTENER_HPP
 #define JL_AUDIOLISTENER_HPP
-#include <Saurobyte/Math.hpp>
+#include <Saurobyte/Math/Vector3.hpp>
 
-namespace jl
+namespace Saurobyte
 {
 	namespace AudioListener
 	{

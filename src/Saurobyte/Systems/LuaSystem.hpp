@@ -7,7 +7,7 @@
 #include <Saurobyte/System.hpp>
 #include <Saurobyte/IdentifierTypes.hpp>
 
-namespace jl
+namespace Saurobyte
 {
 	class LuaEnvironment;
 	class LuaSystem : public System<LuaSystem>
@@ -92,7 +92,7 @@ namespace jl
 		void subscribeEntity(Entity &entity, const std::string &eventName);
 		void unsubscribeEntity(Entity &entity, const std::string &eventName);
 
-		virtual void onMessage(jl::Message *message);
+		virtual void onMessage(Message *message);
 
 		virtual void processEntity(Entity &entity);
 		virtual void postProcess();

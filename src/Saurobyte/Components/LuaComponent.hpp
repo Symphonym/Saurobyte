@@ -7,7 +7,7 @@
 #include <Saurobyte/Component.hpp>
 #include <Saurobyte/Logger.hpp>
 
-namespace jl
+namespace Saurobyte
 {
 	class LuaComponent : public Component<LuaComponent>
 	{

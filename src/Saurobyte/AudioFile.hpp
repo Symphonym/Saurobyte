@@ -5,10 +5,10 @@
 #include <string>
 #include <array>
 #include <SndFile/sndfile.h>
-#include <Saurobyte/Math.hpp>
+#include <Saurobyte/Math/Vector3.hpp>
 
 class SDL_Thread;
-namespace jl
+namespace Saurobyte
 {
 	class AudioFile
 	{

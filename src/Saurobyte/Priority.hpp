@@ -1,7 +1,7 @@
 #ifndef JL_PRIORITY_VALUES_HPP
 #define JL_PRIORITY_VALUES_HPP
 
-namespace jl
+namespace Saurobyte
 {
 
 	typedef unsigned char PriorityType;

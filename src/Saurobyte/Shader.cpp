@@ -3,7 +3,7 @@
 #include <vector>
 #include <Saurobyte/Logger.hpp>
 
-namespace jl
+namespace Saurobyte
 {
 
 	Shader::Shader() :
@@ -87,16 +87,16 @@ namespace jl
 				std::vector<char> logMessage(logLength);
 				glGetShaderInfoLog(m_shaderHandle, logLength, &logLength, &logMessage[0]);
 
-				SAUROBYTE_ERROR_LOG("Shader compilation error:\n%s shader: \"%s\"\n%s", shaderTypeStr.c_str(), filePath.c_str(), &logMessage[0]);
+				SAUROBYTE_ERROR_LOG("Shader compilation error:\n", shaderTypeStr, " shader: ", filePath, "\n", &logMessage[0]);
 
 				// Shader wasen't compiled correctly, delete it to avoid leaks
 				glDeleteShader(m_shaderHandle);
 			}
 			else
-				SAUROBYTE_DEBUG_LOG("Compiled shader (%s): \"%s\"", shaderTypeStr.c_str(), filePath.c_str());
+				SAUROBYTE_DEBUG_LOG("Compiled shader (", shaderTypeStr,"): ", filePath);
 		}
 		else
-			SAUROBYTE_ERROR_LOG("Could not open shader file: %s", filePath.c_str());
+			SAUROBYTE_ERROR_LOG("Could not open shader file: ", filePath);
 
 		reader.close();
 

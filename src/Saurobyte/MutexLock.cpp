@@ -1,7 +1,7 @@
 #include <Saurobyte/MutexLock.hpp>
 #include <SDL2/SDL_mutex.h>
 
-namespace jl
+namespace Saurobyte
 {
 	MutexLock::MutexLock(SDL_mutex *mutex)
 		:

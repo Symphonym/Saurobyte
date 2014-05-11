@@ -6,16 +6,16 @@
 #include <Saurobyte/Shader.hpp>
 #include <Saurobyte/ShaderProgram.hpp>
 
-namespace jl
+namespace Saurobyte
 {
 	class MeshSystem : public System<MeshSystem>
 	{
 	private:
 
-		jl::Shader m_fragShader;
-		jl::Shader m_vertShader;
+		Shader m_fragShader;
+		Shader m_vertShader;
 
-		jl::ShaderProgram m_shaderProgram;
+		ShaderProgram m_shaderProgram;
 
 
 	public:
@@ -23,7 +23,7 @@ namespace jl
 		MeshSystem(Game *game);
 		~MeshSystem();
 
-		virtual void onMessage(jl::Message *message);
+		virtual void onMessage(Message *message);
 
 		virtual void processEntity(Entity &entity);
 	};

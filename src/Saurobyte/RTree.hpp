@@ -11,7 +11,7 @@
 #include <Saurobyte/Math.hpp>
 #include <Saurobyte/Logger.hpp>
 
-namespace jl
+namespace Saurobyte
 {
 	/*
 		RTree
@@ -193,19 +193,19 @@ namespace jl
 
 			if(node->level != m_rootNode->level)
 				assert(node->children.size() >= minNodes && node->children.size() <= maxNodes+1);
-			SAUROBYTE_INFO_LOG("%sChildren count is valid!", indent.c_str());
+			SAUROBYTE_INFO_LOG(indent, "Children count is valid!");
 
 
 			if(!node->isLeaf() && node->level == m_rootNode->level)
 				assert(node->children.size() >= 2);
-			SAUROBYTE_INFO_LOG("%sRoot children count is valid!", indent.c_str());
+			SAUROBYTE_INFO_LOG(indent, "Root children count is valid!");
 
 			if(node->isLeaf())
 				assert(node->level == 0);
-			SAUROBYTE_INFO_LOG("%sSame level leaf is valid!", indent.c_str());
+			SAUROBYTE_INFO_LOG(indent, "Same level leaf is valid!");
 
 			assert(node->bounds == calculateMBR(node->children));
-			SAUROBYTE_INFO_LOG("%sMBR size is correct and up-to-date!", indent.c_str());
+			SAUROBYTE_INFO_LOG(indent, "MBR size is correct and up-to-date!");
 
 
 			for(std::size_t i = 0; i < node->children.size(); i++)
@@ -219,7 +219,7 @@ namespace jl
 		{
 			if(node == nullptr)
 				node = m_rootNode;
-			SAUROBYTE_INFO_LOG("R* Tree invariant test: %s", note.c_str());
+			SAUROBYTE_INFO_LOG("R* Tree invariant test: ", note);
 			invariant(node, 0);
 		}
 
@@ -848,7 +848,6 @@ namespace jl
 			NodeSearchPath searchPath;
 			searchPath.push_back(std::make_pair(m_rootNode, nullptr));
 			bool re = remove(id, entryBounds, searchPath);
-			invariant("POST REMOVE");
 			return re;
 		};
 
@@ -883,7 +882,7 @@ namespace jl
 		// Prints a the R-tree hierarchy to the console
 		void printTree()
 		{
-			SAUROBYTE_INFO_LOG("ROOT (Level %i)", m_rootNode->level);
+			SAUROBYTE_INFO_LOG("ROOT (Level ", m_rootNode->level,")");
 			printTree(*m_rootNode, 1);
 		};
 

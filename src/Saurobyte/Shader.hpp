@@ -5,7 +5,7 @@
 #include <SDL2/SDL_opengl.h>
 #include <string>
 
-namespace jl
+namespace Saurobyte
 {
 
 	class Shader

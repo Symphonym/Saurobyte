@@ -1,6 +1,6 @@
 #include <Saurobyte/Vertex.hpp>
 
-namespace jl
+namespace Saurobyte
 {
 	Vertex::Vertex(
 		const Vector3f &newPosition,

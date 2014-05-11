@@ -1,7 +1,7 @@
 #include <Saurobyte/Lua/LuaEnv_Component.hpp>
 #include <Saurobyte/Game.hpp>
 
-namespace jl
+namespace Saurobyte
 {		
 
 

@@ -2,7 +2,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <Lua/lua.hpp>
 
-namespace jl
+namespace Saurobyte
 {
 
 	TransformComponent::TransformComponent(float x, float y, float z)
@@ -147,7 +147,7 @@ namespace jl
 
 	void TransformComponent::updateTransform()
 	{
-		Matrix4 positionMat = glm::translate(glm::mat4(1), m_position);
+		/* TODO Matrix4 positionMat = glm::translate(glm::mat4(1), m_position);
 
 		Matrix4 rotationMat = Matrix4(1);
 		rotationMat = glm::rotate(rotationMat, m_rotation.x, glm::vec3(0, 1, 0));
@@ -155,7 +155,7 @@ namespace jl
 		rotationMat = glm::rotate(rotationMat, m_rotation.z, glm::vec3(0, 0, -1));
 
 		// Set model transform by multiplying rotaton and position
-		m_modelTransform = rotationMat * positionMat;
+		m_modelTransform = rotationMat * positionMat;*/
 
 	}
 

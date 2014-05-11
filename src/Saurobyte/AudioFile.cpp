@@ -5,7 +5,7 @@
 #include <SDL2/SDL_timer.h>
 #include <Saurobyte/Logger.hpp>
 
-namespace jl
+namespace Saurobyte
 {
 
 	AudioFile::AudioFile()

@@ -7,7 +7,7 @@
 #include <Saurobyte/IdentifierTypes.hpp>
 #include <Saurobyte/MessageHandler.hpp>
 
-namespace jl
+namespace Saurobyte
 {
 
 	class Game;

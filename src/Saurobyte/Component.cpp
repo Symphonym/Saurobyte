@@ -1,6 +1,6 @@
 #include <Saurobyte/Component.hpp>
 
-namespace jl
+namespace Saurobyte
 {
 	TypeID BaseComponent::getTypeID() const
 	{

@@ -1,7 +1,7 @@
 #include <Saurobyte/Lua/LuaEnv_Scene.hpp>
 #include <Saurobyte/Game.hpp>
 
-namespace jl
+namespace Saurobyte
 {
 	int LuaEnv_Scene::GetEntities(lua_State *state)
 	{
@@ -15,7 +15,7 @@ namespace jl
 		for(auto itr = scene->getEntities().begin(); itr != scene->getEntities().end(); itr++)
 		{
 			lua_pushnumber(state, index++);
-			LuaEnvironment::pushObjectToLua<Entity>(state, itr->second, "jl.Entity");
+			LuaEnvironment::pushObject<Entity>(state, itr->second, "jl.Entity");
 			lua_settable(state, tableIndex);
 		}
 

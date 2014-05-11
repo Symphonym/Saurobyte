@@ -2,7 +2,7 @@
 #include <Saurobyte/System.hpp>
 
 
-namespace jl
+namespace Saurobyte
 {
 	SystemPool::SystemPool(Game *game)
 		:

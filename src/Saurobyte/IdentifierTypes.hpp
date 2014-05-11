@@ -1,7 +1,7 @@
 #ifndef JL_IDENTIFIERTYPES_HPP
 #define JL_IDENTIFIERTYPES_HPP
 
-namespace jl
+namespace Saurobyte
 {
 
 	// Used when storying Entity ID's

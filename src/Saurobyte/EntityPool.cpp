@@ -1,7 +1,7 @@
 #include <Saurobyte/EntityPool.hpp>
 #include <Saurobyte/Game.hpp>
 
-namespace jl
+namespace Saurobyte
 {
 
 	EntityPool::EntityPool(Game *game)

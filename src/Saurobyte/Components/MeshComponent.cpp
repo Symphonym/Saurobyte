@@ -3,7 +3,7 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL.h>
 
-namespace jl
+namespace Saurobyte
 	{
 
 	MeshComponent::MeshComponent(const std::vector<Triangle> &triangles, const std::string &texturePath)

@@ -1,7 +1,8 @@
 #include <Saurobyte/Lua/LuaEnv_Game.hpp>
 #include <Saurobyte/Game.hpp>
+#include <Saurobyte/OpenGLWindow.hpp>
 
-namespace jl
+namespace Saurobyte
 {
 	int LuaEnv_Game::ChangeScene(lua_State *state)
 	{
@@ -41,7 +42,7 @@ namespace jl
 		if(activeScene == nullptr)
 			lua_pushnil(state);
 		else
-			LuaEnvironment::pushObjectToLua<Scene>(state, activeScene, "jl.Scene");
+			LuaEnvironment::pushObject<Scene>(state, activeScene, "jl.Scene");
 
 		return 1;
 	}
@@ -79,7 +80,7 @@ namespace jl
 
 		lua_settop(state, 0);
 
-		lua_pushnumber(state, game->getWindow().getWidth());
+		lua_pushnumber(state, game->getWindow().getSize().x);
 
 		return 1;
  	}
@@ -90,7 +91,7 @@ namespace jl
 
 		lua_settop(state, 0);
 
-		lua_pushnumber(state, game->getWindow().getHeight());
+		lua_pushnumber(state, game->getWindow().getSize().y);
 
 		return 1;
 	}
@@ -113,7 +114,7 @@ namespace jl
 
 		// Create global game object in Lua environment
 		lua_State *state = game->getLua().getRaw();
-		LuaEnvironment::pushObjectToLua<Game>(state, game, "jl.Game");
+		LuaEnvironment::pushObject<Game>(state, game, "jl.Game");
 		lua_setglobal(state, "game");
 	}
 };

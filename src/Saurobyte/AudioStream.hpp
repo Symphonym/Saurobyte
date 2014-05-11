@@ -7,7 +7,7 @@
 #include <array>
 #include <SndFile/sndfile.h>
 
-namespace jl
+namespace Saurobyte
 {
 	class AudioStream : public AudioSource
 	{

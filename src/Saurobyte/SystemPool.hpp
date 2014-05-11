@@ -7,7 +7,7 @@
 #include <Saurobyte/IdentifierTypes.hpp>
 #include <Saurobyte/System.hpp>
 
-namespace jl
+namespace Saurobyte
 {
 	class Game;
 	class Entity;

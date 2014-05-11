@@ -5,7 +5,7 @@
 #include <Saurobyte/Logger.hpp>
 
 
-namespace jl
+namespace Saurobyte
 {
 	int LuaEnv_Entity::GetComponent(lua_State* state)
 	{
@@ -24,7 +24,7 @@ namespace jl
 		if(comp == nullptr)
 			lua_pushnil(state);
 		else
-			LuaEnvironment::pushObjectToLua<BaseComponent>(state, comp, "jl.Component");
+			LuaEnvironment::pushObject<BaseComponent>(state, comp, "jl.Component");
 		return 1;
 	}
 	int LuaEnv_Entity::GetComponentCount(lua_State* state)

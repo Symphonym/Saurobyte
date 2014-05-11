@@ -24,36 +24,43 @@
  */
 
 
-#ifndef SAUROBYTE_UTIL_HPP
-#define SAUROBYTE_UTIL_HPP
+#ifndef SAUROBYTE_WINDOW_IMPL_HPP
+#define SAUROBYTE_WINDOW_IMPL_HPP
 
+#include <SDL2/SDL.h>
+#include <Saurobyte/ApiDefines.hpp>
 #include <string>
-#include <sstream>
 
 namespace Saurobyte
 {
-
-
-	inline void appendToStream(std::ostream &stream) {};
-	template<typename TType, typename... TArgs> void appendToStream(std::ostream &stream, TType &first, const TArgs&... args)
+	namespace internal
 	{
-		stream << first;
-		appendToStream(stream, args...);
+		struct SAUROBYTE_API WindowImpl
+		{
+
+			SDL_Window* window;
+			SDL_GLContext openGLContext;
+
+			explicit WindowImpl(const std::string &title, int width, int height, Uint32 flags);
+			~WindowImpl();
+
+			/**
+			 * Creates (or recreates) the Window with the given parameters
+			 * @param title  The title of the window
+			 * @param width  The width of the window
+			 * @param height The height of the window
+			 * @param flags  SDL flags for the Window
+			 */
+			void create(const std::string &title, int width, int height, Uint32 flags);
+
+			/**
+			 * Terminates the Window, effectively closing it
+			 */
+			void close();
+
+		};
 	};
-
-	/**
-	 * Converts all arguments into a string using a string stream
-	 * @param  args Arguments to convert into the string in the order they are provided
-	 * @return      The string with all the arguments concatenated
-	 */
-	template<typename... TArgs> std::string toStr(const TArgs&... args)
-	{
-		std::ostringstream ss;
-		appendToStream(ss, args...);
-		return ss.str();
-	}
-
-	void sleep(unsigned int sleepInMs);
 };
+
 
 #endif

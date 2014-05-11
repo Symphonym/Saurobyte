@@ -1,6 +1,6 @@
 #include <Saurobyte/Components/LuaComponent.hpp>
 
-namespace jl
+namespace Saurobyte
 {
 	LuaComponent::LuaComponent(const std::string fileName)
 		:

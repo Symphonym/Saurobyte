@@ -1,7 +1,7 @@
 #include <Saurobyte/Scene.hpp>
 #include <Saurobyte/Entity.hpp>
 
-namespace jl
+namespace Saurobyte
 {
 	Scene::Scene(const std::string &name)
 		:
@@ -12,6 +12,11 @@ namespace jl
 
 	void Scene::attach(Entity &entity)
 	{
+		if(entity.m_scene != nullptr)
+			entity.m_scene->detach(entity);
+
+		entity.m_scene = this;
+
 		m_entities[entity.getID()] = &entity;
 		entity.refresh();
 	}
@@ -21,6 +26,7 @@ namespace jl
 		if(itr != m_entities.end())
 		{
 			entity.detach();
+			entity.m_scene = nullptr;
 			m_entities.erase(itr);
 		}
 	}

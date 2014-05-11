@@ -7,7 +7,7 @@
 #include <memory>
 #include <Saurobyte/Scene.hpp>
 
-namespace jl
+namespace Saurobyte
 {
 	class Game;
 	class ScenePool

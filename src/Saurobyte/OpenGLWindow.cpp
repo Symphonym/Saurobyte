@@ -3,7 +3,7 @@
 #include <SDL2/SDL_opengl.h>
 #include <Saurobyte/Logger.hpp>
 
-namespace jl
+namespace Saurobyte
 {
 
 	OpenGLWindow::OpenGLWindow(
@@ -30,9 +30,7 @@ namespace jl
 
 		// Failed to create SDL window
 		if(m_window == nullptr)
-			SAUROBYTE_ERROR_LOG("SDL_CreateWindow failed. SDL_Error: %s", SDL_GetError());
-		else
-			SAUROBYTE_INFO_LOG("SDL window created: %s", windowTitle.c_str());
+			SAUROBYTE_FATAL_LOG("SDL_CreateWindow failed. SDL_Error: ", SDL_GetError());
 
 		m_frameCounter.limitFps(maxFps);
 
@@ -43,11 +41,11 @@ namespace jl
 		glewExperimental = GL_TRUE;
 		GLenum loadedGlew = glewInit();
 		if(loadedGlew != GLEW_OK)
-			SAUROBYTE_ERROR_LOG("GLEW initialization error: %s", glewGetErrorString(loadedGlew));
+			SAUROBYTE_FATAL_LOG("GLEW initialization error: ", glewGetErrorString(loadedGlew));
 
-		SAUROBYTE_INFO_LOG("OpenGL: %s", glGetString(GL_VERSION));
-		SAUROBYTE_INFO_LOG("OpenGL vendor: %s", glGetString(GL_VENDOR));
-		SAUROBYTE_INFO_LOG("GLSL: %s", glGetString(GL_SHADING_LANGUAGE_VERSION));
+		SAUROBYTE_INFO_LOG("OpenGL: ", glGetString(GL_VERSION));
+		SAUROBYTE_INFO_LOG("OpenGL vendor: ", glGetString(GL_VENDOR));
+		SAUROBYTE_INFO_LOG("GLSL: ", glGetString(GL_SHADING_LANGUAGE_VERSION));
 	}
 	OpenGLWindow::~OpenGLWindow()
 	{
@@ -89,12 +87,12 @@ namespace jl
 	void OpenGLWindow::setVsync(bool enabled)
 	{
 		if(SDL_GL_SetSwapInterval(enabled ? 1 : 0) < 0)
-			SAUROBYTE_WARNING_LOG("Vsync could not be enabled on this system. SDL_Error: %s", SDL_GetError());
+			SAUROBYTE_WARNING_LOG("Vsync could not be enabled on this system. SDL_Error: ", SDL_GetError());
 	}
 	void OpenGLWindow::setGamma(float gamma)
 	{
 		if(SDL_SetWindowBrightness(m_window, gamma))
-			SAUROBYTE_ERROR_LOG("Couldn't set gamme value. SDL_Error: %s", SDL_GetError());
+			SAUROBYTE_ERROR_LOG("Couldn't set gamma value. SDL_Error: ", SDL_GetError());
 
 	}
 

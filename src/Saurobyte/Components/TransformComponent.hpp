@@ -1,10 +1,11 @@
 #ifndef JL_TRANSFORMCOMPONENT_HPP
 #define JL_TRANSFORMCOMPONENT_HPP
 
+#include <Saurobyte/Math/Vector3.hpp>
 #include <Saurobyte/Math.hpp>
 #include <Saurobyte/Component.hpp>
 
-namespace jl
+namespace Saurobyte
 {
 	class TransformComponent : public Component<TransformComponent>
 	{
@@ -22,7 +23,7 @@ namespace jl
 	public:
 
 		explicit TransformComponent(float x = 0, float y = 0, float z = 0);
-		explicit TransformComponent(const Vector3f &position, const Vector3f &rotation = {0,0,0});
+		explicit TransformComponent(const Vector3f &position, const Vector3f &rotation = Vector3f(0,0,0));
 
 		// Sets the position
 		void setPosition(float x, float y, float z);

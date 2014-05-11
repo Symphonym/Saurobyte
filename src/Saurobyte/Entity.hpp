@@ -6,7 +6,7 @@
 #include <Saurobyte/IdentifierTypes.hpp>
 #include <Saurobyte/Component.hpp>
 
-namespace jl
+namespace Saurobyte
 {
 
 	typedef std::unique_ptr<BaseComponent> ComponentPtr;
@@ -14,6 +14,7 @@ namespace jl
 	typedef std::unordered_map<std::string, BaseComponent*> LuaComponentBag;
 
 	class Game;
+	class Scene;
 	class Entity
 	{
 	private:
@@ -26,6 +27,10 @@ namespace jl
 
 		const EntityID m_id;
 		Game *const m_game;
+
+		// The scene that the entity is in
+		Scene *m_scene;
+		friend class Scene;
 
 	public:
 
@@ -96,6 +101,12 @@ namespace jl
 		// Whether or not the Entity is active, inactive entities do not
 		// get processed at all.
 		bool isActive() const;
+
+		/**
+		 * Checks if this entity is attached to a scene
+		 * @return Whether or not entity is attached to a scenee
+		 */
+		bool inScene() const;
 	};
 };
 

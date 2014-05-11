@@ -9,7 +9,7 @@
 #include <Saurobyte/AudioStream.hpp>
 #include <Saurobyte/Priority.hpp>
 
-namespace jl
+namespace Saurobyte
 {
 	// Handles to audio data
 	typedef std::shared_ptr<AudioSource> AudioHandle;

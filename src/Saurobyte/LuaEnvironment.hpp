@@ -3,26 +3,25 @@
 
 #include <Lua/lua.hpp>
 #include <string>
+#include <type_traits>
+#include <memory>
+#include <functional>
+#include <vector>
 
-namespace jl
+namespace Saurobyte
 {
 
-	// Used when pushing multiple args to avoid ambiguity
-	template<typename TType> struct LuaArg
+	namespace internal
 	{
-		const TType &data;
-	};
+		class LuaImpl;
+	}
 
 	class LuaEnvironment
 	{
 
-	private:
-
-
-
-		lua_State *m_luaContext;
-
 	public:
+
+		typedef std::pair<std::string, std::function<int(LuaEnvironment&)> > LuaFunction; 
 
 		LuaEnvironment();
 		~LuaEnvironment();
@@ -35,30 +34,14 @@ namespace jl
 
 			return *data;
 		};
-				// Stop condition for arg pusher
-		int pushArgsToLua()
+
+		template<typename ...TArgs> int pushArgs(TArgs... args)
 		{
-			return 0;
-		};
-		// Pushes a variable amount of values onto the Lua stack
-		template<typename ...TArgs> int pushArgsToLua(const LuaArg<bool> &arg, TArgs... args)
-		{
-			lua_pushboolean(m_luaContext, arg.data);
-			return 1 + pushArgsToLua(args...);
-		};
-		template<typename ...TArgs> int pushArgsToLua(const LuaArg<std::string> &arg, TArgs... args)
-		{
-			lua_pushstring(m_luaContext, arg.data.c_str());
-			return 1 + pushArgsToLua(args...);
-		};
-		template<typename ...TArgs> int pushArgsToLua(const LuaArg<float> &arg, TArgs... args)
-		{
-			lua_pushnumber(m_luaContext, arg.data);
-			return 1 + pushArgsToLua(args...);
+			return 1 + pushArg(args...);
 		};
 
 		// Pushes an object onto the Lua stack with the metatable specfied by 'className'
-		template<typename TType> static void pushObjectToLua(lua_State *state, TType *newData, const std::string &className)
+		template<typename TType> static void pushObject(lua_State *state, TType *newData, const std::string &className)
 		{
 			luaL_getmetatable(state, className.c_str());
 			int metaTable = lua_gettop(state);
@@ -75,8 +58,13 @@ namespace jl
 
 			luaL_setmetatable(state, className.c_str());
 		}
+
+
+		void pushGlobalEnv();
+
 		// Registers a number of functions in a metatable with the name specified by 'className'
 		void registerClassToLua(const std::string &className, const luaL_Reg *funcs);
+		void registerFunctions(const std::vector<LuaFunction> &funcs);
 
 		// Runs a given script and returns false if errors occurred
 		bool runScript(const std::string &filePath);
@@ -84,6 +72,41 @@ namespace jl
 
 		std::size_t getMemoryUsage() const;
 		lua_State* getRaw();
+
+	private:
+
+		std::unique_ptr<internal::LuaImpl> m_lua; 
+		//
+		lua_State *m_luaContext;
+
+						// Stop condition for arg pusher
+		int pushArg()
+		{
+			return 0;
+		};
+		// Pushes a variable amount of values onto the Lua stack
+		template<typename TType, typename ...TArgs> 
+			typename std::enable_if<std::is_same<bool, TType>::value, int>::type pushArg(TType arg, TArgs... args)
+		{
+			pushBool(arg);
+			return 1 + pushArg(args...);
+		};
+		template<typename TType, typename ...TArgs> 
+			typename std::enable_if<std::is_same<std::string, TType>::value, int>::type pushArg(TType arg, TArgs... args)
+		{
+			pushString(arg);
+			return 1 + pushArg(args...);
+		};
+		template<typename TType, typename ...TArgs> 
+			typename std::enable_if<std::is_arithmetic<TType>::value && !std::is_same<bool, TType>::value, int>::type pushArg(TType arg, TArgs... args)
+		{
+			pushNumber(arg);
+			return 1 + pushArg(args...);
+		};
+
+		void pushBool(bool value);
+		void pushNumber(double value);
+		void pushString(const std::string &value);
 
 	};
 };

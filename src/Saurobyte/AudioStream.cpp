@@ -4,7 +4,7 @@
 #include <AL/al.h>
 #include <vector>
 
-namespace jl
+namespace Saurobyte
 {
 
 	AudioStream::AudioStream()

@@ -10,7 +10,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-namespace jl
+namespace Saurobyte
 {
 
 	class Mesh

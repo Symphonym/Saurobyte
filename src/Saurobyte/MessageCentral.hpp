@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include <vector>
 
-namespace jl
+namespace Saurobyte
 {
 	class Message;
 	class MessageHandler;

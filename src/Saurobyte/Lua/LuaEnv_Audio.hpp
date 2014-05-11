@@ -2,7 +2,7 @@
 #define JL_LUAENV_AUDIO_HPP
 
 class lua_State;
-namespace jl
+namespace Saurobyte
 {
 	class Game;
 	class LuaEnv_Audio

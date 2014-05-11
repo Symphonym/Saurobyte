@@ -1,5 +1,7 @@
 #include <Saurobyte/Game.hpp>
 #include <Saurobyte/Message.hpp>
+#include <Saurobyte/OpenGLWindow.hpp>
+#include <Saurobyte/WindowImpl.hpp>
 
 #include <Saurobyte/Systems/LuaSystem.hpp>
 
@@ -9,24 +11,44 @@
 #include <Saurobyte/Lua/LuaEnv_Component.hpp>
 #include <Saurobyte/Lua/LuaEnv_Scene.hpp>
 #include <Saurobyte/Lua/LuaEnv_Audio.hpp>
+#include <Saurobyte/Logger.hpp>
 
-namespace jl
+namespace Saurobyte
 {
+	bool Game::m_gameInstanceExists = false;
+
 	Game::Game(
-		const std::string &name,
+		/*const std::string &name,
 		int width,
 		int height,
 		std::vector<OpenGLWindow::OpenGLAttribute> glAttributes,
-		OpenGLVersions glVersion)
+		OpenGLVersions glVersion*/)
 		:
 		m_entityPool(this),
 		m_systemPool(this),
 		m_scenePool(this),
 		m_messageCentral(),
 		m_luaEnvironment(),
-		m_glWindow(nullptr),
 		m_audioDevice()
 	{
+		if(m_gameInstanceExists)
+			SAUROBYTE_FATAL_LOG("Only one Game instance may exist!");
+		else
+			m_gameInstanceExists = false;
+
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+
+		// Expose Lua API
+	/*	LuaEnv_Game::exposeToLua(this);
+		LuaEnv_Entity::exposeToLua(this);
+		LuaEnv_Input::exposeToLua(this);
+		LuaEnv_Component::exposeToLua(this);
+		LuaEnv_Scene::exposeToLua(this);
+		internal::LuaEnv_Audio::exposeToLua(&m_luaEnvironment);*/
+
+		/*
 		switch(glVersion)
 		{
 			// Core 3.3 is default
@@ -51,13 +73,13 @@ namespace jl
 				glAttributes.push_back({SDL_GL_CONTEXT_MAJOR_VERSION, 4});
 				glAttributes.push_back({SDL_GL_CONTEXT_MINOR_VERSION, 3});
 			break;*/
-		};
+		/*};
 
-		m_glWindow = new OpenGLWindow(name, width, height, SDL_WINDOW_SHOWN, glAttributes, 300);
-		m_glWindow->setVsync(false);
+		m_window = std::unique_ptr<OpenGLWindow>(new OpenGLWindow(name, width, height, SDL_WINDOW_SHOWN, glAttributes, 300));
+		m_window->setVsync(false);
 
 		// Set default logging
-		setLogging(GameLogging::Info_Error);
+		Logger::setLogStatus(Logger::Info_Error);
 
 		// Add the built in systems
 		m_systemPool.addSystem(new LuaSystem(this));
@@ -68,44 +90,19 @@ namespace jl
 		LuaEnv_Input::exposeToLua(this);
 		LuaEnv_Component::exposeToLua(this);
 		LuaEnv_Scene::exposeToLua(this);
-		LuaEnv_Audio::exposeToLua(this);
+		LuaEnv_Audio::exposeToLua(this);*/
 	}
 
 	Game::~Game()
 	{
-		delete m_glWindow;
-	}
-
-	void Game::setLogging(GameLogging logging)
-	{
-		// Start by disabling all logging
-		SDL_LogSetAllPriority(SDL_LOG_PRIORITY_CRITICAL);
-
-		// Then enable specific logging features
-		switch(logging)
-		{
-			case GameLogging::Debug:
-				SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
-			break;
-			case GameLogging::Warning_Error:
-				SDL_LogSetPriority(SDL_LOG_CATEGORY_ERROR, SDL_LOG_PRIORITY_WARN);
-			break;
-			case GameLogging::Info_Error:
-				SDL_LogSetPriority(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_INFO);
-				SDL_LogSetPriority(SDL_LOG_CATEGORY_ERROR, SDL_LOG_PRIORITY_ERROR);
-			break;
-			case GameLogging::None:
-				SDL_LogSetAllPriority(SDL_LOG_PRIORITY_CRITICAL);
-			break;
-		}
 	}
 
 	void Game::gameLoop()
 	{
 
-		SDL_Event event;
+		/*SDL_Event event;
 
-		while(m_glWindow->running())
+		while(m_window->running())
 		{
 			// Process frame start entity cleanup
 			m_scenePool.frameCleanup();
@@ -113,16 +110,16 @@ namespace jl
 			m_messageCentral.sendQueuedMessages();
 
 			// Poll events
-			while(m_glWindow->pollEvent(event))
+			while(m_window->pollEvent(event))
 			{
 				if(event.type == SDL_QUIT)
-					m_glWindow->close();
+					m_window->close();
 				else if(event.type == SDL_KEYDOWN)
 				{
 					sendMessage(createMessage<SDL_Event>("KeyDown", event));
 
 					if(event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
-						m_glWindow->close();
+						m_window->close();
 					else if(event.key.keysym.scancode == SDL_SCANCODE_R &&
 						SDL_GetModState() & KMOD_LCTRL)
 						sendMessage(createMessage("ReloadLua"));
@@ -149,8 +146,8 @@ namespace jl
 			
 			glFlush();
 
-			m_glWindow->swapBuffers();
-		}
+			m_window->swapBuffers();
+		}*/
 	}
 
 	Entity& Game::createEntity()
@@ -210,8 +207,8 @@ namespace jl
 	{
 		return m_luaEnvironment;
 	}
-	OpenGLWindow& Game::getWindow()
+	Window& Game::getWindow()
 	{
-		return *m_glWindow;
+		return *m_window;
 	}
 };

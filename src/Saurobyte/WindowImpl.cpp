@@ -23,37 +23,56 @@
 
  */
 
-
-#ifndef SAUROBYTE_UTIL_HPP
-#define SAUROBYTE_UTIL_HPP
-
-#include <string>
-#include <sstream>
+#include <Saurobyte/WindowImpl.hpp>
+#include <Saurobyte/Logger.hpp>
 
 namespace Saurobyte
 {
-
-
-	inline void appendToStream(std::ostream &stream) {};
-	template<typename TType, typename... TArgs> void appendToStream(std::ostream &stream, TType &first, const TArgs&... args)
+	namespace internal
 	{
-		stream << first;
-		appendToStream(stream, args...);
+		WindowImpl::WindowImpl(const std::string &title, int width, int height, Uint32 flags)
+		{
+			create(title, width, height, flags);
+
+			openGLContext = SDL_GL_CreateContext(window);
+
+			if(openGLContext == NULL)
+				SAUROBYTE_FATAL_LOG("Could not create OpenGL context: ", SDL_GetError());
+		}
+		WindowImpl::~WindowImpl()
+		{
+			if(window != NULL)
+				SDL_DestroyWindow(window);
+			SDL_GL_DeleteContext(openGLContext);
+		}
+
+		void WindowImpl::create(const std::string &title, int width, int height, Uint32 flags)
+		{
+			// Close the Window first if it is open
+			close();
+
+			window = SDL_CreateWindow(
+				title.c_str(),
+				SDL_WINDOWPOS_UNDEFINED,
+				SDL_WINDOWPOS_UNDEFINED,
+				width,
+				height,
+				flags);
+
+			if(window == NULL)
+				SAUROBYTE_FATAL_LOG("Could not create window by the title '", title, "': ", SDL_GetError());
+
+			SDL_GL_MakeCurrent(window, openGLContext);
+		}
+
+		void WindowImpl::close()
+		{
+			if(window != NULL)
+			{
+				SDL_DestroyWindow(window);
+				window = NULL;
+			}
+		}
+
 	};
-
-	/**
-	 * Converts all arguments into a string using a string stream
-	 * @param  args Arguments to convert into the string in the order they are provided
-	 * @return      The string with all the arguments concatenated
-	 */
-	template<typename... TArgs> std::string toStr(const TArgs&... args)
-	{
-		std::ostringstream ss;
-		appendToStream(ss, args...);
-		return ss.str();
-	}
-
-	void sleep(unsigned int sleepInMs);
 };
-
-#endif

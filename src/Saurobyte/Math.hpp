@@ -28,17 +28,17 @@ THE SOFTWARE.
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 
-namespace jl
+namespace Saurobyte
 {
 	// Float vectors
-	typedef glm::vec2 Vector2f;
-	typedef glm::vec3 Vector3f;
-	typedef glm::vec4 Vector4f;
+	//typedef glm::vec2 Vector2f;
+	//typedef glm::vec3 Vector3f;
+	//typedef glm::vec4 Vector4f;
 
 	// Integer vectors
-	typedef glm::ivec2 Vector2i;
-	typedef glm::ivec3 Vector3i;
-	typedef glm::ivec4 Vector4i;
+	//typedef glm::ivec2 Vector2i;
+	//typedef glm::ivec3 Vector3i;
+	//typedef glm::ivec4 Vector4i;
 
 	// Matrices
 	typedef glm::mat4 Matrix4;
