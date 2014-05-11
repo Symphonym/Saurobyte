@@ -199,7 +199,7 @@ namespace Saurobyte
 			{ "GetID", GetID },
 			{ NULL, NULL }
 		};
-		game->getLua().registerClassToLua("jl.Entity", entityFuncs);
+		game->getLua().createClass("jl.Entity", entityFuncs);
 
 		// Event subscribing requires LuaSystem so we make them into C closures
 		lua_State *state = game->getLua().getRaw();

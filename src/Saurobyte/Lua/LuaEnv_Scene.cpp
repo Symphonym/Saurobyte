@@ -77,6 +77,6 @@ namespace Saurobyte
 			{ "Contains", Contains },
 			{ NULL, NULL }
 		};
-		game->getLua().registerClassToLua("jl.Scene", sceneFuncs);
+		game->getLua().createClass("jl.Scene", sceneFuncs);
 	}
 };

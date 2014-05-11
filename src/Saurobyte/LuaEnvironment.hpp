@@ -43,7 +43,7 @@ namespace Saurobyte
 		// Pushes an object onto the Lua stack with the metatable specfied by 'className'
 		template<typename TType> static void pushObject(lua_State *state, TType *newData, const std::string &className)
 		{
-			luaL_getmetatable(state, className.c_str());
+			/*luaL_getmetatable(state, className.c_str());
 			int metaTable = lua_gettop(state);
 
 			// Create userdata
@@ -56,14 +56,30 @@ namespace Saurobyte
 			lua_setfield(state, metaTable, "__self");
 			lua_remove(state, metaTable);
 
-			luaL_setmetatable(state, className.c_str());
+			luaL_setmetatable(state, className.c_str());*/
+
+			// Create userdata
+			//void *data = pushMemory(sizeof(TType*));
+			//TType **dataPtr = static_cast<TType**>(data);
+			//*dataPtr = newData;
+
+			//attachMetatable(className, -1);
 		}
+
+		bool toBool();
+		double toNumber();
+		std::string toString();
+		template<typename TType> TType toObject(const std::string &className)
+		{
+			TType *data = static_cast<TType*>(toObject(className));
+			return *data;
+		};
 
 
 		void pushGlobalEnv();
 
 		// Registers a number of functions in a metatable with the name specified by 'className'
-		void registerClassToLua(const std::string &className, const luaL_Reg *funcs);
+		void createClass(const std::string &className, const luaL_Reg *funcs);
 		void registerFunctions(const std::vector<LuaFunction> &funcs);
 
 		// Runs a given script and returns false if errors occurred
@@ -107,6 +123,11 @@ namespace Saurobyte
 		void pushBool(bool value);
 		void pushNumber(double value);
 		void pushString(const std::string &value);
+		void* pushMemory(std::size_t sizeInBytes);
+
+		void* toObject(const std::string &className);
+
+		void attachMetatable(const std::string &metatableName, int index);
 
 	};
 };

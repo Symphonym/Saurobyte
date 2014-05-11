@@ -33,13 +33,46 @@ namespace Saurobyte
 	{
 		lua_pushstring(m_lua->state, value.c_str());
 	}
+	void* LuaEnvironment::pushMemory(std::size_t sizeInBytes)
+	{
+		return lua_newuserdata(m_lua->state, sizeInBytes);
+	}
+
+	bool LuaEnvironment::toBool()
+	{
+		return lua_toboolean(m_lua->state, -1);
+	}
+	double LuaEnvironment::toNumber()
+	{
+		return luaL_checknumber(m_lua->state, -1);
+	}
+	std::string LuaEnvironment::toString()
+	{
+		return luaL_checkstring(m_lua->state, -1);
+	}
+	void* LuaEnvironment::toObject(const std::string &className)
+	{
+		return luaL_checkudata(m_lua->state, -1, className.c_str());
+	}
+
+	void LuaEnvironment::attachMetatable(const std::string &metatableName, int index)
+	{
+		luaL_getmetatable(m_lua->state, metatableName.c_str());
+		int metaTable = lua_gettop(m_lua->state);
+
+		// Associate self with C++ object
+		lua_setfield(m_lua->state, metaTable, "__self");
+
+		// Set metatable of the desired object
+		lua_setmetatable(m_lua->state, index);
+	}
 
 	void LuaEnvironment::pushGlobalEnv()
 	{
 		lua_pushglobaltable(m_luaContext);
 	}
 
-	void LuaEnvironment::registerClassToLua(const std::string &className, const luaL_Reg *funcs)
+	void LuaEnvironment::createClass(const std::string &className, const luaL_Reg *funcs)
 	{
 		luaL_newmetatable(m_luaContext, className.c_str());
 		int metaTable = lua_gettop(m_luaContext);
@@ -51,8 +84,8 @@ namespace Saurobyte
 	}
 	void LuaEnvironment::registerFunctions(const std::vector<LuaFunction> &funcs)
 	{
-		lua_pushglobaltable(m_luaContext);
-				const luaL_Reg audioFuncs[] = 
+		/*lua_pushglobaltable(m_luaContext);
+				const luaL_Reg audioFuncs[] =  ALL DIS JUST FOR GETTING THE LAYOUT
 		{
 			{ "PlaySound", PlaySound },
 			{ "PlayStream", PlayStream },
@@ -65,7 +98,7 @@ namespace Saurobyte
 		// Register sound functions at global scope
 		lua_State *state = game->getLua().getRaw();
 		lua_pushglobaltable(state);
-		luaL_setfuncs (state, audioFuncs, 0);
+		luaL_setfuncs (state, audioFuncs, 0);*/
 	}
 
 

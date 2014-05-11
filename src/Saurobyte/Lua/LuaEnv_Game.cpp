@@ -110,7 +110,7 @@ namespace Saurobyte
 			{ "GetWindowHeight", GetWindowHeight },
 			{ NULL, NULL }
 		};
-		game->getLua().registerClassToLua("jl.Game", gameFuncs);
+		game->getLua().createClass("jl.Game", gameFuncs);
 
 		// Create global game object in Lua environment
 		lua_State *state = game->getLua().getRaw();
