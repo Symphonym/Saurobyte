@@ -57,14 +57,19 @@ namespace Saurobyte
 
 	void LuaEnvironment::attachMetatable(const std::string &metatableName, int index)
 	{
-		luaL_getmetatable(m_lua->state, metatableName.c_str());
+		if(index < 0)
+			index = lua_gettop(m_lua->state) + 1 + index;
+
+		luaL_newmetatable(m_lua->state, metatableName.c_str());
 		int metaTable = lua_gettop(m_lua->state);
 
 		// Associate self with C++ object
+		lua_pushvalue(m_lua->state, index);
 		lua_setfield(m_lua->state, metaTable, "__self");
 
 		// Set metatable of the desired object
 		lua_setmetatable(m_lua->state, index);
+
 	}
 
 	void LuaEnvironment::pushGlobalEnv()
@@ -82,29 +87,42 @@ namespace Saurobyte
 		lua_pushvalue(m_luaContext, -1);
 		lua_setfield(m_luaContext, metaTable, "__index");
 	}
+
 	void LuaEnvironment::registerFunctions(const std::vector<LuaFunction> &funcs)
 	{
-		/*lua_pushglobaltable(m_luaContext);
-				const luaL_Reg audioFuncs[] =  ALL DIS JUST FOR GETTING THE LAYOUT
+		auto luaFunc = [] (lua_State *state) -> int
 		{
-			{ "PlaySound", PlaySound },
-			{ "PlayStream", PlayStream },
-			{ "RegisterAudio", RegisterAudio },
-			{ NULL, NULL }
+			LuaEnvironment *luaEnv = static_cast<LuaEnvironment*>(lua_touserdata(state, lua_upvalueindex(1)));
+			LuaFunctionPtr& funcPtr = *static_cast<LuaFunctionPtr*>(lua_touserdata(state, lua_upvalueindex(2)));
+			funcPtr(*luaEnv);
 		};
 
-		std::vector<luaL_Reg> luaFuncs;
+		for(std::size_t i = 0; i < funcs.size(); i++)
+		{	
+			// TODO pushObject makes garbage collect on non-pointer TType
+			lua_pushlightuserdata(m_lua->state, this);
+			pushObject<LuaFunctionPtr>(funcs[i].second, "Saurobyte_LuaFunction");
 
-		// Register sound functions at global scope
-		lua_State *state = game->getLua().getRaw();
-		lua_pushglobaltable(state);
-		luaL_setfuncs (state, audioFuncs, 0);*/
+			lua_pushcclosure(m_lua->state, luaFunc, 2);
+			lua_setglobal(m_lua->state, funcs[i].first.c_str());
+		}
+
+		// Make sure LuaFunctions are cleaned up
+		luaL_newmetatable(m_lua->state, "Saurobyte_LuaFunction");
+		lua_pushcfunction(m_lua->state, 
+			[] (lua_State *state) -> int
+			{
+				LuaFunction* func = static_cast<LuaFunction*>(luaL_checkudata(state, 1, "Saurobyte_LuaFunction"));
+				func->~LuaFunction();
+			});
+		lua_setfield(m_lua->state, -2, "__gc");
+
 	}
 
 
 	bool LuaEnvironment::runScript(const std::string &filePath)
 	{
-		if(luaL_dofile(m_luaContext, filePath.c_str()))
+		if(luaL_dofile(m_lua->state, filePath.c_str()))
 		{
 			reportError();
 			return false;

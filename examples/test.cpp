@@ -26,6 +26,7 @@
 */
 #include <Saurobyte/Math/Vector3.hpp>
 #include <Saurobyte/Logger.hpp>
+#include <Saurobyte/LuaEnvironment.hpp>
 /*
 #include <Saurobyte/Components/LuaComponent.hpp>
 #include <Saurobyte/Systems/MeshSystem.hpp>
@@ -40,6 +41,19 @@ int main(int argc, const char* argv[]){
 	Saurobyte::Vector3f vec(2, 2);
 	vec = vec * 10.f;
 	SAUROBYTE_INFO_LOG("Initializing test! X=", vec.x, " Y=", vec.y, "Length=", vec.length());
+
+
+
+	Saurobyte::LuaEnvironment env;
+	env.registerFunctions(
+	{
+		{ "Testeru", [] (Saurobyte::LuaEnvironment& env) -> int
+		{
+			env.pushArgs(std::string("Hello world"));
+			return 1;
+		}}
+	});
+	env.runScript("./luaTest.lua");
 	//SAUROBYTE_INFO_LOG("Initializing test! X=%f  Y=%f   Length=%f", vec.x, vec.y, vec.length());
 	//SAUROBYTE_INFO_LOG("NORMALIZE test! X=%f  Y=%f   Length=%f", vec.normalized().x, vec.normalized().y, vec.normalized().length());
 	//SAUROBYTE_INFO_LOG("Initializing test! X=%f  Y=%f   Length=%f", vec.x, vec.y, vec.length());

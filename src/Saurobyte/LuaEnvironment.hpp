@@ -1,13 +1,15 @@
 #ifndef JL_LUAENVIRONMENT_HPP
 #define JL_LUAENVIRONMENT_HPP
 
-#include <Lua/lua.hpp>
+//#include <Lua/lua.hpp>
 #include <string>
 #include <type_traits>
 #include <memory>
 #include <functional>
 #include <vector>
 
+class lua_State; // TODO remove
+class luaL_Reg; // TODO remove
 namespace Saurobyte
 {
 
@@ -21,7 +23,8 @@ namespace Saurobyte
 
 	public:
 
-		typedef std::pair<std::string, std::function<int(LuaEnvironment&)> > LuaFunction; 
+		typedef std::function<int(LuaEnvironment&)> LuaFunctionPtr;
+		typedef std::pair<std::string, LuaFunctionPtr> LuaFunction;
 
 		LuaEnvironment();
 		~LuaEnvironment();
@@ -29,10 +32,10 @@ namespace Saurobyte
 		// Utility function, simply converts userdata
 		template<typename TType> static TType* convertUserdata(lua_State *state, int index, const std::string &metatableName)
 		{
-			TType **data = static_cast<TType**>(
-				luaL_checkudata (state, index, metatableName.c_str()));
+			//TType **data = static_cast<TType**>(
+			//	luaL_checkudata (state, index, metatableName.c_str()));
 
-			return *data;
+			//return *data;
 		};
 
 		template<typename ...TArgs> int pushArgs(TArgs... args)
@@ -64,6 +67,16 @@ namespace Saurobyte
 			//*dataPtr = newData;
 
 			//attachMetatable(className, -1);
+		}
+		template<typename TType> void pushObject(TType newData, const std::string &className)
+		{
+
+			// Create userdata
+			//void *data = pushMemory(sizeof(TType*));
+			TType *dataPtr = new (pushMemory(sizeof(TType))) TType(newData);//static_cast<TType*>(data);
+			//*dataPtr = newData;
+
+			attachMetatable(className, -1);
 		}
 
 		bool toBool();
