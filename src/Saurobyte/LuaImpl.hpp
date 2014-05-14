@@ -33,6 +33,7 @@ namespace Saurobyte
 {
 	namespace internal
 	{
+
 		class LuaImpl
 		{
 			public:

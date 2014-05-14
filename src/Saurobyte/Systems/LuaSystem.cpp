@@ -59,7 +59,7 @@ namespace Saurobyte
 			{
 				for(std::size_t i = 0; i < itr->second.size(); i++)
 				{
-					lua_State *state = m_luaEnv.getRaw();
+					/*lua_State *state = m_luaEnv.getRaw();
 
 					// Grab event function
 					lua_getglobal(state, "events");
@@ -95,7 +95,7 @@ namespace Saurobyte
 					// Call event function
 					if(!lua_isnil(state, eventFuncIndex))
 						if(lua_pcall(state, argCount, 0, 0))
-							m_luaEnv.reportError();
+							m_luaEnv.reportError();*/
 				}
 			}
 		}
@@ -111,7 +111,7 @@ namespace Saurobyte
 		if(luaComp->runningStatus == LuaComponent::Running)
 		{
 
-			lua_State *state = m_luaEnv.getRaw();
+			/*lua_State *state = m_luaEnv.getRaw();
 
 			// Call update function
 			lua_getglobal(state, "update");
@@ -126,7 +126,7 @@ namespace Saurobyte
 			{
 				if(lua_pcall(state, 2, 0, 0))
 					m_luaEnv.reportError();
-			}
+			}*/
 		}
 
 		// Only run Lua file if it's not loaded and has no errors, otherwise a reload is needed
@@ -172,7 +172,7 @@ namespace Saurobyte
 	}
 	void LuaSystem::onKill(Entity &entity)
 	{
-		lua_State *state = m_luaEnv.getRaw();
+		/*lua_State *state = m_luaEnv.getRaw();
 
 		// Call kill function
 		lua_getglobal(state, "killed");
@@ -183,7 +183,7 @@ namespace Saurobyte
 
 		if(!lua_isnil(state, killFuncIndex))
 			if(lua_pcall(state, 1, 0, 0))
-				m_luaEnv.reportError();
+				m_luaEnv.reportError();*/
 	}
 	void LuaSystem::onClear()
 	{		
@@ -193,7 +193,7 @@ namespace Saurobyte
 
 	void LuaSystem::runScript(Entity &entity)
 	{
-		LuaComponent *luaComp = entity.getComponent<LuaComponent>();
+		/*LuaComponent *luaComp = entity.getComponent<LuaComponent>();
 
 		if(m_luaEnv.runScript(luaComp->luaFile.c_str()))
 			luaComp->runningStatus = LuaComponent::Running;
@@ -211,7 +211,7 @@ namespace Saurobyte
 
 		if(!lua_isnil(state, initFuncIndex))
 			if(lua_pcall(state, 1, 0, 0))
-				m_luaEnv.reportError();
+				m_luaEnv.reportError();*/
 	}
 
 

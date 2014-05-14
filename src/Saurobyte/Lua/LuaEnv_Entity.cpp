@@ -1,41 +1,66 @@
+
+/*
+
+The MIT License (MIT)
+
+Copyright (c) 2014 by Jakob Larsson
+
+Permission is hereby granted, free of charge, to any person obtaining 
+a copy of this software and associated documentation files (the "Software"), 
+to deal in the Software without restriction, including without limitation the 
+rights to use, copy, modify, merge, publish, distribute, sublicense, and/or 
+sell copies of the Software, and to permit persons to whom the Software is 
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in 
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR 
+IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
+
 #include <Saurobyte/Lua/LuaEnv_Entity.hpp>
-#include <Saurobyte/Game.hpp>
 #include <Saurobyte/Systems/LuaSystem.hpp>
 #include <Saurobyte/Components/LuaComponent.hpp>
+#include <Saurobyte/LuaEnvironment.hpp>
+#include <Saurobyte/Game.hpp>
 #include <Saurobyte/Logger.hpp>
 
 
 namespace Saurobyte
 {
-	int LuaEnv_Entity::GetComponent(lua_State* state)
+	int LuaEnv_Entity::GetComponent(LuaEnvironment &env)
 	{
 		// First arg is self
-		Entity* entity = LuaEnvironment::convertUserdata<Entity>(state, 1, "jl.Entity");
+		Entity *entity = env.toObject<Entity*>("Saurobyte_Entity");
 
 
 		// Second argument is comp name
-		std::string valueName = luaL_checkstring(state, 2);
+		std::string valueName = env.toString();
 
 		SAUROBYTE_INFO_LOG("GETTERU %s", valueName.c_str());
 
-
-		lua_settop(state, 0);
 		BaseComponent *comp = entity->getComponent(valueName);
 		if(comp == nullptr)
-			lua_pushnil(state);
+			env.pushNil();
 		else
-			LuaEnvironment::pushObject<BaseComponent>(state, comp, "jl.Component");
+			env.pushObject<BaseComponent*>(comp, "Saurobyte_Component");
 		return 1;
 	}
-	int LuaEnv_Entity::GetComponentCount(lua_State* state)
+	int LuaEnv_Entity::GetComponentCount(LuaEnvironment &env)
 	{
 		// First arg is self
-		Entity* entity = LuaEnvironment::convertUserdata<Entity>(state, 1, "jl.Entity");
+		Entity *entity = env.toObject<Entity*>("Saurobyte_Entity");
 
-		lua_pushnumber(state, entity->getComponentCount());
+		env.pushArgs(entity->getComponentCount());
 		return 1;
 	}
-	/*int LuaEnv_Entity::AddComponent(lua_State* state)
+	/*int LuaEnv_Entity::AddComponent(LuaEnvironment &env)
 	{
 		// First argument is entity to query, default is JL_ENTITY global
 		lua_getglobal(state, "JL_ENTITY");
@@ -50,7 +75,7 @@ namespace Saurobyte
 
 		return 0;
 	}
-	int LuaEnv_Entity::CreateComponent(lua_State* state)
+	int LuaEnv_Entity::CreateComponent(LuaEnvironment &env)
 	{
 		// First argument is component name
 		std::string valueName = luaL_checkstring(state, 1);
@@ -65,121 +90,119 @@ namespace Saurobyte
 
 		return 1;
 	}*/
-	int LuaEnv_Entity::RemoveComponent(lua_State* state)
+	int LuaEnv_Entity::RemoveComponent(LuaEnvironment &env)
 	{
 		// First argument is self
-		Entity* entity = LuaEnvironment::convertUserdata<Entity>(state, 1, "jl.Entity");
+		Entity *entity = env.toObject<Entity*>("Saurobyte_Entity");
 
 		// Second argument is component name
-		std::string valueName = luaL_checkstring(state, 2);
-
-		lua_settop(state, 0);
+		std::string valueName = env.toString();
 
 		BaseComponent *comp = entity->getComponent(valueName);
 		if(comp != nullptr)
 		{
 			entity->removeComponent(comp->getTypeID());
-			lua_pushboolean(state, 1);
+			env.pushArgs(true);
 		}
 		else
-			lua_pushboolean(state, 0);
+			env.pushArgs(false);
 
 		return 1;
 	}
-	int LuaEnv_Entity::HasComponent(lua_State* state)
+	int LuaEnv_Entity::HasComponent(LuaEnvironment &env)
 	{
 		// First argument is self
-		Entity* entity = LuaEnvironment::convertUserdata<Entity>(state, 1, "jl.Entity");
+		Entity *entity = env.toObject<Entity*>("Saurobyte_Entity");
 
 		// Second argument is component name
-		std::string valueName = luaL_checkstring(state, 2);
-
-		lua_settop(state, 0);
+		std::string valueName = env.toString();
 
 		BaseComponent *comp = entity->getComponent(valueName);
 		if(comp != nullptr)
-			lua_pushboolean(state, 1);
+			env.pushArgs(true);
 		else
-			lua_pushboolean(state, 0);
+			env.pushArgs(false);
 
 		return 1;
 	}
-	int LuaEnv_Entity::EnableEntity(lua_State* state)
+	int LuaEnv_Entity::EnableEntity(LuaEnvironment &env)
 	{
 		// First argument is self
-		Entity* entity = LuaEnvironment::convertUserdata<Entity>(state, 1, "jl.Entity");
-
-		lua_settop(state, 0);
+		Entity *entity = env.toObject<Entity*>("Saurobyte_Entity");
 
 		entity->setActive(true);
 
 		return 0;
 	}
-	int LuaEnv_Entity::DisableEntity(lua_State* state)
+	int LuaEnv_Entity::DisableEntity(LuaEnvironment &env)
 	{
 		// First argument is self
-		Entity* entity = LuaEnvironment::convertUserdata<Entity>(state, 1, "jl.Entity");
-
-		lua_settop(state, 0);
+		Entity *entity = env.toObject<Entity*>("Saurobyte_Entity");
 
 		entity->setActive(false);
 
 		return 0;
 	}
-	int LuaEnv_Entity::KillEntity(lua_State* state)
+	int LuaEnv_Entity::KillEntity(LuaEnvironment &env)
 	{
 		// First argument is self
-		Entity* entity = LuaEnvironment::convertUserdata<Entity>(state, 1, "jl.Entity");
-
-		lua_settop(state, 0);
+		Entity *entity = env.toObject<Entity*>("Saurobyte_Entity");
 
 		entity->kill();
 
 		return 0;
 	}
-	int LuaEnv_Entity::GetID(lua_State *state)
+	int LuaEnv_Entity::GetID(LuaEnvironment &env)
 	{
 		// First arg is self
-		Entity* entity = LuaEnvironment::convertUserdata<Entity>(state, 1, "jl.Entity");
+		Entity *entity = env.toObject<Entity*>("Saurobyte_Entity");
 
-		lua_pushnumber(state, entity->getID());
+		env.pushArgs(entity->getID());
 		return 1;
 	}
-	int LuaEnv_Entity::SubscribeEvent(lua_State *state)
+	int LuaEnv_Entity::SubscribeEvent(LuaEnvironment &env)
 	{
 		// Lua system is upvalue
-		LuaSystem* sys = static_cast<LuaSystem*>(lua_touserdata(state, lua_upvalueindex(1)));
+		//LuaSystem* sys = static_cast<LuaSystem*>(lua_touserdata(state, lua_upvalueindex(1)));
 
 		// First arg is self
-		Entity* entity = LuaEnvironment::convertUserdata<Entity>(state, 1, "jl.Entity");
+		Entity *entity = env.toObject<Entity*>("Saurobyte_Entity");
 
 		// Second arg is event name
-		std::string eventName = luaL_checkstring(state, 2);
+		std::string eventName = env.toString();
+
+		if(env.readGlobal("SAUROBYTE_LUA_SYSTEM"))
+		{
+			LuaSystem *sys = env.toPointer<LuaSystem>();
+			sys->subscribeEntity(*entity, eventName);
+		}
 
 		//LuaComponent *comp = entity->getComponent<LuaComponent>();
 		//comp->requestEvent(eventName);
-		sys->subscribeEntity(*entity, eventName);
-
-		lua_settop(state, 0);
+		//sys->subscribeEntity(*entity, eventName);
 
 		return 0;
 	}
-	int LuaEnv_Entity::UnsubscribeEvent(lua_State *state)
+	int LuaEnv_Entity::UnsubscribeEvent(LuaEnvironment &env)
 	{
 		// Lua system is upvalue
-		LuaSystem* sys = static_cast<LuaSystem*>(lua_touserdata(state, lua_upvalueindex(1)));
+		//LuaSystem* sys = static_cast<LuaSystem*>(lua_touserdata(state, lua_upvalueindex(1)));
 
 		// First arg is self
-		Entity* entity = LuaEnvironment::convertUserdata<Entity>(state, 1, "jl.Entity");
+		Entity *entity = env.toObject<Entity*>("Saurobyte_Entity");
 
 		// Second arg is event name
-		std::string eventName = luaL_checkstring(state, 2);
+		std::string eventName = env.toString();
+
+		if(env.readGlobal("SAUROBYTE_LUA_SYSTEM"))
+		{
+			LuaSystem *sys = env.toPointer<LuaSystem>();
+			sys->unsubscribeEntity(*entity, eventName);
+		}
 
 		//LuaComponent *comp = entity->getComponent<LuaComponent>();
 		//comp->ignoreEvent(eventName);
-		sys->unsubscribeEntity(*entity, eventName);
-
-		lua_settop(state, 0);
+		//sys->unsubscribeEntity(*entity, eventName);
 
 		return 0;
 	}
@@ -187,7 +210,7 @@ namespace Saurobyte
 
 	void LuaEnv_Entity::exposeToLua(Game *game)
 	{
-		const luaL_Reg entityFuncs[] = 
+		/*const luaL_Reg entityFuncs[] = 
 		{
 			{ "GetComponent", GetComponent },
 			{ "GetComponentCount", GetComponentCount },
@@ -198,26 +221,43 @@ namespace Saurobyte
 			{ "Kill", KillEntity },
 			{ "GetID", GetID },
 			{ NULL, NULL }
-		};
-		game->getLua().createClass("jl.Entity", entityFuncs);
+		};*/
+		//game->getLua().createClass("Saurobyte_Entity", entityFuncs);
+
+		LuaEnvironment &env = game->getLua();
+
+		env.pushArgs(game->getSystemPool().getSystem<LuaSystem>());
+		env.writeGlobal("SAUROBYTE_LUA_SYSTEM");
+
+		env.createClass("Saurobyte_Entity",
+		{
+			{ "GetComponent", GetComponent },
+			{ "GetComponentCount", GetComponentCount },
+			{ "RemoveComponent", RemoveComponent },
+			{ "HasComponent", HasComponent },
+			{ "Enable", EnableEntity },
+			{ "Disable", DisableEntity },
+			{ "Kill", KillEntity },
+			{ "GetID", GetID }
+		});
 
 		// Event subscribing requires LuaSystem so we make them into C closures
-		lua_State *state = game->getLua().getRaw();
+	//	LuaEnvironment &env = game->getLua().getRaw();
 
 		// Grab entity metatable
-		luaL_getmetatable(state, "jl.Entity");
-		int metaTable = lua_gettop(state);
+		//luaL_getmetatable(state, "Saurobyte_Entity");
+		//int metaTable = lua_gettop(state);
 
-		lua_pushlightuserdata(state, game->getSystemPool().getSystem<LuaSystem>());
-		lua_pushcclosure(state, SubscribeEvent, 1);
-		lua_setfield(state, metaTable, "SubscribeEvent");
+		//lua_pushlightuserdata(state, game->getSystemPool().getSystem<LuaSystem>());
+		//lua_pushcclosure(state, SubscribeEvent, 1);
+		//lua_setfield(state, metaTable, "SubscribeEvent");
 
-		lua_pushlightuserdata(state, game->getSystemPool().getSystem<LuaSystem>());
-		lua_pushcclosure(state, UnsubscribeEvent, 1);
-		lua_setfield(state, metaTable, "UnsubscribeEvent");
+	//	lua_pushlightuserdata(state, game->getSystemPool().getSystem<LuaSystem>());
+		//lua_pushcclosure(state, UnsubscribeEvent, 1);
+		//lua_setfield(state, metaTable, "UnsubscribeEvent");
 
 		// Pop metatable value
-		lua_pop(state, 1);
+		//lua_pop(state, 1);
 
 	}
 

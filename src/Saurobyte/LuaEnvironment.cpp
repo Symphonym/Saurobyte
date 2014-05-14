@@ -1,3 +1,29 @@
+
+/*
+
+The MIT License (MIT)
+
+Copyright (c) 2014 by Jakob Larsson
+
+Permission is hereby granted, free of charge, to any person obtaining 
+a copy of this software and associated documentation files (the "Software"), 
+to deal in the Software without restriction, including without limitation the 
+rights to use, copy, modify, merge, publish, distribute, sublicense, and/or 
+sell copies of the Software, and to permit persons to whom the Software is 
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in 
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR 
+IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
+
 #include <Saurobyte/LuaEnvironment.hpp>
 #include <Saurobyte/Logger.hpp>
 #include <Saurobyte/LuaImpl.hpp>
@@ -12,13 +38,34 @@ namespace Saurobyte
 
 		m_lua = std::unique_ptr<internal::LuaImpl>(new internal::LuaImpl());
 
-		// Create lua state and environment
-		m_luaContext = luaL_newstate();
-		luaL_openlibs(m_luaContext);
+		lua_pushlightuserdata(m_lua->state, this);
+		lua_setglobal(m_lua->state, "SAUROBYTE_LUA_ENV");
+
+		// Setup function objects
+		auto luaFunc = [] (lua_State *state) -> int
+		{
+			lua_getglobal(state, "SAUROBYTE_LUA_ENV");
+			LuaEnvironment *luaEnv = static_cast<LuaEnvironment*>(lua_touserdata(state, -1));
+			lua_pop(state, 1);
+
+
+			LuaObject<LuaFunctionPtr>& funcPtr = *static_cast<LuaObject<LuaFunctionPtr>*>(lua_touserdata(state, 1));
+			lua_remove(state, 1);
+
+			funcPtr.data(*luaEnv);
+		};
+
+		//lua_pushlightuserdata(m_lua->state, this);
+		luaL_newmetatable(m_lua->state, "Saurobyte_LuaFunction");
+		int metatable = lua_gettop(m_lua->state);
+
+		lua_pushcfunction(m_lua->state, luaFunc);
+		lua_setfield(m_lua->state, metatable, "__call");
+
 	}
 	LuaEnvironment::~LuaEnvironment()
 	{
-		lua_close(m_luaContext);
+
 	}
 
 	void LuaEnvironment::pushBool(bool value)
@@ -33,26 +80,71 @@ namespace Saurobyte
 	{
 		lua_pushstring(m_lua->state, value.c_str());
 	}
+	void LuaEnvironment::pushFunction(const LuaFunctionPtr &function)
+	{
+		pushObject<LuaFunctionPtr>(function, "Saurobyte_LuaFunction");
+	}
+	void LuaEnvironment::pushPointer(void *pointer)
+	{
+		lua_pushlightuserdata(m_lua->state, pointer);
+	}
 	void* LuaEnvironment::pushMemory(std::size_t sizeInBytes)
 	{
 		return lua_newuserdata(m_lua->state, sizeInBytes);
 	}
+	void LuaEnvironment::pushNil()
+	{
+		lua_pushnil(m_lua->state);
+	}
+	void LuaEnvironment::pushTable()
+	{
+		lua_newtable(m_lua->state);
+	}
+
+	bool LuaEnvironment::tableInsert(int key)
+	{
+		if(lua_istable(m_lua->state, 1))
+		{
+			lua_push
+			lua_settable(m_lua->state, 1)
+		}
+		else
+			return false;
+	}
+	bool LuaEnvironment::tableInsert(const std::string &key)
+	{
+
+	}
 
 	bool LuaEnvironment::toBool()
 	{
-		return lua_toboolean(m_lua->state, -1);
+		bool value = lua_toboolean(m_lua->state, 1);
+		lua_pop(m_lua->state, 1);
+		return value;
 	}
 	double LuaEnvironment::toNumber()
 	{
-		return luaL_checknumber(m_lua->state, -1);
+		double value = luaL_checknumber(m_lua->state, 1);
+		lua_pop(m_lua->state, 1);
+		return value;
 	}
 	std::string LuaEnvironment::toString()
 	{
-		return luaL_checkstring(m_lua->state, -1);
+		std::string value = luaL_checkstring(m_lua->state, 1);
+		lua_pop(m_lua->state, 1);
+		return value;
+	}
+	void* LuaEnvironment::toPointer()
+	{
+		void *value = lua_touserdata(m_lua->state, 1);
+		lua_pop(m_lua->state, 1);
+		return value;
 	}
 	void* LuaEnvironment::toObject(const std::string &className)
 	{
-		return luaL_checkudata(m_lua->state, -1, className.c_str());
+		void *value = luaL_checkudata(m_lua->state, 1, className.c_str());
+		lua_pop(m_lua->state, 1);
+		return value;
 	}
 
 	void LuaEnvironment::attachMetatable(const std::string &metatableName, int index)
@@ -63,60 +155,70 @@ namespace Saurobyte
 		luaL_newmetatable(m_lua->state, metatableName.c_str());
 		int metaTable = lua_gettop(m_lua->state);
 
-		// Associate self with C++ object
+		// Associate self with the C++ object
 		lua_pushvalue(m_lua->state, index);
 		lua_setfield(m_lua->state, metaTable, "__self");
+
+		// Garbage collecting
+		lua_pushcfunction(m_lua->state, 
+		[] (lua_State *state) -> int
+		{
+			// Call virtual destructor of base class, this allows a very generic gc function
+			LuaObjectBase* obj = static_cast<LuaObjectBase*>(lua_touserdata(state, 1));
+			obj->~LuaObjectBase();
+		});
+		lua_setfield(m_lua->state, metaTable, "__gc");	
+
 
 		// Set metatable of the desired object
 		lua_setmetatable(m_lua->state, index);
 
+
+
 	}
 
-	void LuaEnvironment::pushGlobalEnv()
+	void LuaEnvironment::createClass(const std::string &className, const std::vector<LuaFunction> &funcs)
 	{
-		lua_pushglobaltable(m_luaContext);
-	}
-
-	void LuaEnvironment::createClass(const std::string &className, const luaL_Reg *funcs)
-	{
-		luaL_newmetatable(m_luaContext, className.c_str());
-		int metaTable = lua_gettop(m_luaContext);
-
-		luaL_setfuncs(m_luaContext, funcs, 0);
-
-		lua_pushvalue(m_luaContext, -1);
-		lua_setfield(m_luaContext, metaTable, "__index");
-	}
-
-	void LuaEnvironment::registerFunctions(const std::vector<LuaFunction> &funcs)
-	{
-		auto luaFunc = [] (lua_State *state) -> int
-		{
-			LuaEnvironment *luaEnv = static_cast<LuaEnvironment*>(lua_touserdata(state, lua_upvalueindex(1)));
-			LuaFunctionPtr& funcPtr = *static_cast<LuaFunctionPtr*>(lua_touserdata(state, lua_upvalueindex(2)));
-			funcPtr(*luaEnv);
-		};
+		luaL_newmetatable(m_lua->state, className.c_str());
+		int metaTable = lua_gettop(m_lua->state);
 
 		for(std::size_t i = 0; i < funcs.size(); i++)
-		{	
-			// TODO pushObject makes garbage collect on non-pointer TType
-			lua_pushlightuserdata(m_lua->state, this);
-			pushObject<LuaFunctionPtr>(funcs[i].second, "Saurobyte_LuaFunction");
-
-			lua_pushcclosure(m_lua->state, luaFunc, 2);
-			lua_setglobal(m_lua->state, funcs[i].first.c_str());
+		{
+			
+			//lua_pushcfunction(m_lua->state, luaFunc);
+			pushFunction(funcs[i].second);
+			lua_setfield(m_lua->state, metaTable, funcs[i].first.c_str());
 		}
 
-		// Make sure LuaFunctions are cleaned up
-		luaL_newmetatable(m_lua->state, "Saurobyte_LuaFunction");
-		lua_pushcfunction(m_lua->state, 
-			[] (lua_State *state) -> int
-			{
-				LuaFunction* func = static_cast<LuaFunction*>(luaL_checkudata(state, 1, "Saurobyte_LuaFunction"));
-				func->~LuaFunction();
-			});
-		lua_setfield(m_lua->state, -2, "__gc");
+		lua_pushvalue(m_lua->state, metaTable);
+		lua_setfield(m_lua->state, metaTable, "__index");
+	}
 
+	void LuaEnvironment::registerFunction(const LuaFunction &func)
+	{
+
+		pushObject<LuaFunctionPtr>(func.second, "Saurobyte_LuaFunction");
+		writeGlobal(func.first);
+
+	}
+	void LuaEnvironment::writeGlobal(const std::string &name)
+	{
+		lua_setglobal(m_lua->state, name.c_str());
+	}
+	bool LuaEnvironment::readGlobal(const std::string &name)
+	{
+		lua_getglobal(m_lua->state, name.c_str());
+
+		if(lua_isnil(m_lua->state, -1))
+		{
+			lua_pop(m_lua->state, 1);
+			return false;
+		}
+		else
+		{
+			lua_insert(m_lua->state, 1);
+			return true;
+		}
 	}
 
 
@@ -132,16 +234,12 @@ namespace Saurobyte
 	}
 	void LuaEnvironment::reportError()
 	{
-		SAUROBYTE_ERROR_LOG("Lua error: ", lua_tostring(m_luaContext, -1));
+		SAUROBYTE_ERROR_LOG("Lua error: ", lua_tostring(m_lua->state, -1));
 	}
 
 	std::size_t LuaEnvironment::getMemoryUsage() const
 	{
-		return lua_gc(m_luaContext, LUA_GCCOUNT, 0);
-	}
-	lua_State* LuaEnvironment::getRaw()
-	{
-		return m_luaContext;
+		return lua_gc(m_lua->state, LUA_GCCOUNT, 0);
 	}
 
 

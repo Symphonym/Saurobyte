@@ -55,6 +55,6 @@ namespace Saurobyte
 			{ "GetName", GetComponentName },
 			{ NULL, NULL }
 		};
-		game->getLua().createClass("jl.Component", componentFuncs);
+		//game->getLua().createClass("jl.Component", componentFuncs);
 	}
 };
