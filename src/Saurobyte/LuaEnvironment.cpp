@@ -101,48 +101,109 @@ namespace Saurobyte
 		lua_newtable(m_lua->state);
 	}
 
-	bool LuaEnvironment::tableInsert(int key)
+	bool LuaEnvironment::tableWrite(int key)
 	{
-		if(lua_istable(m_lua->state, 1))
+		if(lua_istable(m_lua->state, -3) && lua_gettop(m_lua->state) >= 3)
 		{
-			lua_push
-			lua_settable(m_lua->state, 1)
+			lua_pushnumber(m_lua->state, key);
+
+			// Move the key in front of the value associated with the key
+			lua_insert(m_lua->state, lua_gettop(m_lua->state)-1);
+			lua_settable(m_lua->state, -3);
+			return true;
 		}
 		else
 			return false;
 	}
-	bool LuaEnvironment::tableInsert(const std::string &key)
+	bool LuaEnvironment::tableWrite(const std::string &key)
 	{
+		if(lua_istable(m_lua->state, -3) && lua_gettop(m_lua->state) >= 3)
+		{
+			lua_pushstring(m_lua->state, key.c_str());
 
+			// Move the key in front of the value associated with the key
+			lua_insert(m_lua->state, lua_gettop(m_lua->state)-1);
+			lua_settable(m_lua->state, -3);
+			return true;
+		}
+		else
+			return false;
+	}
+	bool LuaEnvironment::tableRead(int key)
+	{
+		if(lua_istable(m_lua->state, -2) && lua_gettop(m_lua->state) >= 2)
+		{
+			lua_pushnumber(m_lua->state, key);
+			lua_gettable(m_lua->state, -2);
+
+			// The table doesn't contain an entry by the specified key, pop nil value
+			if(lua_isnil(m_lua->state, -1))
+			{
+				lua_pop(m_lua->state, 1);
+				return false;
+			}
+			else
+			{
+				lua_insert(m_lua->state, 1);
+				return true;
+			}
+		}
+		else
+			return false;
+	}
+	bool LuaEnvironment::tableRead(const std::string &key)
+	{
+		if(lua_istable(m_lua->state, -2) && lua_gettop(m_lua->state) >= 2)
+		{
+			lua_pushstring(m_lua->state, key.c_str());
+			lua_gettable(m_lua->state, -2);
+
+			// The table doesn't contain an entry by the specified key, pop nil value
+			if(lua_isnil(m_lua->state, -1))
+			{
+				lua_pop(m_lua->state, 1);
+				return false;
+			}
+			else
+			{
+				lua_insert(m_lua->state, 1);
+				return true;
+			}
+		}
+		else
+			return false;
 	}
 
-	bool LuaEnvironment::toBool()
+	bool LuaEnvironment::toBool(bool fromBack)
 	{
-		bool value = lua_toboolean(m_lua->state, 1);
+		bool value = lua_toboolean(m_lua->state, fromBack ? -1 : 1);
+		if(fromBack)
+			lua_pop(m_lua->state, 1);
+		else
+			lua_remove(m_lua->state, 1);
+		return value;
+	}
+	double LuaEnvironment::toNumber(bool fromBack)
+	{
+		double value = luaL_checknumber(m_lua->state, fromBack ? -1 : 1);
 		lua_pop(m_lua->state, 1);
 		return value;
 	}
-	double LuaEnvironment::toNumber()
+	std::string LuaEnvironment::toString(bool fromBack)
 	{
-		double value = luaL_checknumber(m_lua->state, 1);
+		std::string value = luaL_checkstring(m_lua->state, fromBack ? -1 : 1);
 		lua_pop(m_lua->state, 1);
 		return value;
 	}
-	std::string LuaEnvironment::toString()
+	void* LuaEnvironment::toPointer(bool fromBack)
 	{
-		std::string value = luaL_checkstring(m_lua->state, 1);
+		void *value = lua_touserdata(m_lua->state, fromBack ? -1 : 1);
 		lua_pop(m_lua->state, 1);
 		return value;
 	}
-	void* LuaEnvironment::toPointer()
+	void* LuaEnvironment::toObject(const std::string &className, bool fromBack)
 	{
-		void *value = lua_touserdata(m_lua->state, 1);
-		lua_pop(m_lua->state, 1);
-		return value;
-	}
-	void* LuaEnvironment::toObject(const std::string &className)
-	{
-		void *value = luaL_checkudata(m_lua->state, 1, className.c_str());
+		void *value = luaL_checkudata(m_lua->state, fromBack ? -1 : 1, className.c_str());
 		lua_pop(m_lua->state, 1);
 		return value;
 	}
@@ -215,10 +276,7 @@ namespace Saurobyte
 			return false;
 		}
 		else
-		{
-			lua_insert(m_lua->state, 1);
 			return true;
-		}
 	}
 
 
