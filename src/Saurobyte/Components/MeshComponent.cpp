@@ -228,14 +228,14 @@ namespace Saurobyte
 
 
 
-	void MeshComponent::onLuaSet(const std::string& valueName, lua_State *state)
+	void MeshComponent::onLuaSet(const std::string& valueName, LuaEnvironment &env)
 	{
 		if(valueName == "color")
 		{
 			float r = 0, g = 0, b = 0;
-			r = luaL_checknumber(state, 1);
-			g = luaL_checknumber(state, 2);
-			b = luaL_checknumber(state, 3);
+			r = env.toNumber();
+			g = env.toNumber();
+			b = env.toNumber();
 
 			setColor(r, g, b, 1); 
 		}

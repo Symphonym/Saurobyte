@@ -57,7 +57,7 @@ namespace Saurobyte
 
 		void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
 
-		virtual void onLuaSet(const std::string& valueName, lua_State *context);
+		virtual void onLuaSet(const std::string& valueName, LuaEnvironment &env);
 		virtual std::string getName() const;
 
 		void storeData();

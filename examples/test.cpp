@@ -49,21 +49,21 @@ int main(int argc, const char* argv[]){
 	{
 		{ "Print", [] (Saurobyte::LuaEnvironment& env) -> int
 			{
-				printf("\nVal %i\n", *env.toObject<int>("Jebus"));
+				printf("\nVal %i\n", env.toObject<int>("Jebus"));
 				return 0;
 			}
 		},
 		{ "Add", [] (Saurobyte::LuaEnvironment& env) -> int
 			{
-				int* val = env.toObject<int>("Jebus");
-				(*val)++;
+				int &val = env.toObject<int>("Jebus");
+				val++;
 				return 0;
 			}
 		},
 		{ "Clone", [] (Saurobyte::LuaEnvironment& env) -> int
 			{
-				int* val = env.toObject<int>("Jebus");
-				env.pushObject<int>(*val, "Jebus");
+				int val = env.toObject<int>("Jebus");
+				env.pushObject<int>(val, "Jebus");
 				return 1;
 			}
 		}
@@ -71,6 +71,19 @@ int main(int argc, const char* argv[]){
 
 	env.pushObject<int>(5, "Jebus");
 	env.writeGlobal("SWAG");
+
+	// Nested table test
+	env.pushTable();
+	env.pushTable();
+	env.pushArgs("SWEET MOTHER OF JEBUS"); // Store this value
+	env.tableWrite("A testing value :O"); // By this key
+	env.pushArgs("adasdasdad"); // Store this value
+	env.tableWrite("ast"); // By this key
+	env.tableWrite("NESTED"); // Then store that table by this key
+	env.writeGlobal("leTestTable"); // Create global with the first pushed table
+
+	env.pushNil();
+	env.writeGlobal("os.date()");
 
 	env.registerFunction(
 		{ "Testeru", [] (Saurobyte::LuaEnvironment& env) -> int

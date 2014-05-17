@@ -24,6 +24,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 #include <Saurobyte/Lua/LuaEnv_Scene.hpp>
+#include <Saurobyte/LuaEnvironment.hpp>
 #include <Saurobyte/Game.hpp>
 
 namespace Saurobyte
@@ -31,17 +32,19 @@ namespace Saurobyte
 	int LuaEnv_Scene::GetEntities(LuaEnvironment &env)
 	{
 		// First arg is self
-		Scene* scene = LuaEnvironment::convertUserdata<Scene>(state, 1, "jl.Scene");
+		Scene* scene = env.toObject<Scene*>("Saurobyte_Scene");
 
-		lua_createtable(state, scene->getEntities().size(), 0);
-		int tableIndex = lua_gettop(state);
+		//lua_createtable(state, scene->getEntities().size(), 0);
+		env.pushTable();
+		//int tableIndex = lua_gettop(state);
 
 		int index = 1;
 		for(auto itr = scene->getEntities().begin(); itr != scene->getEntities().end(); itr++)
 		{
-			lua_pushnumber(state, index++);
-			LuaEnvironment::pushObject<Entity>(state, itr->second, "jl.Entity");
-			lua_settable(state, tableIndex);
+			//lua_pushnumber(state, index++);
+			env.pushObject<Entity*>(itr->second, "Saurobyte_Entity");
+			env.tableWrite(index);
+			//lua_settable(state, tableIndex);
 		}
 
 		return 1;
@@ -49,19 +52,19 @@ namespace Saurobyte
 	int LuaEnv_Scene::GetName(LuaEnvironment &env)
 	{
 		// First arg is self
-		Scene* scene = LuaEnvironment::convertUserdata<Scene>(state, 1, "jl.Scene");
+		Scene* scene = env.toObject<Scene*>("Saurobyte_Scene");
 
-		lua_pushstring(state, scene->getName().c_str());
+		env.pushArgs(scene->getName());
 
 		return 1;
 	}
 	int LuaEnv_Scene::Detach(LuaEnvironment &env)
 	{
 		// First arg is self
-		Scene* scene = LuaEnvironment::convertUserdata<Scene>(state, 1, "jl.Scene");
+		Scene* scene = env.toObject<Scene*>("Saurobyte_Scene");
 
 		// Second arg is the entity to detach
-		Entity* entity = LuaEnvironment::convertUserdata<Entity>(state, 2, "jl.Entity");
+		Entity *entity = env.toObject<Entity*>("Saurobyte_Entity");
 
 		scene->detach(*entity);
 
@@ -70,10 +73,10 @@ namespace Saurobyte
 	int LuaEnv_Scene::Attach(LuaEnvironment &env)
 	{
 		// First arg is self
-		Scene* scene = LuaEnvironment::convertUserdata<Scene>(state, 1, "jl.Scene");
+		Scene* scene = env.toObject<Scene*>("Saurobyte_Scene");
 
 		// Second arg is the entity to attach
-		Entity* entity = LuaEnvironment::convertUserdata<Entity>(state, 2, "jl.Entity");
+		Entity *entity = env.toObject<Entity*>("Saurobyte_Entity");
 
 		scene->attach(*entity);
 
@@ -82,18 +85,18 @@ namespace Saurobyte
 	int LuaEnv_Scene::Contains(LuaEnvironment &env)
 	{
 		// First arg is self
-		Scene* scene = LuaEnvironment::convertUserdata<Scene>(state, 1, "jl.Scene");
+		Scene* scene = env.toObject<Scene*>("Saurobyte_Scene");
 
 		// Second arg is the entity to query
-		Entity* entity = LuaEnvironment::convertUserdata<Entity>(state, 2, "jl.Entity");
+		Entity *entity = env.toObject<Entity*>("Saurobyte_Entity");
 
-		lua_pushboolean(state, scene->contains(*entity));
+		env.pushArgs(scene->contains(*entity));
 
 		return 1;
 	}
 	void LuaEnv_Scene::exposeToLua(Game *game)
 	{
-		const luaL_Reg sceneFuncs[] = 
+		/*const luaL_Reg sceneFuncs[] = 
 		{
 			{ "GetEntities", GetEntities },
 			{ "GetName", GetName },
@@ -101,7 +104,17 @@ namespace Saurobyte
 			{ "Attach", Attach },
 			{ "Contains", Contains },
 			{ NULL, NULL }
-		};
-		//game->getLua().createClass("jl.Scene", sceneFuncs);
+		};*/
+
+		LuaEnvironment &env = game->getLua();
+		env.createClass("Saurobyte_Scene",
+		{
+			{ "GetEntities", GetEntities },
+			{ "GetName", GetName },
+			{ "Detach", Detach },
+			{ "Attach", Attach },
+			{ "Contains", Contains }
+		});
+		//game->getLua().createClass("Saurobyte_Scene", sceneFuncs);
 	}
 };

@@ -1,54 +1,83 @@
+
+/*
+
+The MIT License (MIT)
+
+Copyright (c) 2014 by Jakob Larsson
+
+Permission is hereby granted, free of charge, to any person obtaining 
+a copy of this software and associated documentation files (the "Software"), 
+to deal in the Software without restriction, including without limitation the 
+rights to use, copy, modify, merge, publish, distribute, sublicense, and/or 
+sell copies of the Software, and to permit persons to whom the Software is 
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in 
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR 
+IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
+
 #include <Saurobyte/Lua/LuaEnv_Input.hpp>
+#include <Saurobyte/LuaEnvironment.hpp>
 #include <Saurobyte/Game.hpp>
 #include <SDL2/SDL.h>
 
 namespace Saurobyte
 {		
 
-	int LuaEnv_Input::GetMousePos(lua_State *state)
+	int LuaEnv_Input::GetMousePos(LuaEnvironment &env)
 	{
 		int mouseX = -1, mouseY = -1;
 		SDL_GetMouseState(&mouseX, &mouseY);
 
-		lua_settop(state, 0);
+		env.pushArgs(mouseX, mouseY);
 
-		lua_pushnumber(state, mouseX);
-		lua_pushnumber(state, mouseY);
+		//lua_settop(state, 0);
+
+		//lua_pushnumber(state, mouseX);
+		//lua_pushnumber(state, mouseY);
 		return 2;
 	}
-	int LuaEnv_Input::IsMousePressed(lua_State *state)
+	int LuaEnv_Input::IsMousePressed(LuaEnvironment &env)
 	{
 		// First argument is mouse key
-		std::string mouseKeyName = luaL_checkstring(state, 1);
+		std::string mouseKeyName = env.toString();
 
-		lua_settop(state, 0);
+		//lua_settop(state, 0);
 
 		Uint32 mouseState = SDL_GetMouseState(nullptr, nullptr);
 		if(mouseKeyName == "Left")
-			lua_pushboolean(state, mouseState & SDL_BUTTON(SDL_BUTTON_LEFT));
+			env.pushArgs(mouseState & SDL_BUTTON(SDL_BUTTON_LEFT));
 		else if(mouseKeyName == "Right")
-			lua_pushboolean(state, mouseState & SDL_BUTTON(SDL_BUTTON_RIGHT));
+			env.pushArgs(mouseState & SDL_BUTTON(SDL_BUTTON_RIGHT));
 		else if(mouseKeyName == "Middle")
-			lua_pushboolean(state, mouseState & SDL_BUTTON(SDL_BUTTON_MIDDLE));
+			env.pushArgs(mouseState & SDL_BUTTON(SDL_BUTTON_MIDDLE));
 
 
 		return 1;
 	}
-	int LuaEnv_Input::IsKeyPressed(lua_State *state)
+	int LuaEnv_Input::IsKeyPressed(LuaEnvironment &env)
 	{
 		// First argument is keyboard key
-		std::string keyboardKeyName = luaL_checkstring(state, 1);
+		std::string keyboardKeyName = env.toString();
 
-		lua_settop(state, 0);
+		//lua_settop(state, 0);
 
 		SDL_Keycode keyCode = SDL_GetKeyFromName(keyboardKeyName.c_str());
 
 		if(keyCode == SDLK_UNKNOWN)
-			lua_pushboolean(state, 0);
+			env.pushArgs(false);
 		else
 		{
 			const Uint8 *keyboardState = SDL_GetKeyboardState(NULL);
-			lua_pushboolean(state, keyboardState[SDL_GetScancodeFromKey(keyCode)]);
+			env.pushArgs(static_cast<bool>(keyboardState[SDL_GetScancodeFromKey(keyCode)]));
 		}
 
 		return 1;
@@ -57,7 +86,11 @@ namespace Saurobyte
 
 	 void LuaEnv_Input::exposeToLua(Game *game)
 	 {
-	 	const luaL_Reg inputFuncs[] = 
+	 	LuaEnvironment &env = game->getLua();
+	 	env.registerFunction({"GetMousePos", GetMousePos });
+		env.registerFunction({"IsMousePressed", IsMousePressed });
+		env.registerFunction({"IsKeyPressed", IsKeyPressed });
+	 	/*const luaL_Reg inputFuncs[] = 
 		{
 			{ "GetMousePos", GetMousePos },
 			{ "IsMousePressed", IsMousePressed },
@@ -65,9 +98,10 @@ namespace Saurobyte
 			{ NULL, NULL }
 		};
 
-		lua_State *state = game->getLua().getRaw();
+		LuaEnvironment &env = game->getLua().getRaw();
 
 		// Register input functions to global environment
 		lua_pushglobaltable(state);
-		luaL_setfuncs(state, inputFuncs, 0);	 }
+		luaL_setfuncs(state, inputFuncs, 0);*/
+	}
 };

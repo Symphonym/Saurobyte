@@ -1,50 +1,81 @@
+
+/*
+
+The MIT License (MIT)
+
+Copyright (c) 2014 by Jakob Larsson
+
+Permission is hereby granted, free of charge, to any person obtaining 
+a copy of this software and associated documentation files (the "Software"), 
+to deal in the Software without restriction, including without limitation the 
+rights to use, copy, modify, merge, publish, distribute, sublicense, and/or 
+sell copies of the Software, and to permit persons to whom the Software is 
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in 
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR 
+IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
 #include <Saurobyte/Lua/LuaEnv_Audio.hpp>
+#include <Saurobyte/LuaEnvironment.hpp>
 #include <Saurobyte/Game.hpp>
 
 namespace Saurobyte
 {
-	int LuaEnv_Audio::PlaySound(lua_State *state)
+	int LuaEnv_Audio::PlaySound(LuaEnvironment &env)
 	{
 		// First arg is name of sound
-		std::string soundName = luaL_checkstring(state, 1);
+		std::string soundName = env.toString();
 
 		AudioHandle sound = AudioDevice::playSound(soundName);
 
-		if(sound)
-			lua_pushboolean(state, true);
+		if(sound->isValid())
+			env.pushArgs(true);
 		else
-			lua_pushboolean(state, false);
+			env.pushArgs(false);
 
 		return 1;
 	}
-	int LuaEnv_Audio::PlayStream(lua_State *state)
+	int LuaEnv_Audio::PlayStream(LuaEnvironment &env)
 	{
 		// First arg is name of sound
-		std::string soundName = luaL_checkstring(state, 1);
+		std::string soundName = env.toString();
 
 		AudioHandle sound = AudioDevice::playStream(soundName);
 
-		if(sound)
-			lua_pushboolean(state, true);
+		if(sound->isValid())
+			env.pushArgs(true);
 		else
-			lua_pushboolean(state, false);
+			env.pushArgs(false);
 
 		return 1;
 	}
-	int LuaEnv_Audio::RegisterAudio(lua_State *state)
+	int LuaEnv_Audio::RegisterAudio(LuaEnvironment &env)
 	{
 		// First arg filepath of the sound
-		std::string filePath = luaL_checkstring(state, 1);
+		std::string filePath = env.toString();
 
 		// Second arg is the new name of the sound
-		std::string soundName = luaL_checkstring(state, 2);
+		std::string soundName = env.toString();
 
 		AudioDevice::registerAudio(filePath, soundName);
 	}
 
 	void LuaEnv_Audio::exposeToLua(Game *game)
 	{
-		const luaL_Reg audioFuncs[] = 
+		LuaEnvironment &env = game->getLua();
+		env.registerFunction({"PlaySound", PlaySound});
+		env.registerFunction({"PlayStream", PlayStream});
+		env.registerFunction({"RegisterAudio", RegisterAudio});
+
+		/*const luaL_Reg audioFuncs[] = 
 		{
 			{ "PlaySound", PlaySound },
 			{ "PlayStream", PlayStream },
@@ -53,8 +84,8 @@ namespace Saurobyte
 		};
 
 		// Register sound functions at global scope
-		lua_State *state = game->getLua().getRaw();
+		LuaEnvironment &env = game->getLua().getRaw();
 		lua_pushglobaltable(state);
-		luaL_setfuncs (state, audioFuncs, 0);
+		luaL_setfuncs (state, audioFuncs, 0);*/
 	}
 };

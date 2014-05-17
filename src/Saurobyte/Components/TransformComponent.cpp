@@ -67,59 +67,53 @@ namespace Saurobyte
 	}
 
 
-	void TransformComponent::onLuaSet(const std::string& valueName, lua_State *state)
+	void TransformComponent::onLuaSet(const std::string& valueName, LuaEnvironment &env)
 	{
 		if(valueName == "position")
 		{
-			m_position.x = luaL_checknumber(state, 1);
-			m_position.y = luaL_checknumber(state, 2);
-			m_position.z = luaL_checknumber(state, 3);
+			m_position.x = env.toNumber();
+			m_position.y = env.toNumber();
+			m_position.z = env.toNumber();
 		}
 		else if(valueName == "x")
-			m_position.x = luaL_checknumber(state, 1);
+			m_position.x = env.toNumber();
 		else if(valueName == "y")
-			m_position.y = luaL_checknumber(state, 1);
+			m_position.y = env.toNumber();
 		else if(valueName == "z")
-			m_position.z = luaL_checknumber(state, 1);
+			m_position.z = env.toNumber();
 		else if(valueName == "rotation")
 		{
-			m_rotation.x = luaL_checknumber(state, 1);
-			m_rotation.y = luaL_checknumber(state, 2);
-			m_rotation.z = luaL_checknumber(state, 3);
+			m_rotation.x = env.toNumber();
+			m_rotation.y = env.toNumber();
+			m_rotation.z = env.toNumber();
 		}
 
 	}
-	int TransformComponent::onLuaGet(const std::string& valueName, lua_State *state)
+	int TransformComponent::onLuaGet(const std::string& valueName, LuaEnvironment &env)
 	{
 		if(valueName == "position")
 		{
-			lua_pushnumber(state, m_position.x);
-			lua_pushnumber(state, m_position.y);
-			lua_pushnumber(state, m_position.z);
-
+			env.pushArgs(m_position.x, m_position.y, m_position.z);
 			return 3;
 		}
 		else if(valueName == "x")
 		{
-			lua_pushnumber(state, m_position.x);
+			env.pushArgs(m_position.x);
 			return 1;
 		}
 		else if(valueName == "y")
 		{
-			lua_pushnumber(state, m_position.y);
+			env.pushArgs(m_position.y);
 			return 1;
 		}
 		else if(valueName == "z")
 		{
-			lua_pushnumber(state, m_position.z);
+			env.pushArgs(m_position.z);
 			return 1;
 		}
 		else if(valueName == "rotation")
 		{
-			lua_pushnumber(state, m_rotation.x);
-			lua_pushnumber(state, m_rotation.y);
-			lua_pushnumber(state, m_rotation.z);
-
+			env.pushArgs(m_rotation.x, m_rotation.y, m_rotation.z);
 			return 3;
 		}
 	}

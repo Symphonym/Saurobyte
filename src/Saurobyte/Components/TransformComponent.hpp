@@ -42,8 +42,8 @@ namespace Saurobyte
 		void rotate(float x, float y = 0, float z = 0);
 		void rotate(const Vector3f &rotation);
 
-		virtual void onLuaSet(const std::string& valueName, lua_State *state);
-		virtual int onLuaGet(const std::string& valueName, lua_State *state);
+		virtual void onLuaSet(const std::string& valueName, LuaEnvironment &env);
+		virtual int onLuaGet(const std::string& valueName, LuaEnvironment &env);
 
 		virtual std::string getName() const;
 

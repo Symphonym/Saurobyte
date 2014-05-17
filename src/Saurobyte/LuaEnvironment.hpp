@@ -166,6 +166,10 @@ namespace Saurobyte
 		 * @return          Whether or not the script executed without errors
 		 */
 		bool runScript(const std::string &filePath);
+		bool runScript(const std::string &filePath, int sandBoxID);
+
+		int createSandbox(const std::vector<std::string> &disabledLuaFunctions);
+
 		void reportError();
 
 		std::size_t getMemoryUsage() const;
@@ -214,7 +218,7 @@ namespace Saurobyte
 			return 1 + pushArg(args...);
 		};
 		template<typename TType, typename ...TArgs> 
-			typename std::enable_if<std::is_pointer<TType>::value, int>::type pushArg(TType arg, TArgs... args)
+			typename std::enable_if<std::is_pointer<TType>::value && !std::is_convertible<TType, std::string>::value, int>::type pushArg(TType arg, TArgs... args)
 		{
 			pushPointer(arg);
 			return 1 + pushArg(args...);
@@ -227,8 +231,8 @@ namespace Saurobyte
 		void pushPointer(void *pointer);
 		void* pushMemory(std::size_t sizeInBytes);
 
-		void* toPointer(bool fromBack = false);
-		void* toObject(const std::string &className, bool fromBack = false);
+		void* toPointer();
+		void* toObject(const std::string &className);
 
 
 		void attachMetatable(const std::string &metatableName, int index);

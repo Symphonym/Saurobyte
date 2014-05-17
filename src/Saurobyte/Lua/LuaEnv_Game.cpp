@@ -26,7 +26,6 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <Saurobyte/Lua/LuaEnv_Game.hpp>
 #include <Saurobyte/LuaEnvironment.hpp>
 #include <Saurobyte/Game.hpp>
-#include <Saurobyte/OpenGLWindow.hpp>
 
 namespace Saurobyte
 {
