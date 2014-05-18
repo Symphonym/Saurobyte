@@ -11,6 +11,8 @@ SWAG:Add()
 SWAG:Add()
 SWAG:Print()
 
+print("ADD STATUS: " .. tostring(SWAG.Add))
+
 local swag = SWAG:Clone()
 swag:Add()
 swag:Print()

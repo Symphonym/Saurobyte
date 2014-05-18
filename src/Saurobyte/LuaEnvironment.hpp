@@ -27,6 +27,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define SAUROBYTE_LUA_ENVIRONMENT_HPP
 
 #include <Saurobyte/ApiDefines.hpp>
+#include <Saurobyte/NonCopyable.hpp>
 #include <string>
 #include <type_traits>
 #include <memory>
@@ -41,7 +42,7 @@ namespace Saurobyte
 		class LuaImpl;
 	}
 
-	class SAUROBYTE_API LuaEnvironment
+	class SAUROBYTE_API LuaEnvironment : public NonCopyable
 	{
 
 	public:
@@ -150,7 +151,20 @@ namespace Saurobyte
 		 */
 		void registerFunction(const LuaFunction &func);
 
-		
+		/**
+		 * Calls a Lua function i
+		 * @param  args [description]
+		 * @return      [description]
+		 */
+		template<typename ...TArgs> bool callFunction(TArgs ...args)
+		{
+			int arguments = pushArg(args...);
+		};
+		template<typename ...TArgs> bool callFunction(int sandBoxID, TArgs ...args)
+		{
+			int arguments = pushArg(args...);
+		};
+
 		/**
 		 * Runs a given Lua script
 		 * @param  filePath Path to the script
@@ -160,6 +174,7 @@ namespace Saurobyte
 		bool runScript(const std::string &filePath, int sandBoxID);
 
 		int createSandbox(const std::vector<std::string> &disabledLuaFunctions);
+		bool readSandbox(int sandBoxID);
 
 		void reportError();
 

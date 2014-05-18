@@ -93,7 +93,7 @@ int main(int argc, const char* argv[]){
 
 
 	if(env.readGlobal("GLOBAL_VAR_TEST"))
-		printf("\nSilly %i\n", env.readStack<int>());
+		printf("\nSilly %s\n", env.readStack<std::string>().c_str());
 
 	//SAUROBYTE_INFO_LOG("Initializing test! X=%f  Y=%f   Length=%f", vec.x, vec.y, vec.length());
 	//SAUROBYTE_INFO_LOG("NORMALIZE test! X=%f  Y=%f   Length=%f", vec.normalized().x, vec.normalized().y, vec.normalized().length());

@@ -326,12 +326,13 @@ namespace Saurobyte
 				std::string moduleFunc = moduleToDisable.substr(dotPos+1, moduleToDisable.size());
 
 				// Read lua module table
-				tableRead(moduleTable);
-
-				// Overwrite function
-				pushNil();
-				tableWrite(moduleFunc);
-				tableWrite(moduleTable);
+				if(tableRead(moduleTable))
+				{
+					// Overwrite function
+					pushNil();
+					tableWrite(moduleFunc);
+					tableWrite(moduleTable);
+				}
 			}
 			else
 			{
@@ -342,6 +343,19 @@ namespace Saurobyte
 
 		// Store sand box in Lua registry and return identifier
 		return luaL_ref(m_lua->state, LUA_REGISTRYINDEX);
+	}
+	bool LuaEnvironment::readSandbox(int sandBoxID)
+	{
+		// Push sand box table onto stack
+		lua_rawgeti(m_lua->state, LUA_REGISTRYINDEX, sandBoxID);
+
+		if(lua_isnil(m_lua->state, -1))
+		{
+			lua_pop(m_lua->state, 1);
+			return false;
+		}
+		else
+			return true;
 	}
 
 	void LuaEnvironment::reportError()
