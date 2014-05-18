@@ -25,3 +25,5 @@ end
 print("FINALLY: " .. leTestTable.NESTED["A testing value :O"])
 print("FINALLY: " .. leTestTable.NESTED.ast)
 print(os.date())
+
+GLOBAL_VAR_TEST = "Some silly text"

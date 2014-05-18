@@ -37,11 +37,11 @@ namespace Saurobyte
 	int LuaEnv_Entity::GetComponent(LuaEnvironment &env)
 	{
 		// First arg is self
-		Entity *entity = env.toObject<Entity*>("Saurobyte_Entity");
+		Entity *entity = env.readArg<Entity*>("Saurobyte_Entity");
 
 
 		// Second argument is comp name
-		std::string valueName = env.toString();
+		std::string valueName = env.readArg<std::string>();
 
 		SAUROBYTE_INFO_LOG("GETTERU %s", valueName.c_str());
 
@@ -55,7 +55,7 @@ namespace Saurobyte
 	int LuaEnv_Entity::GetComponentCount(LuaEnvironment &env)
 	{
 		// First arg is self
-		Entity *entity = env.toObject<Entity*>("Saurobyte_Entity");
+		Entity *entity = env.readArg<Entity*>("Saurobyte_Entity");
 
 		env.pushArgs(entity->getComponentCount());
 		return 1;
@@ -93,10 +93,10 @@ namespace Saurobyte
 	int LuaEnv_Entity::RemoveComponent(LuaEnvironment &env)
 	{
 		// First argument is self
-		Entity *entity = env.toObject<Entity*>("Saurobyte_Entity");
+		Entity *entity = env.readArg<Entity*>("Saurobyte_Entity");
 
 		// Second argument is component name
-		std::string valueName = env.toString();
+		std::string valueName = env.readArg<std::string>();
 
 		BaseComponent *comp = entity->getComponent(valueName);
 		if(comp != nullptr)
@@ -112,10 +112,10 @@ namespace Saurobyte
 	int LuaEnv_Entity::HasComponent(LuaEnvironment &env)
 	{
 		// First argument is self
-		Entity *entity = env.toObject<Entity*>("Saurobyte_Entity");
+		Entity *entity = env.readArg<Entity*>("Saurobyte_Entity");
 
 		// Second argument is component name
-		std::string valueName = env.toString();
+		std::string valueName = env.readArg<std::string>();
 
 		BaseComponent *comp = entity->getComponent(valueName);
 		if(comp != nullptr)
@@ -128,7 +128,7 @@ namespace Saurobyte
 	int LuaEnv_Entity::EnableEntity(LuaEnvironment &env)
 	{
 		// First argument is self
-		Entity *entity = env.toObject<Entity*>("Saurobyte_Entity");
+		Entity *entity = env.readArg<Entity*>("Saurobyte_Entity");
 
 		entity->setActive(true);
 
@@ -137,7 +137,7 @@ namespace Saurobyte
 	int LuaEnv_Entity::DisableEntity(LuaEnvironment &env)
 	{
 		// First argument is self
-		Entity *entity = env.toObject<Entity*>("Saurobyte_Entity");
+		Entity *entity = env.readArg<Entity*>("Saurobyte_Entity");
 
 		entity->setActive(false);
 
@@ -146,7 +146,7 @@ namespace Saurobyte
 	int LuaEnv_Entity::KillEntity(LuaEnvironment &env)
 	{
 		// First argument is self
-		Entity *entity = env.toObject<Entity*>("Saurobyte_Entity");
+		Entity *entity = env.readArg<Entity*>("Saurobyte_Entity");
 
 		entity->kill();
 
@@ -155,7 +155,7 @@ namespace Saurobyte
 	int LuaEnv_Entity::GetID(LuaEnvironment &env)
 	{
 		// First arg is self
-		Entity *entity = env.toObject<Entity*>("Saurobyte_Entity");
+		Entity *entity = env.readArg<Entity*>("Saurobyte_Entity");
 
 		env.pushArgs(entity->getID());
 		return 1;
@@ -166,14 +166,14 @@ namespace Saurobyte
 		//LuaSystem* sys = static_cast<LuaSystem*>(lua_touserdata(state, lua_upvalueindex(1)));
 
 		// First arg is self
-		Entity *entity = env.toObject<Entity*>("Saurobyte_Entity");
+		Entity *entity = env.readArg<Entity*>("Saurobyte_Entity");
 
 		// Second arg is event name
-		std::string eventName = env.toString();
+		std::string eventName = env.readArg<std::string>();
 
 		if(env.readGlobal("SAUROBYTE_LUA_SYSTEM"))
 		{
-			LuaSystem *sys = env.toPointer<LuaSystem>();
+			LuaSystem *sys = env.readArg<LuaSystem*>();
 			sys->subscribeEntity(*entity, eventName);
 		}
 
@@ -189,14 +189,14 @@ namespace Saurobyte
 		//LuaSystem* sys = static_cast<LuaSystem*>(lua_touserdata(state, lua_upvalueindex(1)));
 
 		// First arg is self
-		Entity *entity = env.toObject<Entity*>("Saurobyte_Entity");
+		Entity *entity = env.readArg<Entity*>("Saurobyte_Entity");
 
 		// Second arg is event name
-		std::string eventName = env.toString();
+		std::string eventName = env.readArg<std::string>();
 
 		if(env.readGlobal("SAUROBYTE_LUA_SYSTEM"))
 		{
-			LuaSystem *sys = env.toPointer<LuaSystem>();
+			LuaSystem *sys = env.readArg<LuaSystem*>();
 			sys->unsubscribeEntity(*entity, eventName);
 		}
 

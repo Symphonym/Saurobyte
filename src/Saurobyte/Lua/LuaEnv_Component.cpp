@@ -36,10 +36,10 @@ namespace Saurobyte
 	int LuaEnv_Component::GetComponentValue(LuaEnvironment &env)
 	{
 		// First argument is self
-		BaseComponent *comp = env.toObject<BaseComponent*>("Saurobyte_Component");
+		BaseComponent *comp = env.readArg<BaseComponent*>("Saurobyte_Component");
 
 		// Second argument is value identifier
-		std::string valueName = env.toString();
+		std::string valueName = env.readArg<std::string>();
 
 		return comp->onLuaGet(valueName, env);
 	}
@@ -48,10 +48,10 @@ namespace Saurobyte
 	int LuaEnv_Component::SetComponentValue(LuaEnvironment &env)
 	{
 		// First argument is self
-		BaseComponent *comp = env.toObject<BaseComponent*>("Saurobyte_Component");
+		BaseComponent *comp = env.readArg<BaseComponent*>("Saurobyte_Component");
 
 		// Second argument is value identifier
-		std::string valueName = env.toString();
+		std::string valueName = env.readArg<std::string>();
 
 		// Third values and so forth are optional arguments handled in
 		// the component. But we will remove first and second args
@@ -67,7 +67,7 @@ namespace Saurobyte
 	int LuaEnv_Component::GetComponentName(LuaEnvironment &env)
 	{
 		// First argument is self
-		BaseComponent *comp = env.toObject<BaseComponent*>("Saurobyte_Component");
+		BaseComponent *comp = env.readArg<BaseComponent*>("Saurobyte_Component");
 
 		env.pushArgs(comp->getName());
 		return 1;

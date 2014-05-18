@@ -168,34 +168,34 @@ namespace Saurobyte
 			return false;
 	}
 
-	bool LuaEnvironment::toBool()
+	bool LuaEnvironment::toBool(int index)
 	{
-		bool value = lua_toboolean(m_lua->state, 1);
-		lua_remove(m_lua->state, 1);
+		bool value = lua_toboolean(m_lua->state, index);
+		lua_remove(m_lua->state, index);
 		return value;
 	}
-	double LuaEnvironment::toNumber()
+	double LuaEnvironment::toNumber(int index)
 	{
-		double value = luaL_checknumber(m_lua->state, 1);
-		lua_remove(m_lua->state, 1);
+		double value = luaL_checknumber(m_lua->state, index);
+		lua_remove(m_lua->state, index);
 		return value;
 	}
-	std::string LuaEnvironment::toString()
+	std::string LuaEnvironment::toString(int index)
 	{
-		std::string value = luaL_checkstring(m_lua->state, 1);
-		lua_remove(m_lua->state, 1);
+		std::string value = luaL_checkstring(m_lua->state, index);
+		lua_remove(m_lua->state, index);
 		return value;
 	}
-	void* LuaEnvironment::toPointer()
+	void* LuaEnvironment::toPointer(int index)
 	{
-		void *value = lua_touserdata(m_lua->state, 1);
-		lua_remove(m_lua->state, 1);
+		void *value = lua_touserdata(m_lua->state, index);
+		lua_remove(m_lua->state, index);
 		return value;
 	}
-	void* LuaEnvironment::toObject(const std::string &className)
+	void* LuaEnvironment::toObject(const std::string &className, int index)
 	{
-		void *value = luaL_checkudata(m_lua->state, 1, className.c_str());
-		lua_remove(m_lua->state, 1);
+		void *value = luaL_checkudata(m_lua->state, index, className.c_str());
+		lua_remove(m_lua->state, index);
 		return value;
 	}
 

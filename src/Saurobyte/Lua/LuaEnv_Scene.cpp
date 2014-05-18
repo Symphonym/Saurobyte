@@ -32,7 +32,7 @@ namespace Saurobyte
 	int LuaEnv_Scene::GetEntities(LuaEnvironment &env)
 	{
 		// First arg is self
-		Scene* scene = env.toObject<Scene*>("Saurobyte_Scene");
+		Scene* scene = env.readArg<Scene*>("Saurobyte_Scene");
 
 		//lua_createtable(state, scene->getEntities().size(), 0);
 		env.pushTable();
@@ -43,7 +43,7 @@ namespace Saurobyte
 		{
 			//lua_pushnumber(state, index++);
 			env.pushObject<Entity*>(itr->second, "Saurobyte_Entity");
-			env.tableWrite(index);
+			env.tableWrite(index++);
 			//lua_settable(state, tableIndex);
 		}
 
@@ -52,7 +52,7 @@ namespace Saurobyte
 	int LuaEnv_Scene::GetName(LuaEnvironment &env)
 	{
 		// First arg is self
-		Scene* scene = env.toObject<Scene*>("Saurobyte_Scene");
+		Scene* scene = env.readArg<Scene*>("Saurobyte_Scene");
 
 		env.pushArgs(scene->getName());
 
@@ -61,10 +61,10 @@ namespace Saurobyte
 	int LuaEnv_Scene::Detach(LuaEnvironment &env)
 	{
 		// First arg is self
-		Scene* scene = env.toObject<Scene*>("Saurobyte_Scene");
+		Scene* scene = env.readArg<Scene*>("Saurobyte_Scene");
 
 		// Second arg is the entity to detach
-		Entity *entity = env.toObject<Entity*>("Saurobyte_Entity");
+		Entity *entity = env.readArg<Entity*>("Saurobyte_Entity");
 
 		scene->detach(*entity);
 
@@ -73,10 +73,10 @@ namespace Saurobyte
 	int LuaEnv_Scene::Attach(LuaEnvironment &env)
 	{
 		// First arg is self
-		Scene* scene = env.toObject<Scene*>("Saurobyte_Scene");
+		Scene* scene = env.readArg<Scene*>("Saurobyte_Scene");
 
 		// Second arg is the entity to attach
-		Entity *entity = env.toObject<Entity*>("Saurobyte_Entity");
+		Entity *entity = env.readArg<Entity*>("Saurobyte_Entity");
 
 		scene->attach(*entity);
 
@@ -85,10 +85,10 @@ namespace Saurobyte
 	int LuaEnv_Scene::Contains(LuaEnvironment &env)
 	{
 		// First arg is self
-		Scene* scene = env.toObject<Scene*>("Saurobyte_Scene");
+		Scene* scene = env.readArg<Scene*>("Saurobyte_Scene");
 
 		// Second arg is the entity to query
-		Entity *entity = env.toObject<Entity*>("Saurobyte_Entity");
+		Entity *entity = env.readArg<Entity*>("Saurobyte_Entity");
 
 		env.pushArgs(scene->contains(*entity));
 

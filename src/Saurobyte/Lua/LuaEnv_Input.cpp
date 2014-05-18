@@ -48,7 +48,7 @@ namespace Saurobyte
 	int LuaEnv_Input::IsMousePressed(LuaEnvironment &env)
 	{
 		// First argument is mouse key
-		std::string mouseKeyName = env.toString();
+		std::string mouseKeyName = env.readArg<std::string>();
 
 		//lua_settop(state, 0);
 
@@ -66,7 +66,7 @@ namespace Saurobyte
 	int LuaEnv_Input::IsKeyPressed(LuaEnvironment &env)
 	{
 		// First argument is keyboard key
-		std::string keyboardKeyName = env.toString();
+		std::string keyboardKeyName = env.readArg<std::string>();
 
 		//lua_settop(state, 0);
 

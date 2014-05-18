@@ -71,21 +71,21 @@ namespace Saurobyte
 	{
 		if(valueName == "position")
 		{
-			m_position.x = env.toNumber();
-			m_position.y = env.toNumber();
-			m_position.z = env.toNumber();
+			m_position.x = env.readArg<float>();
+			m_position.y = env.readArg<float>();
+			m_position.z = env.readArg<float>();
 		}
 		else if(valueName == "x")
-			m_position.x = env.toNumber();
+			m_position.x = env.readArg<float>();
 		else if(valueName == "y")
-			m_position.y = env.toNumber();
+			m_position.y = env.readArg<float>();
 		else if(valueName == "z")
-			m_position.z = env.toNumber();
+			m_position.z = env.readArg<float>();
 		else if(valueName == "rotation")
 		{
-			m_rotation.x = env.toNumber();
-			m_rotation.y = env.toNumber();
-			m_rotation.z = env.toNumber();
+			m_rotation.x = env.readArg<float>();
+			m_rotation.y = env.readArg<float>();
+			m_rotation.z = env.readArg<float>();
 		}
 
 	}

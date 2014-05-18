@@ -32,7 +32,7 @@ namespace Saurobyte
 	int LuaEnv_Audio::PlaySound(LuaEnvironment &env)
 	{
 		// First arg is name of sound
-		std::string soundName = env.toString();
+		std::string soundName = env.readArg<std::string>();
 
 		AudioHandle sound = AudioDevice::playSound(soundName);
 
@@ -46,7 +46,7 @@ namespace Saurobyte
 	int LuaEnv_Audio::PlayStream(LuaEnvironment &env)
 	{
 		// First arg is name of sound
-		std::string soundName = env.toString();
+		std::string soundName = env.readArg<std::string>();
 
 		AudioHandle sound = AudioDevice::playStream(soundName);
 
@@ -60,10 +60,10 @@ namespace Saurobyte
 	int LuaEnv_Audio::RegisterAudio(LuaEnvironment &env)
 	{
 		// First arg filepath of the sound
-		std::string filePath = env.toString();
+		std::string filePath = env.readArg<std::string>();
 
 		// Second arg is the new name of the sound
-		std::string soundName = env.toString();
+		std::string soundName = env.readArg<std::string>();
 
 		AudioDevice::registerAudio(filePath, soundName);
 	}

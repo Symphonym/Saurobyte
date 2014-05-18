@@ -101,38 +101,29 @@ namespace Saurobyte
 		bool tableRead(const std::string &key);
 
 		/**
-		 * Pops the value at the bottom of the stack and converts it to a boolean
-		 * @return The boolean value at the bottom of the stack
+		 * Reads function arguments within a function called by Lua, in the order they were passed
+		 * @return The value of the function parameter converted to the specified type
 		 */
-		bool toBool();
-		/**
-		 * Pops the value at the bottom of the stack and converts it to a double
-		 * @return The double value at the bottom of the stack
-		 */
-		double toNumber();
-		/**
-		 * Pops the value at the bottom of the stack and converts it to a string
-		 * @return The string value at the bottom of the stack
-		 */
-		std::string toString();
-		/**
-		 * Pops the value at the bottom of the stack and converts it to a pointer (userdata)
-		 * @return The pointer (userdata) value at the bottom of the stack
-		 */
-		template<typename TType> TType* toPointer()
+		template<typename TType> TType readArg()
 		{
-			TType* ptr = static_cast<TType*>(toPointer());
-			return ptr;
-		}
-		/**
-		 * Pops the value at the bottom of the stack and converts it to an object (userdata)
-		 * @param  className The metatable that the object is using, to validate it
-		 * @return           The object (userdata) at the bottom of hte stack
-		 */
-		template<typename TType> TType& toObject(const std::string &className)
+			return readStackValue<TType>(1);
+		};
+		template<typename TType> TType& readArg(const std::string &className)
 		{
-			LuaObject<TType> *data = static_cast<LuaObject<TType>*>(toObject(className));
-			return data->data;
+			return toObject<TType>(className, 1);
+		};
+
+		/**
+		 * Reads values from the top of the Lua stack
+		 * @return The value at the top of the Lua stack converted to the specified type
+		 */
+		template<typename TType> TType readStack()
+		{
+			return readStackValue<TType>(-1);
+		};
+		template<typename TType> TType& readStack(const std::string &className)
+		{
+			return toObject<TType>(className, -1);
 		};
 
 		/**
@@ -224,6 +215,32 @@ namespace Saurobyte
 			return 1 + pushArg(args...);
 		};
 
+		template<typename TType> 
+			typename std::enable_if<std::is_same<bool, TType>::value, TType>::type readStackValue(int index)
+		{
+			return toBool(index);
+		};
+		template<typename TType> 
+			typename std::enable_if<std::is_convertible<TType, std::string>::value, TType>::type readStackValue(int index)
+		{
+			return toString(index);
+		};
+		template<typename TType> 
+			typename std::enable_if<std::is_arithmetic<TType>::value && !std::is_same<bool, TType>::value, TType>::type readStackValue(int index)
+		{
+			return toNumber(index);
+		};
+		template<typename TType> 
+			typename std::enable_if<std::is_convertible<TType, LuaFunctionPtr>::value, TType>::type readStackValue(int index)
+		{
+			return toObject<TType>("Saurobyte_LuaFunction", index);
+		};
+		template<typename TType> 
+			typename std::enable_if<std::is_pointer<TType>::value && !std::is_convertible<TType, std::string>::value, TType>::type readStackValue(int index)
+		{
+			return toPointer<TType>(index);
+		};
+
 		void pushBool(bool value);
 		void pushNumber(double value);
 		void pushString(const std::string &value);
@@ -231,8 +248,44 @@ namespace Saurobyte
 		void pushPointer(void *pointer);
 		void* pushMemory(std::size_t sizeInBytes);
 
-		void* toPointer();
-		void* toObject(const std::string &className);
+		void* toPointer(int index);
+		void* toObject(const std::string &className, int index);
+
+		/**
+		 * Pops the value at the index and converts it to a boolean
+		 * @return The boolean value at the index
+		 */
+		bool toBool(int index);
+		/**
+		 * Pops the value at the index and converts it to a double
+		 * @return The double value at the index
+		 */
+		double toNumber(int index);
+		/**
+		 * Pops the value at the index and converts it to a string
+		 * @return The string value at the index
+		 */
+		std::string toString(int index);
+		/**
+		 * Pops the value at the index and converts it to a pointer (userdata)
+		 * @return The pointer (userdata) value at the index
+		 */
+		template<typename TType> TType toPointer(int index)
+		{
+			TType* ptr = static_cast<TType*>(toPointer(index));
+			return *ptr;
+		}
+		/**
+		 * Pops the value at the index and converts it to an object (userdata)
+		 * @param  className The metatable that the object is using, to validate it
+		 * @return           The object (userdata) at the index
+		 */
+		template<typename TType> TType& toObject(const std::string &className, int index)
+		{
+			LuaObject<TType> *data = static_cast<LuaObject<TType>*>(toObject(className, index));
+			return data->data;
+		};
+
 
 
 		void attachMetatable(const std::string &metatableName, int index);

@@ -233,9 +233,9 @@ namespace Saurobyte
 		if(valueName == "color")
 		{
 			float r = 0, g = 0, b = 0;
-			r = env.toNumber();
-			g = env.toNumber();
-			b = env.toNumber();
+			r = env.readArg<float>();
+			g = env.readArg<float>();
+			b = env.readArg<float>();
 
 			setColor(r, g, b, 1); 
 		}

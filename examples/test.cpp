@@ -49,20 +49,20 @@ int main(int argc, const char* argv[]){
 	{
 		{ "Print", [] (Saurobyte::LuaEnvironment& env) -> int
 			{
-				printf("\nVal %i\n", env.toObject<int>("Jebus"));
+				printf("\nVal %i\n", env.readArg<int>("Jebus"));
 				return 0;
 			}
 		},
 		{ "Add", [] (Saurobyte::LuaEnvironment& env) -> int
 			{
-				int &val = env.toObject<int>("Jebus");
+				int &val = env.readArg<int>("Jebus");
 				val++;
 				return 0;
 			}
 		},
 		{ "Clone", [] (Saurobyte::LuaEnvironment& env) -> int
 			{
-				int val = env.toObject<int>("Jebus");
+				int val = env.readArg<int>("Jebus");
 				env.pushObject<int>(val, "Jebus");
 				return 1;
 			}
@@ -82,17 +82,19 @@ int main(int argc, const char* argv[]){
 	env.tableWrite("NESTED"); // Then store that table by this key
 	env.writeGlobal("leTestTable"); // Create global with the first pushed table
 
-	env.pushNil();
-	env.writeGlobal("os.date()");
-
 	env.registerFunction(
 		{ "Testeru", [] (Saurobyte::LuaEnvironment& env) -> int
 			{
-				env.pushArgs(std::string("Hello world"));
+				env.pushArgs("Hello world");
 				return 1;
 			}
 		});
 	env.runScript("./luaTest.lua");
+
+
+	if(env.readGlobal("GLOBAL_VAR_TEST"))
+		printf("\nSilly %i\n", env.readStack<int>());
+
 	//SAUROBYTE_INFO_LOG("Initializing test! X=%f  Y=%f   Length=%f", vec.x, vec.y, vec.length());
 	//SAUROBYTE_INFO_LOG("NORMALIZE test! X=%f  Y=%f   Length=%f", vec.normalized().x, vec.normalized().y, vec.normalized().length());
 	//SAUROBYTE_INFO_LOG("Initializing test! X=%f  Y=%f   Length=%f", vec.x, vec.y, vec.length());
