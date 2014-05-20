@@ -133,11 +133,23 @@ namespace Saurobyte
 		 */
 		void writeGlobal(const std::string &name);
 		/**
-		 * Retrieves a global from the Lua environment and inserts it at the bottom of the stack, if it was found.
+		 * Pops the value at the top of the stack and sets it as a global in the specified Lua environment
+		 * @param name      The global name
+		 * @param sandBoxID The sand box in which to register the global
+		 */
+		void writeGlobal(const std::string &name, int sandBoxID);
+		/**
+		 * Retrieves a global from the Lua environment and pushes it onto the stack, if it was found.
 		 * @param  name The name of the global variable
 		 * @return      Whether or not the global was found
 		 */
 		bool readGlobal(const std::string &name);
+		/**
+		 * Retrieves a global from the specified Lua environment and pushes it onto the stack, if it was found.
+		 * @param name      The global name
+		 * @param sandBoxID The sand box from which to read
+		 */
+		bool readGlobal(const std::string &name, int sandBoxID);
 
 		/**
 		 * Creates a Lua metatable to act as a class with the specified functions and name
@@ -156,28 +168,37 @@ namespace Saurobyte
 		 * @param  args [description]
 		 * @return      [description]
 		 */
-		template<typename ...TArgs> bool callFunction(TArgs ...args)
+		template<typename ...TArgs> bool callFunction(const std::string &funcName, TArgs ...args)
 		{
 			int arguments = pushArg(args...);
 		};
-		template<typename ...TArgs> bool callFunction(int sandBoxID, TArgs ...args)
+		template<typename ...TArgs> bool callFunction(const std::string &funcName, int sandBoxID, TArgs ...args)
 		{
 			int arguments = pushArg(args...);
 		};
 
 		/**
-		 * Runs a given Lua script
+		 * Runs the specified Lua script
 		 * @param  filePath Path to the script
 		 * @return          Whether or not the script executed without errors
 		 */
 		bool runScript(const std::string &filePath);
+		/**
+		 * Runs a script within the specified Lua sand box
+		 * @param  filePath  Path to the script
+		 * @param  sandBoxID The sand box in which to run the script
+		 * @return           Whether or not the script executed without errors
+		 */
 		bool runScript(const std::string &filePath, int sandBoxID);
 
 		int createSandbox(const std::vector<std::string> &disabledLuaFunctions);
-		bool readSandbox(int sandBoxID);
 
 		void reportError();
 
+		/**
+		 * Checks to see how much memory Lua is using
+		 * @return Lua memory usage, in kilo bytes (kB)
+		 */
 		std::size_t getMemoryUsage() const;
 
 	private:

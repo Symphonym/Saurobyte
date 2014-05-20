@@ -42,7 +42,7 @@ namespace Saurobyte
 		lua_setglobal(m_lua->state, "SAUROBYTE_LUA_ENV");
 
 		// Setup function objects
-		auto luaFunc = [] (lua_State *state) -> int
+	/*	auto luaFunc = [] (lua_State *state) -> int
 		{
 			lua_getglobal(state, "SAUROBYTE_LUA_ENV");
 			LuaEnvironment *luaEnv = static_cast<LuaEnvironment*>(lua_touserdata(state, -1));
@@ -60,7 +60,7 @@ namespace Saurobyte
 		int metatable = lua_gettop(m_lua->state);
 
 		lua_pushcfunction(m_lua->state, luaFunc);
-		lua_setfield(m_lua->state, metatable, "__call");
+		lua_setfield(m_lua->state, metatable, "__call");*/
 
 	}
 	LuaEnvironment::~LuaEnvironment()
@@ -82,7 +82,20 @@ namespace Saurobyte
 	}
 	void LuaEnvironment::pushFunction(const LuaFunctionPtr &function)
 	{
+		auto luaFunc = [] (lua_State *state) -> int
+		{
+			lua_getglobal(state, "SAUROBYTE_LUA_ENV");
+			LuaEnvironment *luaEnv = static_cast<LuaEnvironment*>(lua_touserdata(state, -1));
+			lua_pop(state, 1);
+
+			LuaObject<LuaFunctionPtr>& funcPtr = *static_cast<LuaObject<LuaFunctionPtr>*>(
+				lua_touserdata(state, lua_upvalueindex(1)));
+
+			return funcPtr.data(*luaEnv);
+		};
+
 		pushObject<LuaFunctionPtr>(function, "Saurobyte_LuaFunction");
+		lua_pushcclosure(m_lua->state, luaFunc, 1);
 	}
 	void LuaEnvironment::pushPointer(void *pointer)
 	{
@@ -250,25 +263,67 @@ namespace Saurobyte
 	void LuaEnvironment::registerFunction(const LuaFunction &func)
 	{
 
-		pushObject<LuaFunctionPtr>(func.second, "Saurobyte_LuaFunction");
+		auto luaFunc = [] (lua_State *state) -> int
+		{
+			lua_getglobal(state, "SAUROBYTE_LUA_ENV");
+			LuaEnvironment *luaEnv = static_cast<LuaEnvironment*>(lua_touserdata(state, -1));
+			lua_pop(state, 1);
+
+			LuaObject<LuaFunctionPtr>& funcPtr = *static_cast<LuaObject<LuaFunctionPtr>*>(
+				lua_touserdata(state, lua_upvalueindex(1)));
+
+			return funcPtr.data(*luaEnv);
+		};
+
+		pushFunction(func.second);
 		writeGlobal(func.first);
 
 	}
 	void LuaEnvironment::writeGlobal(const std::string &name)
 	{
-		lua_setglobal(m_lua->state, name.c_str());
+		writeGlobal(name, LUA_NOREF);
+	}
+	void LuaEnvironment::writeGlobal(const std::string &name, int sandBoxID)
+	{
+		if(lua_gettop(m_lua->state) < 1)
+			return;
+
+		if(sandBoxID == LUA_NOREF)
+			lua_pushglobaltable(m_lua->state);
+		else
+			lua_rawgeti(m_lua->state, LUA_REGISTRYINDEX, sandBoxID);
+
+		if(lua_isnil(m_lua->state, -1))
+		{
+			lua_pop(m_lua->state, 1);
+			return;
+		}
+
+		// Move the sandbox/global table just below the top, so that the global value is at the top
+		lua_insert(m_lua->state, lua_gettop(m_lua->state) - 1);
+		tableWrite(name);
+
+		// Pop env table
+		lua_pop(m_lua->state, 1);
 	}
 	bool LuaEnvironment::readGlobal(const std::string &name)
 	{
-		lua_getglobal(m_lua->state, name.c_str());
+		return readGlobal(name, LUA_NOREF);
+	}
+	bool LuaEnvironment::readGlobal(const std::string &name, int sandBoxID)
+	{
+		if(sandBoxID == LUA_NOREF)
+			lua_pushglobaltable(m_lua->state);
+		else
+			lua_rawgeti(m_lua->state, LUA_REGISTRYINDEX, sandBoxID);
 
 		if(lua_isnil(m_lua->state, -1))
 		{
 			lua_pop(m_lua->state, 1);
 			return false;
 		}
-		else
-			return true;
+
+		return tableRead(name);
 	}
 
 
@@ -343,19 +398,6 @@ namespace Saurobyte
 
 		// Store sand box in Lua registry and return identifier
 		return luaL_ref(m_lua->state, LUA_REGISTRYINDEX);
-	}
-	bool LuaEnvironment::readSandbox(int sandBoxID)
-	{
-		// Push sand box table onto stack
-		lua_rawgeti(m_lua->state, LUA_REGISTRYINDEX, sandBoxID);
-
-		if(lua_isnil(m_lua->state, -1))
-		{
-			lua_pop(m_lua->state, 1);
-			return false;
-		}
-		else
-			return true;
 	}
 
 	void LuaEnvironment::reportError()

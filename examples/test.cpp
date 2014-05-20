@@ -56,7 +56,8 @@ int main(int argc, const char* argv[]){
 		{ "Add", [] (Saurobyte::LuaEnvironment& env) -> int
 			{
 				int &val = env.readArg<int>("Jebus");
-				val++;
+				int valueToAdd = env.readArg<int>();
+				val += valueToAdd;
 				return 0;
 			}
 		},
@@ -90,6 +91,7 @@ int main(int argc, const char* argv[]){
 			}
 		});
 	env.runScript("./luaTest.lua");
+	//TODO use lua C closures for regging functions to allow for customizability within lua
 
 
 	if(env.readGlobal("GLOBAL_VAR_TEST"))
