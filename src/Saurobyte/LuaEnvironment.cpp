@@ -199,12 +199,6 @@ namespace Saurobyte
 		lua_remove(m_lua->state, index);
 		return value;
 	}
-	void* LuaEnvironment::toPointer(int index)
-	{
-		void *value = lua_touserdata(m_lua->state, index);
-		lua_remove(m_lua->state, index);
-		return value;
-	}
 	void* LuaEnvironment::toObject(const std::string &className, int index)
 	{
 		void *value = luaL_checkudata(m_lua->state, index, className.c_str());
@@ -324,6 +318,24 @@ namespace Saurobyte
 		}
 
 		return tableRead(name);
+	}
+
+	int LuaEnvironment::callFunction(const std::string &funcName, int argumentCount)
+	{
+		return callFunction(funcName, argumentCount, LUA_NOREF);
+	}
+	int LuaEnvironment::callFunction(const std::string &funcName, int argumentCount, int sandBoxID)
+	{
+		if(readGlobal(funcName, sandBoxID))
+		{
+			int oldTop = lua_gettop(m_lua->state) - argumentCount;
+			lua_pcall(m_lua->state, argumentCount, LUA_MULTRET, 0);
+			int newTop = lua_gettop(m_lua->state) + 1;
+
+			return newTop - oldTop;
+		}
+		else
+			return 0;
 	}
 
 

@@ -173,7 +173,7 @@ namespace Saurobyte
 
 		if(env.readGlobal("SAUROBYTE_LUA_SYSTEM"))
 		{
-			LuaSystem *sys = env.readArg<LuaSystem*>();
+			LuaSystem *sys = env.readStack<LuaSystem*>("Saurobyte_LuaSystem");
 			sys->subscribeEntity(*entity, eventName);
 		}
 
@@ -196,7 +196,7 @@ namespace Saurobyte
 
 		if(env.readGlobal("SAUROBYTE_LUA_SYSTEM"))
 		{
-			LuaSystem *sys = env.readArg<LuaSystem*>();
+			LuaSystem *sys = env.readStack<LuaSystem*>("Saurobyte_LuaSystem");
 			sys->unsubscribeEntity(*entity, eventName);
 		}
 
@@ -225,9 +225,6 @@ namespace Saurobyte
 		//game->getLua().createClass("Saurobyte_Entity", entityFuncs);
 
 		LuaEnvironment &env = game->getLua();
-
-		env.pushArgs(game->getSystemPool().getSystem<LuaSystem>());
-		env.writeGlobal("SAUROBYTE_LUA_SYSTEM");
 
 		env.createClass("Saurobyte_Entity",
 		{

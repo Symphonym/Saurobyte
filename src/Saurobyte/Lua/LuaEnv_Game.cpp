@@ -35,7 +35,7 @@ namespace Saurobyte
 		// First arg is self
 		if(env.readGlobal("SAUROBYTE_GAME"))
 		{
-			Game *game = env.readStack<Game*>();
+			Game *game = env.readStack<Game*>("Saurobyte_Game");
 			std::string sceneName = env.readArg<std::string>();
 			game->changeScene(sceneName.c_str());
 
@@ -53,7 +53,7 @@ namespace Saurobyte
  		// First arg is self
  		if(env.readGlobal("SAUROBYTE_GAME"))
 		{
-			Game *game = env.readStack<Game*>();
+			Game *game = env.readStack<Game*>("Saurobyte_Game");
 			std::string sceneName = env.readArg<std::string>();
 			game->getScenePool().deleteScene(sceneName.c_str());
 		}
@@ -72,7 +72,7 @@ namespace Saurobyte
 		// First arg is self
 		if(env.readGlobal("SAUROBYTE_GAME"))
 		{
-			Game *game = env.readStack<Game*>();
+			Game *game = env.readStack<Game*>("Saurobyte_Game");
 
 			Scene *activeScene = game->getScenePool().getActiveScene();
 			
@@ -96,7 +96,7 @@ namespace Saurobyte
 		//Game* game = LuaEnvironment::convertUserdata<Game>(state, 1, "jl.Game");
 		if(env.readGlobal("SAUROBYTE_GAME"))
 		{
-			Game *game = env.readStack<Game*>();
+			Game *game = env.readStack<Game*>("Saurobyte_Game");
 			env.pushArgs(game->getEntityPool().getEntityCount());
 		}
 
@@ -110,7 +110,7 @@ namespace Saurobyte
 		//Game* game = LuaEnvironment::convertUserdata<Game>(state, 1, "jl.Game");
 		if(env.readGlobal("SAUROBYTE_GAME"))
 		{
-			Game *game = env.readStack<Game*>();
+			Game *game = env.readStack<Game*>("Saurobyte_Game");
 
 			// 2nd arg is X offset, 3rd arg is Y offset, 4th arg is Z offset
 			float xOff = env.readArg<float>();
@@ -130,7 +130,7 @@ namespace Saurobyte
 		//Game* game = LuaEnvironment::convertUserdata<Game>(state, 1, "jl.Game");
 		if(env.readGlobal("SAUROBYTE_GAME"))
 		{
-			Game *game = env.readStack<Game*>();
+			Game *game = env.readStack<Game*>("Saurobyte_Game");
 			env.pushArgs(game->getWindow().getSize().x);
 		}
 
@@ -144,7 +144,7 @@ namespace Saurobyte
 		// First arg is self
 		if(env.readGlobal("SAUROBYTE_GAME"))
 		{
-			Game *game = env.readStack<Game*>();
+			Game *game = env.readStack<Game*>("Saurobyte_Game");
 			env.pushArgs(game->getWindow().getSize().y);
 		}
 		//Game* game = LuaEnvironment::convertUserdata<Game>(state, 1, "jl.Game");
@@ -181,7 +181,8 @@ namespace Saurobyte
 		env.registerFunction({ "GetWindowWidth", GetWindowWidth });
 		env.registerFunction({ "GetWindowHeight", GetWindowHeight });
 
-
+		env.pushObject<Game*>(game, "Saurobyte_Game");
+		env.writeGlobal("SAUROBYTE_GAME");
 		// Create global game object in Lua environment
 		//LuaEnvironment &env = game->getLua().getRaw();
 		//LuaEnvironment::pushObject<Game>(state, game, "jl.Game");

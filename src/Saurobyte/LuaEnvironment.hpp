@@ -102,7 +102,7 @@ namespace Saurobyte
 		bool tableRead(const std::string &key);
 
 		/**
-		 * Reads function arguments within a function called by Lua, in the order they were passed
+		 * Reads function arguments within a function called by Lua or return values of a Lua function, in the order they were passed
 		 * @return The value of the function parameter converted to the specified type
 		 */
 		template<typename TType> TType readArg()
@@ -163,19 +163,22 @@ namespace Saurobyte
 		 */
 		void registerFunction(const LuaFunction &func);
 
+		
 		/**
-		 * Calls a Lua function i
-		 * @param  args [description]
-		 * @return      [description]
+		 * Calls a Lua function, using values at the top of the stack as arguments
+		 * @param  funcName      The function to call
+		 * @param  argumentCount How many arguments to pop from the stack
+		 * @return               The amount of return values
 		 */
-		template<typename ...TArgs> bool callFunction(const std::string &funcName, TArgs ...args)
-		{
-			int arguments = pushArg(args...);
-		};
-		template<typename ...TArgs> bool callFunction(const std::string &funcName, int sandBoxID, TArgs ...args)
-		{
-			int arguments = pushArg(args...);
-		};
+		int callFunction(const std::string &funcName, int argumentCount = 0);
+		/**
+		 * Calls a Lua function in the specified sand box, using values at the top of the stack as arguments
+		 * @param  funcName      The function to call
+		 * @param  argumentCount How many arguments to pop from the stack
+		 * @param  sandBoxID     The sand box in which the function is located
+		 * @return               The amount of return values
+		 */
+		int callFunction(const std::string &funcName, int argumentCount, int sandBoxID);
 
 		/**
 		 * Runs the specified Lua script
@@ -250,6 +253,12 @@ namespace Saurobyte
 			pushPointer(arg);
 			return 1 + pushArg(args...);
 		};
+		template<typename TType, typename ...TArgs> 
+			typename std::enable_if<std::is_convertible<TType, std::pair<TType, std::string> >::value, int>::type pushArg(TType arg, TArgs... args)
+		{
+			pushObject(arg.first, arg.second);
+			return 1 + pushArg(args...);
+		};
 
 		template<typename TType> 
 			typename std::enable_if<std::is_same<bool, TType>::value, TType>::type readStackValue(int index)
@@ -267,15 +276,15 @@ namespace Saurobyte
 			return toNumber(index);
 		};
 		template<typename TType> 
-			typename std::enable_if<std::is_convertible<TType, LuaFunctionPtr>::value, TType>::type readStackValue(int index)
+			typename std::enable_if<std::is_convertible<TType, LuaFunctionPtr>::value, LuaFunctionPtr>::type readStackValue(int index)
 		{
 			return toObject<TType>("Saurobyte_LuaFunction", index);
 		};
-		template<typename TType> 
-			typename std::enable_if<std::is_pointer<TType>::value && !std::is_convertible<TType, std::string>::value, TType>::type readStackValue(int index)
-		{
-			return toPointer<TType>(index);
-		};
+		//template<typename TType> 
+		//	typename std::enable_if<std::is_pointer<TType>::value && !std::is_convertible<TType, std::string>::value, TType>::type readStackValue(int index)
+		//{
+		//	return toPointer<TType>(index);
+		//};
 
 		void pushBool(bool value);
 		void pushNumber(double value);
@@ -284,7 +293,6 @@ namespace Saurobyte
 		void pushPointer(void *pointer);
 		void* pushMemory(std::size_t sizeInBytes);
 
-		void* toPointer(int index);
 		void* toObject(const std::string &className, int index);
 
 		/**
@@ -302,15 +310,6 @@ namespace Saurobyte
 		 * @return The string value at the index
 		 */
 		std::string toString(int index);
-		/**
-		 * Pops the value at the index and converts it to a pointer (userdata)
-		 * @return The pointer (userdata) value at the index
-		 */
-		template<typename TType> TType toPointer(int index)
-		{
-			TType* ptr = static_cast<TType*>(toPointer(index));
-			return *ptr;
-		}
 		/**
 		 * Pops the value at the index and converts it to an object (userdata)
 		 * @param  className The metatable that the object is using, to validate it

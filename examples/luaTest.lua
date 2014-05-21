@@ -8,8 +8,8 @@ print(type(SWAG))
 SWAG:Add(55)
 SWAG:Print()
 SWAG:Add("DASDAD")
-SWAG:Print()
-SWAG:Add()
+--SWAG:Print()
+--[[SWAG:Add()
 SWAG:Add()
 SWAG:Add()
 SWAG:Print()
@@ -31,4 +31,8 @@ print("FINALLY: " .. leTestTable.NESTED["A testing value :O"])
 print("FINALLY: " .. leTestTable.NESTED.ast)
 print(os.date())
 
-GLOBAL_VAR_TEST = "Some silly text"
+GLOBAL_VAR_TEST = "Some silly text"]]
+
+function grabString()
+	return "Funny shiz"
+end

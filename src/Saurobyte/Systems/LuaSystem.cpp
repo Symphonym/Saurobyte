@@ -11,14 +11,18 @@ namespace Saurobyte
 
 	LuaSystem::LuaSystem(Game *game)
 		:
-		System<LuaSystem>(game),
-		m_luaEnv(game->getLua())
+		System<LuaSystem>(game)
 	{
 		// Specify we want LuaComponents
 		addRequirement({TypeIdGrabber::getUniqueTypeID<LuaComponent>()});
 
 		// Subscribe to reload messages
 		subscribe("ReloadLua");
+
+		LuaEnvironment &env = game->getLua();
+
+		env.pushObject(this, "Saurobyte_LuaSystem");
+		env.writeGlobal("SAUROBYTE_LUA_SYSTEM");
 
 		// Create lua state and environment
 		//m_luaContext = luaL_newstate();
@@ -38,6 +42,9 @@ namespace Saurobyte
 	}
 	LuaSystem::~LuaSystem()
 	{
+		LuaEnvironment &env = game->getLua();
+		env.pushNil();
+		env.writeGlobal("SAUROBYTE_LUA_SYSTEM");
 	}
 
 	void LuaSystem::onMessage(Message *message)

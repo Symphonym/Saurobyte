@@ -70,7 +70,7 @@ int main(int argc, const char* argv[]){
 		}
 	});
 
-	env.pushObject<int>(5, "Jebus");
+	env.pushObject(5, "Jebus");
 	env.writeGlobal("SWAG");
 
 	// Nested table test
@@ -91,6 +91,9 @@ int main(int argc, const char* argv[]){
 			}
 		});
 	env.runScript("./luaTest.lua");
+
+	printf("\nReturn args %i\n", env.callFunction("grabString"));
+	printf("\nHARU SHITTERU %s\n", env.readStack<std::string>().c_str());
 	//TODO use lua C closures for regging functions to allow for customizability within lua
 
 

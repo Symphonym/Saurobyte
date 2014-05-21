@@ -75,9 +75,6 @@ namespace Saurobyte
 		};*/
 
 
-		lua_State *m_luaContext;
-		LuaEnvironment &m_luaEnv;
-
 		// Scripts subscribed to events
 		std::unordered_map<std::string, std::vector<Entity*> > m_subscribedScripts;
 
