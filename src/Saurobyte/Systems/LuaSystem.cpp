@@ -114,6 +114,11 @@ namespace Saurobyte
 	{
 		LuaComponent *luaComp = entity.getComponent<LuaComponent>();
 
+		LuaEnvironment &env = game->getLua();
+
+		//env.pushArgs(game->getWindow().getDelta());
+		env.callFunction("entity.update", 1, luaComp->sandBox);
+
 		// Call lua script as usual
 		if(luaComp->runningStatus == LuaComponent::Running)
 		{
@@ -146,7 +151,18 @@ namespace Saurobyte
 	}
 	void LuaSystem::onAttach(Entity &entity)
 	{
-		runScript(entity);
+		LuaEnvironment &env = game->getLua();
+
+		LuaComponent *luaComp = entity.getComponent<LuaComponent>();
+		luaComp->sandBox = env.createSandbox(
+			{
+				"os.execute"
+			});
+
+		env.pushObject<Entity*>(&entity, "Saurobyte_Entity");
+		env.writeGlobal("entity", luaComp->sandBox);
+
+		env.runScript(luaComp->luaFile, luaComp->sandBox);
 	}
 	void LuaSystem::onDetach(Entity &entity)
 	{

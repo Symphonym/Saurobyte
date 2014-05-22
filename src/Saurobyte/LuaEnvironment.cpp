@@ -438,17 +438,21 @@ namespace Saurobyte
 		lua_getglobal(m_lua->state, "_G");
 		lua_setfield(m_lua->state, -2, "__index");
 
+		// Store sand box in Lua registry
+		int sandBox = luaL_ref(m_lua->state, LUA_REGISTRYINDEX);
+		
 		for(std::size_t i = 0; i < disabledLuaFunctions.size(); i++)
 		{
 			std::string curFunc = disabledLuaFunctions[i];
-			pushNil();
 
-			if(readGlobal(curFunc))
-				writeGlobal(curFunc);
+			if(readGlobal(curFunc, sandBox))
+			{
+				pushNil();
+				writeGlobal(curFunc, sandBox);
+			}
 		}
 
-		// Store sand box in Lua registry and return identifier
-		return luaL_ref(m_lua->state, LUA_REGISTRYINDEX);
+		return sandBox;
 	}
 
 	void LuaEnvironment::reportError()

@@ -22,6 +22,7 @@ namespace Saurobyte
 
 		LuaRunningStatuses runningStatus;
 		std::string luaFile;
+		int sandBox;
 
 		// Events that the script is subscribed to
 		std::unordered_set<std::string> subscribedEvents;
