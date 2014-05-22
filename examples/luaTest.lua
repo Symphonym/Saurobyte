@@ -3,6 +3,18 @@ print("HUR DUR TEST")
 print(TESTERU)
 
 print(swag.swag.test)
+
+
+SWAG:Add(55)
+SWAG:Print()
+
+SWAG.goodValue = 1337
+
+print("HELLOW SHOULD BE " .. Testeru())
+
+function grabString()
+	return "Funny shiz"
+end
 --[[print("HUR DUR")
 print(Testeru())
 print("PST HUR DUR")
@@ -49,6 +61,3 @@ print(os.date())
 
 GLOBAL_VAR_TEST = "Some silly text"]]
 
-function grabString()
-	return "Funny shiz"
-end

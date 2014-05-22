@@ -50,11 +50,8 @@ int main(int argc, const char* argv[]){
 
 	env.pushArgs(5);
 	env.writeGlobal("swag.swag.test");
-	env.runScript("./luaTest.lua");
 
-	env.readGlobal("swag.swag.test");
-	printf("\nVal %i\n", env.readStack<int>());
-	/*env.createClass("Jebus",
+	env.createClass("Jebus",
 	{
 		{ "Print", [] (Saurobyte::LuaEnvironment& env) -> int
 			{
@@ -78,22 +75,8 @@ int main(int argc, const char* argv[]){
 			}
 		}
 	});
-
 	env.pushObject(5, "Jebus");
 	env.writeGlobal("SWAG");
-
-	// Nested table test
-	env.pushTable();
-	env.pushTable();
-	env.pushArgs("SWEET MOTHER OF JEBUS"); // Store this value
-	env.tableWrite("A testing value :O"); // By this key
-	env.pushArgs("adasdasdad"); // Store this value
-	env.tableWrite("ast"); // By this key
-	env.tableWrite("NESTED"); // Then store that table by this key
-	env.writeGlobal("leTestTable"); // Create global with the first pushed table
-
-	env.pushArgs("NESTED WOOSH");
-	env.writeGlobal("nest.nested.nesterino");
 
 	env.registerFunction(
 		{ "Testeru", [] (Saurobyte::LuaEnvironment& env) -> int
@@ -102,15 +85,29 @@ int main(int argc, const char* argv[]){
 				return 1;
 			}
 		});
+	if(env.runScript("./luaTest.lua"))
+			printf("\nReturn args %i\n", env.callFunction("grabString"));
+	printf("\nHARU SHITTERU %s\n", env.readStack<std::string>().c_str());
+
+	if(env.readGlobal("swag.swag.test"))
+		printf("\nVal %i\n", env.readStack<int>());
+	env.pushArgs(
+		[] (Saurobyte::LuaEnvironment& env) -> int
+			{
+				int &val = env.readArg<int>("Jebus");
+				int valueToAdd = env.readArg<int>();
+				val += 10000;
+				return 0;
+			}
+		);
+	env.writeGlobal("SWAG.Add");
 	env.runScript("./luaTest.lua");
 
-	printf("\nReturn args %i\n", env.callFunction("grabString"));
-	printf("\nHARU SHITTERU %s\n", env.readStack<std::string>().c_str());
-	//TODO use lua C closures for regging functions to allow for customizability within lua
+	env.readGlobal("SDASDASD");
+	env.readGlobal("SWAG.goodValue");
+	SAUROBYTE_INFO_LOG("VALUE ", env.readStack<int>());
 
 
-	if(env.readGlobal("GLOBAL_VAR_TEST"))
-		printf("\nSilly %s\n", env.readStack<std::string>().c_str());*/
 
 	//SAUROBYTE_INFO_LOG("Initializing test! X=%f  Y=%f   Length=%f", vec.x, vec.y, vec.length());
 	//SAUROBYTE_INFO_LOG("NORMALIZE test! X=%f  Y=%f   Length=%f", vec.normalized().x, vec.normalized().y, vec.normalized().length());

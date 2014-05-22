@@ -73,8 +73,7 @@ namespace Saurobyte
 
 			// Use placement new to allocate new LuaObject in Lua owned memory
 			LuaObject<TType> *dataPtr = new (pushMemory(sizeof(LuaObject<TType>))) LuaObject<TType>(newData);
-
-			attachMetatable(className, -1);
+			attachMetatable(className);
 		}
 		/**
 		 * Pushes a nil value onto the Lua stack
@@ -194,9 +193,13 @@ namespace Saurobyte
 		 */
 		bool runScript(const std::string &filePath, int sandBoxID);
 
+		/**
+		 * Creates a Lua sand box, which is a copy of the global Lua environment (in its current state)
+		 * @param  disabledLuaFunctions The Lua modules (e.g os.execute) that will be disabled in the sand box environment
+		 * @return                      Unique identifier of the sand box
+		 */
 		int createSandbox(const std::vector<std::string> &disabledLuaFunctions);
 
-		void reportError();
 
 		/**
 		 * Checks to see how much memory Lua is using
@@ -222,7 +225,6 @@ namespace Saurobyte
 		{
 			return 0;
 		};
-		// Pushes a variable amount of values onto the Lua stack
 		template<typename TType, typename ...TArgs> 
 			typename std::enable_if<std::is_same<bool, TType>::value, int>::type pushArg(TType arg, TArgs... args)
 		{
@@ -280,11 +282,6 @@ namespace Saurobyte
 		{
 			return toObject<TType>("Saurobyte_LuaFunction", index);
 		};
-		//template<typename TType> 
-		//	typename std::enable_if<std::is_pointer<TType>::value && !std::is_convertible<TType, std::string>::value, TType>::type readStackValue(int index)
-		//{
-		//	return toPointer<TType>(index);
-		//};
 
 		void pushBool(bool value);
 		void pushNumber(double value);
@@ -321,12 +318,16 @@ namespace Saurobyte
 			return data->data;
 		};
 
-		bool getTableRecursive(const std::string &nestedTable, bool createNonExistant, int sandBoxID);
-		bool getTableRecursive(const std::string &nestedTable, bool createNonExistant);
+		/**
+		 * Creates and set the metatable for the value at the top of the stack, complete with gc
+		 * @param metatableName The name of the metatable
+		 */
+		void attachMetatable(const std::string &metatableName);
 
-
-		void attachMetatable(const std::string &metatableName, int index);
-
+		/**
+		 * Reports Lua errors to the logger
+		 */
+		void reportError();
 	};
 };
 

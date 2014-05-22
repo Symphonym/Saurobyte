@@ -3,6 +3,8 @@
 Saurobyte is a 3D game engine currently under development. The goal of this engine is to
 make it as easy to use as possible while maintaining a healthy amount of features.
 
+**Please note:** Saurobyte is under heavy development, it is **NOT** in a condition to be used by anyone other than me (for development).
+
 ## Features
 **Please note:** Saurobyte is under development so features may be added or removed
 
