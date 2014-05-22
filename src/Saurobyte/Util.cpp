@@ -33,4 +33,16 @@ namespace Saurobyte
 	{
 		SDL_Delay(sleepInMs);
 	};
+
+	std::vector<std::string> splitStr(const std::string &strToSplit, char delimiter)
+	{
+		std::stringstream ss(strToSplit);
+		std::vector<std::string> splitItems;
+
+		std::string splitItem = "";
+		while(std::getline(ss, splitItem, delimiter))
+			splitItems.push_back(splitItem);
+
+		return splitItems;
+	}
 };

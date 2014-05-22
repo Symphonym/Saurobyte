@@ -1,5 +1,9 @@
 
-print("HUR DUR")
+print("HUR DUR TEST")
+print(TESTERU)
+
+print(swag.swag.test)
+--[[print("HUR DUR")
 print(Testeru())
 print("PST HUR DUR")
 print(type(Testeru))
@@ -7,7 +11,19 @@ print(type(Testeru))
 print(type(SWAG))
 SWAG:Add(55)
 SWAG:Print()
-SWAG:Add("DASDAD")
+
+for key, val in pairs(nest) do
+	print("Key: " .. tostring(key) .. " Val: " .. tostring(val))
+	for subKey, subVal in pairs(val) do
+		print("SubKey: " ..  tostring(subKey) .. " SubVal: " .. tostring(subVal))
+
+		for subSubKey, subSubVal in pairs(subVal) do
+			print("SubSubKey: " ..  tostring(subSubKey) .. " SubSubVal: " .. tostring(subSubVal))
+		end
+	end
+end
+]]
+--SWAG:Add("DASDAD")
 --SWAG:Print()
 --[[SWAG:Add()
 SWAG:Add()

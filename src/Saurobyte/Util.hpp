@@ -29,6 +29,7 @@
 
 #include <string>
 #include <sstream>
+#include <vector>
 
 namespace Saurobyte
 {
@@ -54,6 +55,8 @@ namespace Saurobyte
 	}
 
 	void sleep(unsigned int sleepInMs);
+
+	std::vector<std::string> splitStr(const std::string &strToSplit, char delimiter);
 };
 
 #endif

@@ -27,6 +27,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <Saurobyte/LuaEnvironment.hpp>
 #include <Saurobyte/Logger.hpp>
 #include <Saurobyte/LuaImpl.hpp>
+#include <Saurobyte/Util.hpp>
 #include <Lua/lua.hpp>
 
 namespace Saurobyte
@@ -116,7 +117,7 @@ namespace Saurobyte
 
 	bool LuaEnvironment::tableWrite(int key)
 	{
-		if(lua_istable(m_lua->state, -3) && lua_gettop(m_lua->state) >= 3)
+		if(lua_istable(m_lua->state, -2) && lua_gettop(m_lua->state) >= 2)
 		{
 			lua_pushnumber(m_lua->state, key);
 
@@ -129,22 +130,52 @@ namespace Saurobyte
 			return false;
 	}
 	bool LuaEnvironment::tableWrite(const std::string &key)
-	{
-		if(lua_istable(m_lua->state, -3) && lua_gettop(m_lua->state) >= 3)
-		{
-			lua_pushstring(m_lua->state, key.c_str());
+	{		
+		std::vector<std::string> tablePath = Saurobyte::splitStr(key, '.');
 
-			// Move the key in front of the value associated with the key
-			lua_insert(m_lua->state, lua_gettop(m_lua->state)-1);
-			lua_settable(m_lua->state, -3);
-			return true;
+		// Shuffle the value with the table, allowing for easier traversing of nested tables
+		lua_insert(m_lua->state, lua_gettop(m_lua->state)-1);
+		int originalTableIndex = lua_gettop(m_lua->state);
+		int valueIndex = originalTableIndex - 1;
+
+		for(std::size_t i = 0; i < tablePath.size(); i++)
+		{
+			std::string curTable = tablePath[i];
+
+			// If this is the last segment of the path, it's the value
+			if(i == tablePath.size()-1)
+			{
+				// Move the value to the top of the stack, so we can just traverse the table path and set all fields
+				lua_pushvalue(m_lua->state, valueIndex);
+				lua_remove(m_lua->state, valueIndex);
+				
+				// Traverse the table path and set all fields
+				int index = 1;
+				for(int i = lua_gettop(m_lua->state); i >= originalTableIndex; i--)
+				{
+					lua_setfield(m_lua->state, -2, tablePath[tablePath.size()-index].c_str());
+					++index;
+				}
+
+				return true;
+			}
+
+			lua_getfield(m_lua->state, -1, curTable.c_str());
+
+			if(lua_isnil(m_lua->state, -1))
+			{
+				// Pop nil value and push another table for the path
+				lua_pop(m_lua->state, 1);
+				pushTable();
+			}
+			else if(!lua_istable(m_lua->state, -1))
+				return false;
 		}
-		else
-			return false;
+
 	}
 	bool LuaEnvironment::tableRead(int key)
 	{
-		if(lua_istable(m_lua->state, -2) && lua_gettop(m_lua->state) >= 2)
+		if(lua_istable(m_lua->state, -1) && lua_gettop(m_lua->state) >= 1)
 		{
 			lua_pushnumber(m_lua->state, key);
 			lua_gettable(m_lua->state, -2);
@@ -163,7 +194,29 @@ namespace Saurobyte
 	}
 	bool LuaEnvironment::tableRead(const std::string &key)
 	{
-		if(lua_istable(m_lua->state, -2) && lua_gettop(m_lua->state) >= 2)
+		std::vector<std::string> tablePath = Saurobyte::splitStr(key, '.');
+
+		for(std::size_t i = 0; i < tablePath.size(); i++)
+		{
+			std::string curTable = tablePath[i];
+
+			lua_getfield(m_lua->state, -1, curTable.c_str());
+
+			// The value was not found
+			if(lua_isnil(m_lua->state, -1))
+			{
+				lua_pop(m_lua->state, 1);
+				return false;
+			}
+
+			// Remove old nested tables, but not the original one (top level)
+			if(i > 0)
+				lua_remove(m_lua->state, -2);
+		}
+
+		return true;
+
+		if(lua_istable(m_lua->state, -1) && lua_gettop(m_lua->state) >= 1)
 		{
 			lua_pushstring(m_lua->state, key.c_str());
 			lua_gettable(m_lua->state, -2);
@@ -282,6 +335,8 @@ namespace Saurobyte
 		if(lua_gettop(m_lua->state) < 1)
 			return;
 
+		//if(!getTableRecursive(name, true, sandBoxID))
+		//	return;
 		if(sandBoxID == LUA_NOREF)
 			lua_pushglobaltable(m_lua->state);
 		else
@@ -410,6 +465,124 @@ namespace Saurobyte
 
 		// Store sand box in Lua registry and return identifier
 		return luaL_ref(m_lua->state, LUA_REGISTRYINDEX);
+	}
+
+	bool LuaEnvironment::getTableRecursive(const std::string &nestedTable, bool createNonExistant, int sandBoxID)
+	{
+		if(sandBoxID == LUA_NOREF)
+			lua_pushglobaltable(m_lua->state);
+		else
+			lua_rawgeti(m_lua->state, LUA_REGISTRYINDEX, sandBoxID);
+
+		if(lua_isnil(m_lua->state, -1))
+			return false;
+
+		getTableRecursive(nestedTable, createNonExistant);
+
+	}
+	bool LuaEnvironment::getTableRecursive(const std::string &nestedTable, bool createNonExistant)
+	{
+
+		std::vector<std::string> tablePath = Saurobyte::splitStr(nestedTable, '.');
+
+		SAUROBYTE_INFO_LOG("START");
+		for(std::size_t i = 0; i < tablePath.size(); i++)
+		{
+			std::string curPath = tablePath[i];
+			SAUROBYTE_INFO_LOG("CUr ", curPath);
+			if(tableRead(curPath))
+				tableWrite(curPath);
+			else
+			{
+				SAUROBYTE_INFO_LOG("Not found ", curPath);
+				pushTable();
+				tableWrite(curPath);
+				tableRead(curPath); // Push it back on the stack
+			}
+
+			if(!lua_istable(m_lua->state, -1))
+			{
+				lua_pop(m_lua->state, 1);
+				return true;
+			}
+
+
+			// Remove previous table
+			lua_remove(m_lua->state, -2);
+		}
+
+
+
+		return true;
+
+		std::string::size_type dotPos = nestedTable.find('.');
+
+		// End of table path
+		if(dotPos == std::string::npos)
+			dotPos = nestedTable.size()-1;
+
+		std::string currentTable = nestedTable.substr(0, dotPos);
+		std::string nextPath = nestedTable.substr(dotPos+1, nestedTable.size());
+		printf("\nCurtab %s, next %s\n", currentTable.c_str(), nextPath.c_str());
+
+		// Attempts to read the current table from the previous table
+		bool tableExists = tableRead(currentTable);
+
+		if(!lua_istable(m_lua->state, -1))
+		{
+			lua_pop(m_lua->state, 1);
+			return true;
+		}
+		else if(!tableExists)
+		{
+			if(createNonExistant)
+			{
+				pushTable();
+				tableWrite(currentTable); // Write the table to the previous table
+				return getTableRecursive(nextPath, createNonExistant);
+			}
+			else
+				return false;
+		}
+
+		if(currentTable.empty() || nextPath.empty())
+			return true;
+
+		return getTableRecursive(nextPath, createNonExistant);
+		/*lua_getfield(m_lua->state, -1, currentTable.c_str());
+		printf("\nCurtab %s, next %s\n", currentTable.c_str(), nextPath.c_str());
+
+		if(lua_isnil(m_lua->state, -1))
+		{
+			lua_pop(m_lua->state, 1); // Pop nil
+
+			// Create table if that's specified
+			if(createNonExistant)
+			{
+				pushTable();
+				lua_setfield(m_lua->state, -1, currentTable.c_str());
+				lua_getfield(m_lua->state, -1, currentTable.c_str());
+			}
+			else
+			{
+				lua_pop(m_lua->state, 1); // Pop table
+				return true;
+			}
+		}
+
+		// If we come across a non-table value, pop it and return the previous table
+		if(!lua_istable(m_lua->state, -1))
+		{
+			lua_remove(m_lua->state, -1);
+			return true;
+		}
+
+		// Recurse into next table
+		else
+		{
+			printf("\nRecursing into %s, was in %s\n", nextPath.c_str(), currentTable.c_str());
+			return getTableRecursive(nextPath, createNonExistant);
+		}*/
 	}
 
 	void LuaEnvironment::reportError()

@@ -102,7 +102,7 @@ namespace Saurobyte
 		bool tableRead(const std::string &key);
 
 		/**
-		 * Reads function arguments within a function called by Lua or return values of a Lua function, in the order they were passed
+		 * Reads function arguments within a function called by Lua, in the order they were passed
 		 * @return The value of the function parameter converted to the specified type
 		 */
 		template<typename TType> TType readArg()
@@ -168,7 +168,7 @@ namespace Saurobyte
 		 * Calls a Lua function, using values at the top of the stack as arguments
 		 * @param  funcName      The function to call
 		 * @param  argumentCount How many arguments to pop from the stack
-		 * @return               The amount of return values
+		 * @return               The amount of return values that are pushed onto the stack
 		 */
 		int callFunction(const std::string &funcName, int argumentCount = 0);
 		/**
@@ -176,7 +176,7 @@ namespace Saurobyte
 		 * @param  funcName      The function to call
 		 * @param  argumentCount How many arguments to pop from the stack
 		 * @param  sandBoxID     The sand box in which the function is located
-		 * @return               The amount of return values
+		 * @return               The amount of return values that are pushed onto the stack
 		 */
 		int callFunction(const std::string &funcName, int argumentCount, int sandBoxID);
 
@@ -321,6 +321,8 @@ namespace Saurobyte
 			return data->data;
 		};
 
+		bool getTableRecursive(const std::string &nestedTable, bool createNonExistant, int sandBoxID);
+		bool getTableRecursive(const std::string &nestedTable, bool createNonExistant);
 
 
 		void attachMetatable(const std::string &metatableName, int index);
