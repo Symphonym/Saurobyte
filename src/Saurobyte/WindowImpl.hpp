@@ -45,15 +45,6 @@ namespace Saurobyte
 			~WindowImpl();
 
 			/**
-			 * Creates (or recreates) the Window with the given parameters
-			 * @param title  The title of the window
-			 * @param width  The width of the window
-			 * @param height The height of the window
-			 * @param flags  SDL flags for the Window
-			 */
-			void create(const std::string &title, int width, int height, Uint32 flags);
-
-			/**
 			 * Terminates the Window, effectively closing it
 			 */
 			void close();

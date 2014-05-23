@@ -32,37 +32,31 @@ namespace Saurobyte
 	{
 		WindowImpl::WindowImpl(const std::string &title, int width, int height, Uint32 flags)
 		{
-			create(title, width, height, flags);
-
 			openGLContext = SDL_GL_CreateContext(window);
 
 			if(openGLContext == NULL)
 				SAUROBYTE_FATAL_LOG("Could not create OpenGL context: ", SDL_GetError());
+			else
+			{
+				window = SDL_CreateWindow(
+					title.c_str(),
+					SDL_WINDOWPOS_UNDEFINED,
+					SDL_WINDOWPOS_UNDEFINED,
+					width,
+					height,
+					flags);
+
+				if(window == NULL)
+					SAUROBYTE_FATAL_LOG("Could not create window by the title '", title, "': ", SDL_GetError());
+
+				SDL_GL_MakeCurrent(window, openGLContext);
+			}
 		}
 		WindowImpl::~WindowImpl()
 		{
 			if(window != NULL)
 				SDL_DestroyWindow(window);
 			SDL_GL_DeleteContext(openGLContext);
-		}
-
-		void WindowImpl::create(const std::string &title, int width, int height, Uint32 flags)
-		{
-			// Close the Window first if it is open
-			close();
-
-			window = SDL_CreateWindow(
-				title.c_str(),
-				SDL_WINDOWPOS_UNDEFINED,
-				SDL_WINDOWPOS_UNDEFINED,
-				width,
-				height,
-				flags);
-
-			if(window == NULL)
-				SAUROBYTE_FATAL_LOG("Could not create window by the title '", title, "': ", SDL_GetError());
-
-			SDL_GL_MakeCurrent(window, openGLContext);
 		}
 
 		void WindowImpl::close()

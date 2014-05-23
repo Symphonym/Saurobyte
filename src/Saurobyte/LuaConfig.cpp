@@ -23,21 +23,34 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
 IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-
-#include <Saurobyte/Components/LuaComponent.hpp>
+#include <Saurobyte/LuaConfig.hpp>
+#include <Saurobyte/LuaEnvironment.hpp>
 #include <Lua/lua.hpp>
+#include <fstream>
 
 namespace Saurobyte
 {
-	LuaComponent::LuaComponent(const std::string fileName)
+	LuaConfig::LuaConfig(LuaEnvironment &env)
 		:
-		runningStatus(LuaRunningStatuses::NotLoaded),
-		luaFile(fileName),
-		sandBox(LUA_NOREF)
-	{}
-
-	std::string LuaComponent::getName() const
+		m_env(env),
+		m_luaSandbox(LUA_NOREF)
 	{
-		return "LuaComponent";
+		m_luaSandbox = m_env.createSandbox(
+		{
+			"os", "io", "package", "coroutine"
+		});
+
+		// Where all values are stored
+		env.pushTable();
+		env.writeGlobal("SauroConfig");
+	}
+
+	bool LuaConfig::read(const std::string &filePath)
+	{
+		return m_env.runScript(filePath, m_luaSandbox);
+	}
+	void LuaConfig::write(const std::string &filePath)
+	{
+		std::ofstream writer(filePath, std::ofstream::trunc);
 	}
 };

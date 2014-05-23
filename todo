@@ -22,3 +22,7 @@ CHECK	* Optimize sound/stream reusage
 		* Heap allocation might not be needed for messaging
 		* Create serializable class that has switch for stream/lua and simply uses different functions when serializing data. Hide Lua dependencies and use lua environment class.
 		* Entties can only be created from a Scene, the entitypool create function is private
+
+		* Create YAML parser for config files
+		* Create VideoDevice class for initializing and configuring OpenGL/GLEW
+		* Create global settings interface where config files will store data

@@ -1,10 +1,6 @@
 #include <Saurobyte/Game.hpp>
 #include <Saurobyte/Message.hpp>
-#include <Saurobyte/OpenGLWindow.hpp>
-#include <Saurobyte/WindowImpl.hpp>
-
 #include <Saurobyte/Systems/LuaSystem.hpp>
-
 #include <Saurobyte/Lua/LuaEnv_Game.hpp>
 #include <Saurobyte/Lua/LuaEnv_Entity.hpp>
 #include <Saurobyte/Lua/LuaEnv_Input.hpp>
@@ -12,89 +8,68 @@
 #include <Saurobyte/Lua/LuaEnv_Scene.hpp>
 #include <Saurobyte/Lua/LuaEnv_Audio.hpp>
 #include <Saurobyte/Logger.hpp>
+#include <SDL2/SDL_opengl.h>
 
 namespace Saurobyte
 {
 	bool Game::m_gameInstanceExists = false;
 
-	Game::Game(
-		/*const std::string &name,
-		int width,
-		int height,
-		std::vector<OpenGLWindow::OpenGLAttribute> glAttributes,
-		OpenGLVersions glVersion*/)
+	Game::Game(const std::string &title, int width, int height, Window::WindowModes windowMode)
 		:
 		m_entityPool(this),
 		m_systemPool(this),
 		m_scenePool(this),
 		m_messageCentral(),
 		m_luaEnvironment(),
-		m_audioDevice()
+		m_audioDevice(),
+		m_window(title, width, height, windowMode)
 	{
 		if(m_gameInstanceExists)
 			SAUROBYTE_FATAL_LOG("Only one Game instance may exist!");
 		else
-			m_gameInstanceExists = false;
+			m_gameInstanceExists = true;
+
+		// Set default logging
+		Logger::setLogStatus(Logger::Info_Error);
+
+		// Initialize libraries
+		if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
+			SAUROBYTE_FATAL_LOG("SDL could not be initialized. SDL_Error: ", SDL_GetError());
+
+		// Disable Vsync by default
+		m_window.setVsync(false);
 
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 
-		// Expose Lua API
-	/*	LuaEnv_Game::exposeToLua(this);
-		LuaEnv_Entity::exposeToLua(this);
-		LuaEnv_Input::exposeToLua(this);
-		LuaEnv_Component::exposeToLua(this);
-		LuaEnv_Scene::exposeToLua(this);
-		internal::LuaEnv_Audio::exposeToLua(&m_luaEnvironment);*/
+		// Use 4 samples if OpenGL enables multisampling
+		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
-		/*
-		switch(glVersion)
-		{
-			// Core 3.3 is default
-			default:
-			case OpenGLVersions::Core_3_3:
-				glAttributes.push_back({SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE});
-				glAttributes.push_back({SDL_GL_CONTEXT_MAJOR_VERSION, 3});
-				glAttributes.push_back({SDL_GL_CONTEXT_MINOR_VERSION, 3});
-			break;
-			case OpenGLVersions::Core_4_3:
-				glAttributes.push_back({SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE});
-				glAttributes.push_back({SDL_GL_CONTEXT_MAJOR_VERSION, 4});
-				glAttributes.push_back({SDL_GL_CONTEXT_MINOR_VERSION, 3});
-			break;
-			/*case OpenGLVersions::ES_3_3:
-				glAttributes.push_back({SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES});
-				glAttributes.push_back({SDL_GL_CONTEXT_MAJOR_VERSION, 3});
-				glAttributes.push_back({SDL_GL_CONTEXT_MINOR_VERSION, 3});
-			break;
-			case OpenGLVersions::ES_4_3:
-				glAttributes.push_back({SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES});
-				glAttributes.push_back({SDL_GL_CONTEXT_MAJOR_VERSION, 4});
-				glAttributes.push_back({SDL_GL_CONTEXT_MINOR_VERSION, 3});
-			break;*/
-		/*};
+		// Initialize GLEW
+		glewExperimental = GL_TRUE;
+		GLenum glewErrCode = glewInit();
+		if(glewErrCode != GLEW_OK)
+			SAUROBYTE_FATAL_LOG("Could not initialize GLEW: ", glewGetErrorString(glewErrCode));
 
-		m_window = std::unique_ptr<OpenGLWindow>(new OpenGLWindow(name, width, height, SDL_WINDOW_SHOWN, glAttributes, 300));
-		m_window->setVsync(false);
 
-		// Set default logging
-		Logger::setLogStatus(Logger::Info_Error);
 
 		// Add the built in systems
 		m_systemPool.addSystem(new LuaSystem(this));
-
+		
 		// Expose Lua API
 		LuaEnv_Game::exposeToLua(this);
 		LuaEnv_Entity::exposeToLua(this);
 		LuaEnv_Input::exposeToLua(this);
 		LuaEnv_Component::exposeToLua(this);
 		LuaEnv_Scene::exposeToLua(this);
-		LuaEnv_Audio::exposeToLua(this);*/
+		LuaEnv_Audio::exposeToLua(this);
 	}
 
 	Game::~Game()
 	{
+		SDL_Quit();
 	}
 
 	void Game::gameLoop()
@@ -183,7 +158,7 @@ namespace Saurobyte
 
 	bool Game::runScript(const std::string &filePath)
 	{
-		m_luaEnvironment.runScript(filePath);
+		return m_luaEnvironment.runScript(filePath);
 	}
 
 
@@ -209,6 +184,6 @@ namespace Saurobyte
 	}
 	Window& Game::getWindow()
 	{
-		return *m_window;
+		return m_window;
 	}
 };

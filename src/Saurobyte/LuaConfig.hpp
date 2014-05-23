@@ -23,21 +23,31 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
 IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+#ifndef SAUROBYTE_LUA_CONFIG_HPP
+#define SAUROBYTE_LUA_CONFIG_HPP
 
-#include <Saurobyte/Components/LuaComponent.hpp>
-#include <Lua/lua.hpp>
+#include <Saurobyte/ApiDefines.hpp>
+#include <string>
 
 namespace Saurobyte
 {
-	LuaComponent::LuaComponent(const std::string fileName)
-		:
-		runningStatus(LuaRunningStatuses::NotLoaded),
-		luaFile(fileName),
-		sandBox(LUA_NOREF)
-	{}
-
-	std::string LuaComponent::getName() const
+	class LuaEnvironment;
+	class SAUROBYTE_API LuaConfig
 	{
-		return "LuaComponent";
-	}
-};
+	public:
+
+		explicit LuaConfig(LuaEnvironment &env);
+
+		bool read(const std::string &filePath);
+		void write(const std::string &filePath);
+
+	private:
+
+		LuaEnvironment &m_env;
+		int m_luaSandbox;
+
+	};
+}
+
+
+#endif

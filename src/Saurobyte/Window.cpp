@@ -25,12 +25,14 @@
 
 #include <Saurobyte/Window.hpp>
 #include <Saurobyte/WindowImpl.hpp>
+#include <Saurobyte/Logger.hpp>
 #include <SDL2/SDL.h>
 
 namespace Saurobyte
 {
-	Window::Window(const std::string &title, int width, int height, const std::bitset<7> &windowFlags)
+	Window::Window(const std::string &title, int width, int height, WindowModes windowMode)
 		:
+		m_window(nullptr),
 		m_running(true)
 	{
 		Uint32 sdlFlags = 0;
@@ -39,25 +41,31 @@ namespace Saurobyte
 		sdlFlags |= SDL_WINDOW_OPENGL;
 		sdlFlags |= SDL_WINDOW_ALLOW_HIGHDPI;
 
-		if(windowFlags.test(WindowFlags::Fullscreen))
-			sdlFlags |= SDL_WINDOW_FULLSCREEN;
-		if(windowFlags.test(WindowFlags::FullscreenDesktop))
-			sdlFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
-
-		if(windowFlags.test(WindowFlags::Borderless))
+		if(windowMode == WindowModes::Normless ||
+			windowMode == WindowModes::Maxless)
+		{
 			sdlFlags |= SDL_WINDOW_BORDERLESS;
-		if(windowFlags.test(WindowFlags::Resizable))
-			sdlFlags |= SDL_WINDOW_RESIZABLE;
-		if(windowFlags.test(WindowFlags::Maximized))
+		}
+
+		if(windowMode == WindowModes::Maxless ||
+			windowMode == WindowModes::Maximized)
+		{
 			sdlFlags |= SDL_WINDOW_MAXIMIZED;
-		if(windowFlags.test(WindowFlags::Minimized))
-			sdlFlags |= SDL_WINDOW_MINIMIZED;
-		if(windowFlags.test(WindowFlags::Focused))
-			sdlFlags |= SDL_WINDOW_INPUT_GRABBED;
+		}
+
+		if(windowMode == WindowModes::Fullscreen)
+		{
+			sdlFlags |= SDL_WINDOW_FULLSCREEN;
+		}
 
 		m_window = std::unique_ptr<internal::WindowImpl>(new internal::WindowImpl(title, width, height, sdlFlags));
 	}
+	Window::~Window()
+	{
+		
+	}
 
+	
 	void Window::close()
 	{
 		m_window->close();
@@ -70,6 +78,10 @@ namespace Saurobyte
 	void Window::hide()
 	{
 		SDL_HideWindow(m_window->window);
+	}
+	void Window::swapBuffers()
+	{
+		SDL_GL_SwapWindow(m_window->window);
 	}
 
 	void Window::setTitle(const std::string &title)
@@ -92,6 +104,50 @@ namespace Saurobyte
 	{
 		SDL_SetWindowSize(m_window->window, size.x, size.y);
 	}
+	void Window::setVsync(bool enabled)
+	{
+		if(SDL_GL_SetSwapInterval(enabled ? 1 : 0) < 0)
+			SAUROBYTE_WARNING_LOG("Vsync could not be enabled on this system. SDL_Error: ", SDL_GetError());
+	}
+	void Window::setGamma(float gamma)
+	{
+		if(SDL_SetWindowBrightness(m_window->window, gamma))
+			SAUROBYTE_WARNING_LOG("Couldn't set gamma value. SDL_Error: ", SDL_GetError());
+	}
+	void Window::setMode(WindowModes mode)
+	{
+		// Modify window borders
+		if(mode == WindowModes::Normless ||
+			mode == WindowModes::Maxless)
+			SDL_SetWindowBordered(m_window->window, SDL_FALSE);
+		else
+			SDL_SetWindowBordered(m_window->window, SDL_TRUE);
+
+		// Modify window maximization
+		if(mode == WindowModes::Maxless ||
+			mode == WindowModes::Maximized)
+			SDL_MaximizeWindow(m_window->window);
+		else
+			SDL_RestoreWindow(m_window->window);
+
+		// Modify window fullscreen mode
+		if(mode == WindowModes::Fullscreen)
+			SDL_SetWindowFullscreen(m_window->window, SDL_WINDOW_FULLSCREEN);
+		else
+			SDL_SetWindowFullscreen(m_window->window, 0);
+	}
+
+	void Window::moveToMonitor(int monitorIndex)
+	{
+		SDL_DisplayMode mode;
+		if(SDL_GetCurrentDisplayMode(monitorIndex, &mode))
+		{
+			SAUROBYTE_INFO_LOG("Moving window to monitor ", monitorIndex, "(", SDL_GetDisplayName(monitorIndex),")");
+			SDL_SetWindowDisplayMode(m_window->window, &mode);
+		}
+		else
+			SAUROBYTE_ERROR_LOG("Attempted to move window to invalid monitor index. SDL_Error: ", SDL_GetError());
+	}
 
 
 	Vector2i Window::getPosition() const
@@ -105,6 +161,11 @@ namespace Saurobyte
 		Vector2i size;
 		SDL_GetWindowSize(m_window->window, &size.x, &size.y);
 		return size;
+	}
+	std::string Window::getTitle() const
+	{
+		std::string title(SDL_GetWindowTitle(m_window->window));
+		return title;
 	}
 	bool Window::running() const
 	{
