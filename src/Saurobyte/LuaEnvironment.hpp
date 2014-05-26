@@ -240,7 +240,7 @@ namespace Saurobyte
 		 * @return Lua memory usage, in kilo bytes (kB)
 		 */
 		std::size_t getMemoryUsage() const;
-		void pr();
+		
 	private:
 
 		friend class LuaElement;
@@ -371,38 +371,6 @@ namespace Saurobyte
 		 * Reports Lua errors to the logger
 		 */
 		void reportError();
-	};
-
-	class SAUROBYTE_API LuaElement : public NonCopyable
-	{
-	public:
-
-		template<typename TType> TType key()
-		{
-			pushKey();
-			return m_env->readStack<TType>();
-		};
-		template<typename TType> TType value()
-		{
-			pushValue();
-			return m_env->readStack<TType>();
-		};
-
-		LuaElement();
-		~LuaElement();
-
-		void pushValue();
-		void pushKey();
-
-	private:
-
-		friend class LuaEnvironment;
-
-		void unrefData();
-		void refData(int keyRef, int valueRef);
-
-		int m_keyID, m_valueID;
-		LuaEnvironment *m_env;
 	};
 };
 

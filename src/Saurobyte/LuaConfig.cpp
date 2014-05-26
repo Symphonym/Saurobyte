@@ -58,7 +58,6 @@ namespace Saurobyte
 		{
 			writer << "SauroConf =" << std::endl << "{" << std::endl;
 
-			m_env.pr();
 			m_env.iterateTable(
 				[&writer, &filePath] (LuaEnvironment &env, int nestedLevel)
 				{
@@ -99,7 +98,7 @@ namespace Saurobyte
 					writer << stringIndent << "}," << std::endl;
 				}	
 			);
-m_env.pr();
+
 			writer << "}";
 		}
 	}

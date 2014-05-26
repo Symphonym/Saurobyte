@@ -249,10 +249,7 @@ namespace Saurobyte
 			iterateTableRecursive(handler, tableFinishHandler, 1, tableIndex);
 		}
 	}
-	void LuaEnvironment::pr()
-	{
-		SAUROBYTE_INFO_LOG("CHAOS ", lua_gettop(m_lua->state));
-	}
+
 	void LuaEnvironment::iterateTableRecursive(LuaLoopFunction &handler, LuaLoopFunction &tableFinishHandler, int nestedLevel, int tableIndex)
 	{
 		while(lua_next(m_lua->state, tableIndex))
@@ -547,45 +544,6 @@ namespace Saurobyte
 	std::size_t LuaEnvironment::getMemoryUsage() const
 	{
 		return lua_gc(m_lua->state, LUA_GCCOUNT, 0);
-	}
-
-
-
-
-
-
-
-	LuaElement::LuaElement()
-		:
-		m_keyID(LUA_NOREF),
-		m_valueID(LUA_NOREF),
-		m_env(nullptr)
-	{
-
-	}
-	LuaElement::~LuaElement()
-	{
-		unrefData();
-	}
-
-	void LuaElement::pushValue()
-	{
-		lua_rawgeti(m_env->m_lua->state, LUA_REGISTRYINDEX, m_valueID);
-	}
-	void LuaElement::pushKey()
-	{
-		lua_rawgeti(m_env->m_lua->state, LUA_REGISTRYINDEX, m_keyID);
-	}
-
-	void LuaElement::unrefData()
-	{
-		luaL_unref(m_env->m_lua->state, LUA_REGISTRYINDEX, m_keyID);
-		luaL_unref(m_env->m_lua->state, LUA_REGISTRYINDEX, m_valueID);
-	}
-	void LuaElement::refData(int keyRef, int valueRef)
-	{
-		m_keyID = keyRef;
-		m_valueID = valueRef;
 	}
 
 };
