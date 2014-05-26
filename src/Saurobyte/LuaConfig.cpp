@@ -25,6 +25,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <Saurobyte/LuaConfig.hpp>
 #include <Saurobyte/LuaEnvironment.hpp>
+#include <Saurobyte/Logger.hpp>
 #include <Lua/lua.hpp>
 #include <fstream>
 
@@ -41,16 +42,128 @@ namespace Saurobyte
 		});
 
 		// Where all values are stored
-		env.pushTable();
-		env.writeGlobal("SauroConfig");
+		m_env.pushTable();
+		m_env.writeGlobal("SauroConf");
 	}
 
-	bool LuaConfig::read(const std::string &filePath)
+	bool LuaConfig::load(const std::string &filePath)
 	{
 		return m_env.runScript(filePath, m_luaSandbox);
 	}
-	void LuaConfig::write(const std::string &filePath)
+	void LuaConfig::save(const std::string &filePath)
 	{
 		std::ofstream writer(filePath, std::ofstream::trunc);
+
+		if(m_env.readGlobal("SauroConf", m_luaSandbox))
+		{
+			writer << "SauroConf =" << std::endl << "{" << std::endl;
+
+			m_env.pr();
+			m_env.iterateTable(
+				[&writer, &filePath] (LuaEnvironment &env, int nestedLevel)
+				{
+					// Create indention based on how nested the iteration is
+					std::string stringIndent;
+					stringIndent.append(nestedLevel, '\t');
+
+					// Handle key values
+					if(env.isString())
+						writer << stringIndent << env.readStack<std::string>() << " = ";
+					else if (env.isNumber())
+						writer << stringIndent << "[" << env.readStack<int>() << "] = ";
+					else
+					{
+						SAUROBYTE_WARNING_LOG("Saving config file '", filePath, "' failed due to invalid key value. File will be corrupt.");
+						return;
+					}
+
+					// Handle values
+					if(env.isTable())
+						writer << std::endl << stringIndent << "{" << std::endl;
+					else if(env.isString())
+						writer << "\"" << env.readStack<std::string>() << "\"," << std::endl;
+					else if(env.isNumber())
+						writer << env.readStack<double>() << "," << std::endl;
+					else if(env.isBool())
+						writer << std::boolalpha << env.readStack<bool>() << "," << std::endl;
+					else
+						writer << "nil -- An unsupported value was written" << std::endl;
+
+				},
+				[&writer] (LuaEnvironment &env, int nestedLevel)
+				{
+					// Create indention based on how nested the iteration is
+					std::string stringIndent;
+					stringIndent.append(nestedLevel, '\t');
+
+					writer << stringIndent << "}," << std::endl;
+				}	
+			);
+m_env.pr();
+			writer << "}";
+		}
+	}
+
+	bool LuaConfig::readInt(const std::string &name, int &value)
+	{
+		if(m_env.readGlobal(name, m_luaSandbox))
+		{
+			value = m_env.readStack<int>();
+			return true;
+		}
+		else
+			return false;
+	} 
+	bool LuaConfig::readDouble(const std::string &name, double &value)
+	{
+		if(m_env.readGlobal(name, m_luaSandbox))
+		{
+			value = m_env.readStack<double>();
+			return true;
+		}
+		else
+			return false;
+	}
+	bool LuaConfig::readString(const std::string &name, std::string &value)
+	{
+		if(m_env.readGlobal(name, m_luaSandbox))
+		{
+			value = m_env.readStack<std::string>();
+			return true;
+		}
+		else
+			return false;
+	}
+	bool LuaConfig::readBool(const std::string &name, bool &value)
+	{
+		if(m_env.readGlobal(name, m_luaSandbox))
+		{
+			value = m_env.readStack<bool>();
+			return true;
+		}
+		else
+			return false;
+	}
+
+	
+	void LuaConfig::writeInt(const std::string &name, int value)
+	{
+		m_env.pushArgs(value);
+		m_env.writeGlobal(name, m_luaSandbox);
+	}
+	void LuaConfig::writeDouble(const std::string &name, double value)
+	{
+		m_env.pushArgs(value);
+		m_env.writeGlobal(name, m_luaSandbox);
+	}
+	void LuaConfig::writeString(const std::string &name, const std::string &value)
+	{
+		m_env.pushArgs(value);
+		m_env.writeGlobal(name, m_luaSandbox);
+	}
+	void LuaConfig::writeBool(const std::string &name, bool value)
+	{
+		m_env.pushArgs(value);
+		m_env.writeGlobal(name, m_luaSandbox);
 	}
 };

@@ -240,6 +240,68 @@ namespace Saurobyte
 		return true;
 	}
 
+	void LuaEnvironment::iterateTable(LuaLoopFunction handler, LuaLoopFunction tableFinishHandler)
+	{
+		int tableIndex = lua_gettop(m_lua->state);
+		if(lua_istable(m_lua->state, -1))
+		{
+			pushNil();
+			iterateTableRecursive(handler, tableFinishHandler, 1, tableIndex);
+		}
+	}
+	void LuaEnvironment::pr()
+	{
+		SAUROBYTE_INFO_LOG("CHAOS ", lua_gettop(m_lua->state));
+	}
+	void LuaEnvironment::iterateTableRecursive(LuaLoopFunction &handler, LuaLoopFunction &tableFinishHandler, int nestedLevel, int tableIndex)
+	{
+		while(lua_next(m_lua->state, tableIndex))
+		{
+			bool isValueTable = lua_istable(m_lua->state, -1);
+			int valueID = luaL_ref(m_lua->state, LUA_REGISTRYINDEX);
+			int keyID = luaL_ref(m_lua->state, LUA_REGISTRYINDEX);
+
+			// This is the stack size we want to maintain
+			int prevStackSize = lua_gettop(m_lua->state);
+
+			lua_rawgeti(m_lua->state, LUA_REGISTRYINDEX, valueID);
+			lua_rawgeti(m_lua->state, LUA_REGISTRYINDEX, keyID);
+
+
+			// Call handler and cleanup "leftovers" (on the stack) from it
+			handler(*this, nestedLevel);
+			lua_pop(m_lua->state, lua_gettop(m_lua->state) - prevStackSize);
+
+			// Recurse into nested tables
+			if(isValueTable)
+			{
+
+				lua_rawgeti(m_lua->state, LUA_REGISTRYINDEX, valueID);
+				pushNil();
+				iterateTableRecursive(handler, tableFinishHandler, nestedLevel+1, lua_gettop(m_lua->state) -1);
+
+				// Pop the table that was recursed
+				lua_pop(m_lua->state, 1);
+
+				// Calls optional handler at end of table recursion
+				if(tableFinishHandler != nullptr)
+				{
+					lua_rawgeti(m_lua->state, LUA_REGISTRYINDEX, valueID);
+					lua_rawgeti(m_lua->state, LUA_REGISTRYINDEX, keyID);
+					tableFinishHandler(*this, nestedLevel);
+				}
+
+				// Make sure stack is not contaminated by the user
+				lua_pop(m_lua->state, lua_gettop(m_lua->state) - prevStackSize);
+			}
+
+			// Push key for next iteration and unref data for this element
+			lua_rawgeti(m_lua->state, LUA_REGISTRYINDEX, keyID);
+			luaL_unref(m_lua->state, LUA_REGISTRYINDEX, valueID);
+			luaL_unref(m_lua->state, LUA_REGISTRYINDEX, keyID);
+		}
+	}
+
 	bool LuaEnvironment::toBool(int index)
 	{
 		bool value = lua_toboolean(m_lua->state, index);
@@ -461,10 +523,69 @@ namespace Saurobyte
 			SAUROBYTE_ERROR_LOG("Lua error: ", readStack<std::string>());
 	}
 
+	bool LuaEnvironment::isNumber() const
+	{
+		return lua_type(m_lua->state, -1) == LUA_TNUMBER; // Due to isnumber returning true for certain strings
+	}
+	bool LuaEnvironment::isString() const
+	{
+		return lua_type(m_lua->state, -1) == LUA_TSTRING; // Due to isstring returning true for certain numbers
+	}
+	bool LuaEnvironment::isBool() const
+	{
+		return lua_isboolean(m_lua->state, -1);
+	}
+	bool LuaEnvironment::isTable() const
+	{
+		return lua_istable(m_lua->state, -1);
+	}
+	bool LuaEnvironment::isObject() const
+	{
+		return lua_isuserdata(m_lua->state, -1);
+	}
+
 	std::size_t LuaEnvironment::getMemoryUsage() const
 	{
 		return lua_gc(m_lua->state, LUA_GCCOUNT, 0);
 	}
 
+
+
+
+
+
+
+	LuaElement::LuaElement()
+		:
+		m_keyID(LUA_NOREF),
+		m_valueID(LUA_NOREF),
+		m_env(nullptr)
+	{
+
+	}
+	LuaElement::~LuaElement()
+	{
+		unrefData();
+	}
+
+	void LuaElement::pushValue()
+	{
+		lua_rawgeti(m_env->m_lua->state, LUA_REGISTRYINDEX, m_valueID);
+	}
+	void LuaElement::pushKey()
+	{
+		lua_rawgeti(m_env->m_lua->state, LUA_REGISTRYINDEX, m_keyID);
+	}
+
+	void LuaElement::unrefData()
+	{
+		luaL_unref(m_env->m_lua->state, LUA_REGISTRYINDEX, m_keyID);
+		luaL_unref(m_env->m_lua->state, LUA_REGISTRYINDEX, m_valueID);
+	}
+	void LuaElement::refData(int keyRef, int valueRef)
+	{
+		m_keyID = keyRef;
+		m_valueID = valueRef;
+	}
 
 };

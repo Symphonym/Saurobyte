@@ -42,6 +42,7 @@ namespace Saurobyte
 		class LuaImpl;
 	}
 
+	class LuaElement;
 	class SAUROBYTE_API LuaEnvironment : public NonCopyable
 	{
 
@@ -49,6 +50,7 @@ namespace Saurobyte
 
 		typedef std::function<int(LuaEnvironment&)> LuaFunctionPtr;
 		typedef std::pair<std::string, LuaFunctionPtr> LuaFunction;
+		typedef std::function<void(LuaEnvironment&, int)> LuaLoopFunction;
 
 		LuaEnvironment();
 		~LuaEnvironment();
@@ -99,6 +101,12 @@ namespace Saurobyte
 		 */
 		bool tableRead(int key);
 		bool tableRead(const std::string &key);
+
+		/**
+		 * Iterates the table at the top of the stack recursively, calling the handler for each element
+		 * @param handler Function called for each element in the table, and its nested tables
+		 */
+		void iterateTable(LuaLoopFunction handler, LuaLoopFunction tableFinishHandler = LuaLoopFunction(nullptr));
 
 		/**
 		 * Reads function arguments within a function called by Lua, in the order they were passed
@@ -202,12 +210,40 @@ namespace Saurobyte
 
 
 		/**
+		 * Checks if the value at the top of the stack is a number
+		 * @return Whether or not top stack value is a number
+		 */
+		bool isNumber() const;
+		/**
+		 * Checks if the value at the top of the stack is a string
+		 * @return Whether or not top stack value is a string
+		 */
+		bool isString() const;
+		/**
+		 * Checks if the value at the top of the stack is a boolean
+		 * @return Whether or not top stack value is a boolean
+		 */
+		bool isBool() const;
+		/**
+		 * Checks if the value at the top of the stack is a table
+		 * @return Whether or not top stack value is a table
+		 */
+		bool isTable() const;
+		/**
+		 * Checks if the value at the top of the stack is a C++ object
+		 * @return Whether or not top stack value is a C++ object
+		 */
+		bool isObject() const;
+
+		/**
 		 * Checks to see how much memory Lua is using
 		 * @return Lua memory usage, in kilo bytes (kB)
 		 */
 		std::size_t getMemoryUsage() const;
-
+		void pr();
 	private:
+
+		friend class LuaElement;
 
 		struct LuaObjectBase
 		{
@@ -319,6 +355,13 @@ namespace Saurobyte
 		};
 
 		/**
+		 * Recursively iterates a table
+		 * @param handler     The handler that will be called for each element in the hierarchy
+		 * @param nestedLevel How deep the iterator is, starts and 0 and increments by 1 for each nested table it recurses into
+		 */
+		void iterateTableRecursive(LuaLoopFunction &handler, LuaLoopFunction &tableFinishHandler, int nestedLevel, int tableIndex);
+
+		/**
 		 * Creates and set the metatable for the value at the top of the stack, complete with gc
 		 * @param metatableName The name of the metatable
 		 */
@@ -328,6 +371,38 @@ namespace Saurobyte
 		 * Reports Lua errors to the logger
 		 */
 		void reportError();
+	};
+
+	class SAUROBYTE_API LuaElement : public NonCopyable
+	{
+	public:
+
+		template<typename TType> TType key()
+		{
+			pushKey();
+			return m_env->readStack<TType>();
+		};
+		template<typename TType> TType value()
+		{
+			pushValue();
+			return m_env->readStack<TType>();
+		};
+
+		LuaElement();
+		~LuaElement();
+
+		void pushValue();
+		void pushKey();
+
+	private:
+
+		friend class LuaEnvironment;
+
+		void unrefData();
+		void refData(int keyRef, int valueRef);
+
+		int m_keyID, m_valueID;
+		LuaEnvironment *m_env;
 	};
 };
 

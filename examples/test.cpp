@@ -27,6 +27,7 @@
 #include <Saurobyte/Math/Vector3.hpp>
 #include <Saurobyte/Logger.hpp>
 #include <Saurobyte/LuaEnvironment.hpp>
+#include <Saurobyte/LuaConfig.hpp>
 /*
 #include <Saurobyte/Components/LuaComponent.hpp>
 #include <Saurobyte/Systems/MeshSystem.hpp>
@@ -45,7 +46,20 @@ int main(int argc, const char* argv[]){
 
 
 	Saurobyte::LuaEnvironment env;
-	env.pushArgs(5);
+
+	Saurobyte::LuaConfig conf(env);
+	//conf.writeInt("SauroConf.window.width", 55);
+	//conf.writeBool("SauroConf.isCool", true);
+	//conf.save("./luaConf.lua");
+	conf.load("./luaConf.lua");
+
+	bool val = false;
+	int value = 0;
+	conf.readBool("SauroConf.isCool", val);
+	conf.readInt("SauroConf.window.width", value);
+	SAUROBYTE_INFO_LOG("VAL ", val, " VALUE ", value);
+
+	/*env.pushArgs(5);
 	env.writeGlobal("TESTERU");
 
 	env.pushArgs(5);
@@ -105,7 +119,7 @@ int main(int argc, const char* argv[]){
 
 	env.readGlobal("SDASDASD");
 	env.readGlobal("SWAG.goodValue");
-	SAUROBYTE_INFO_LOG("VALUE ", env.readStack<int>());
+	SAUROBYTE_INFO_LOG("VALUE ", env.readStack<int>());*/
 
 
 

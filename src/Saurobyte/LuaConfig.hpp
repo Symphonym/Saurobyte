@@ -38,8 +38,72 @@ namespace Saurobyte
 
 		explicit LuaConfig(LuaEnvironment &env);
 
-		bool read(const std::string &filePath);
-		void write(const std::string &filePath);
+		/**
+		 * Loads the specified configuration Lua file
+		 * @param  filePath Path to the Lua file
+		 * @return          If the file was loaded succesfully
+		 */
+		bool load(const std::string &filePath);
+		/**
+		 * Saves all values in the SauroConf table to the specified Lua file (truncating previous data in the file)
+		 * @param filePath Path to the Lua file, non existant file will be created
+		 */
+		void save(const std::string &filePath);
+
+		/**
+		 * Reads the specified integer from the Lua config environment
+		 * @param  name  Name of the integer, path to nested tables are supported
+		 * @param  value The value in which to store the integer
+		 * @return       Whether or not the value could be found
+		 */
+		bool readInt(const std::string &name, int &value); 
+		/**
+		 * Reads the specified double from the Lua config environment
+		 * @param  name  Name of the double, path to nested tables are supported
+		 * @param  value The value in which to store the double
+		 * @return       Whether or not the value could be found
+		 */
+		bool readDouble(const std::string &name, double &value);
+		/**
+		 * Reads the specified string from the Lua config environment
+		 * @param  name  Name of the string, path to nested tables are supported
+		 * @param  value The value in which to store the string
+		 * @return       Whether or not the value could be found
+		 */
+		bool readString(const std::string &name, std::string &value);
+		/**
+		 * Reads the specified bool from the Lua config environment
+		 * @param  name  Name of the bool, path to nested tables are supported
+		 * @param  value The value in which to store the bool
+		 * @return       Whether or not the value could be found
+		 */
+		bool readBool(const std::string &name, bool &value);
+
+		
+		/**
+		 * Writes the specified integer by the specifed identifier. Paths to nested tables are supported.
+		 * @param name  Name to store the value by, note that only variables written to the SauroConf table will be saved.
+		 * @param value The value to write
+		 */
+		void writeInt(const std::string &name, int value);
+		/**
+		 * Writes the specified double by the specifed identifier. Paths to nested tables are supported.
+		 * @param name  Name to store the value by, note that only variables written to the SauroConf table will be saved.
+		 * @param value The value to write
+		 */
+		void writeDouble(const std::string &name, double value);
+		/**
+		 * Writes the specified string by the specifed identifier. Paths to nested tables are supported.
+		 * @param name  Name to store the value by, note that only variables written to the SauroConf table will be saved.
+		 * @param value The value to write
+		 */
+		void writeString(const std::string &name, const std::string &value);
+		/**
+		 * Writes the specified bool by the specifed identifier. Paths to nested tables are supported.
+		 * @param name  Name to store the value by, note that only variables written to the SauroConf table will be saved.
+		 * @param value The value to write
+		 */
+		void writeBool(const std::string &name, bool value);
 
 	private:
 
