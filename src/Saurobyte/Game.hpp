@@ -32,7 +32,7 @@
 #include <Saurobyte/ScenePool.hpp>
 #include <Saurobyte/MessageCentral.hpp>
 #include <Saurobyte/LuaEnvironment.hpp>
-#include <Saurobyte/AudioDevice.hpp>
+#include <Saurobyte/LuaConfig.hpp>
 #include <Saurobyte/Window.hpp>
 #include <Saurobyte/ApiDefines.hpp>
 #include <Saurobyte/NonCopyable.hpp>
@@ -41,23 +41,10 @@
 namespace Saurobyte
 {
 
+	class AudioDevice;
+	class VideoDevice;
 	class SAUROBYTE_API Game : public NonCopyable
 	{
-	private:
-
-		EntityPool m_entityPool;
-		SystemPool m_systemPool;
-		ScenePool m_scenePool;
-		MessageCentral m_messageCentral;
-		LuaEnvironment m_luaEnvironment;
-
-		AudioDevice m_audioDevice;
-
-		Window m_window;
-
-		// Enforce one game instance
-		static bool m_gameInstanceExists;
-
 	public:
 
 
@@ -69,11 +56,6 @@ namespace Saurobyte
 		 * @param  windowMode Display mode of the window
 		 */
 		explicit Game(const std::string &title, int width, int height, Window::WindowModes windowMode);
-			//const std::string &name,
-			//int width,
-			//int height,
-			//std::vector<OpenGLWindow::OpenGLAttribute> glAttributes = std::vector<OpenGLWindow::OpenGLAttribute>(),
-			//OpenGLVersions glVersion = OpenGLVersions::Core_3_3);
 		~Game();
 
 		// TODO game constructor provides only OpenGL context data
@@ -140,9 +122,31 @@ namespace Saurobyte
 		EntityPool& getEntityPool();
 		SystemPool& getSystemPool();
 		ScenePool& getScenePool();
+
 		MessageCentral& getMessageCentral();
-		LuaEnvironment& getLua();
 		Window& getWindow();
+
+		LuaEnvironment& getLua();
+		LuaConfig& getConfig();
+
+	private:
+
+		EntityPool m_entityPool;
+		SystemPool m_systemPool;
+		ScenePool m_scenePool;
+
+
+		std::unique_ptr<AudioDevice> m_audioDevice;
+		std::unique_ptr<VideoDevice> m_videoDevice;
+
+		LuaEnvironment m_luaEnvironment;
+		LuaConfig m_luaConfig;
+
+		MessageCentral m_messageCentral;
+		Window m_window;
+
+		// Enforce one game instance
+		static bool m_gameInstanceExists;
 	};
 };
 

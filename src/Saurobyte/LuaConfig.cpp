@@ -103,45 +103,33 @@ namespace Saurobyte
 		}
 	}
 
-	bool LuaConfig::readInt(const std::string &name, int &value)
+	int LuaConfig::readInt(const std::string &name, int defaultValue)
 	{
 		if(m_env.readGlobal(name, m_luaSandbox))
-		{
-			value = m_env.readStack<int>();
-			return true;
-		}
+			return m_env.readStack<int>();
 		else
-			return false;
+			return defaultValue;
 	} 
-	bool LuaConfig::readDouble(const std::string &name, double &value)
+	double LuaConfig::readDouble(const std::string &name, double defaultValue)
 	{
 		if(m_env.readGlobal(name, m_luaSandbox))
-		{
-			value = m_env.readStack<double>();
-			return true;
-		}
+			return m_env.readStack<double>();
 		else
-			return false;
+			return defaultValue;
 	}
-	bool LuaConfig::readString(const std::string &name, std::string &value)
+	std::string LuaConfig::readString(const std::string &name, const std::string &defaultValue)
 	{
 		if(m_env.readGlobal(name, m_luaSandbox))
-		{
-			value = m_env.readStack<std::string>();
-			return true;
-		}
+			return m_env.readStack<std::string>();
 		else
-			return false;
+			return defaultValue;
 	}
-	bool LuaConfig::readBool(const std::string &name, bool &value)
+	bool LuaConfig::readBool(const std::string &name, bool defaultValue)
 	{
 		if(m_env.readGlobal(name, m_luaSandbox))
-		{
-			value = m_env.readStack<bool>();
-			return true;
-		}
+			return m_env.readStack<bool>();
 		else
-			return false;
+			return defaultValue;
 	}
 
 	

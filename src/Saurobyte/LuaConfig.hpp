@@ -52,32 +52,32 @@ namespace Saurobyte
 
 		/**
 		 * Reads the specified integer from the Lua config environment
-		 * @param  name  Name of the integer, path to nested tables are supported
-		 * @param  value The value in which to store the integer
-		 * @return       Whether or not the value could be found
+		 * @param  name         Name of the integer, path to nested tables are supported
+		 * @param  defaultValue The value that is returned if the config value was not found
+		 * @return              The value
 		 */
-		bool readInt(const std::string &name, int &value); 
+		int readInt(const std::string &name, int defaultValue); 
 		/**
 		 * Reads the specified double from the Lua config environment
-		 * @param  name  Name of the double, path to nested tables are supported
-		 * @param  value The value in which to store the double
-		 * @return       Whether or not the value could be found
+		 * @param  name         Name of the double, path to nested tables are supported
+		 * @param  defaultValue The value that is returned if the config value was not found
+		 * @return              The value
 		 */
-		bool readDouble(const std::string &name, double &value);
+		double readDouble(const std::string &name, double defaultValue);
 		/**
 		 * Reads the specified string from the Lua config environment
-		 * @param  name  Name of the string, path to nested tables are supported
-		 * @param  value The value in which to store the string
-		 * @return       Whether or not the value could be found
+		 * @param  name         Name of the string, path to nested tables are supported
+		 * @param  defaultValue The value that is returned if the config value was not found
+		 * @return              The value
 		 */
-		bool readString(const std::string &name, std::string &value);
+		std::string readString(const std::string &name, const std::string &defaultValue);
 		/**
-		 * Reads the specified bool from the Lua config environment
-		 * @param  name  Name of the bool, path to nested tables are supported
-		 * @param  value The value in which to store the bool
-		 * @return       Whether or not the value could be found
+		 * Reads the specified boolean from the Lua config environment
+		 * @param  name         Name of the boolean, path to nested tables are supported
+		 * @param  defaultValue The value that is returned if the config value was not found
+		 * @return              The value
 		 */
-		bool readBool(const std::string &name, bool &value);
+		bool readBool(const std::string &name, bool defaultValue);
 
 		
 		/**

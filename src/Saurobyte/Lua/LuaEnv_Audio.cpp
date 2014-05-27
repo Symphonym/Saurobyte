@@ -25,6 +25,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <Saurobyte/Lua/LuaEnv_Audio.hpp>
 #include <Saurobyte/LuaEnvironment.hpp>
+#include <Saurobyte/AudioDevice.hpp>
 #include <Saurobyte/Game.hpp>
 
 namespace Saurobyte

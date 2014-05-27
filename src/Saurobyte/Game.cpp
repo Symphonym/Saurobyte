@@ -8,7 +8,8 @@
 #include <Saurobyte/Lua/LuaEnv_Scene.hpp>
 #include <Saurobyte/Lua/LuaEnv_Audio.hpp>
 #include <Saurobyte/Logger.hpp>
-#include <SDL2/SDL_opengl.h>
+#include <Saurobyte/AudioDevice.hpp>
+#include <Saurobyte/VideoDevice.hpp>
 
 namespace Saurobyte
 {
@@ -19,9 +20,11 @@ namespace Saurobyte
 		m_entityPool(this),
 		m_systemPool(this),
 		m_scenePool(this),
-		m_messageCentral(),
+		m_audioDevice(nullptr),
+		m_videoDevice(nullptr),
 		m_luaEnvironment(),
-		m_audioDevice(),
+		m_luaConfig(m_luaEnvironment),
+		m_messageCentral(),
 		m_window(title, width, height, windowMode)
 	{
 		if(m_gameInstanceExists)
@@ -36,23 +39,16 @@ namespace Saurobyte
 		if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
 			SAUROBYTE_FATAL_LOG("SDL could not be initialized. SDL_Error: ", SDL_GetError());
 
-		// Disable Vsync by default
+		// Disable Vsync by default TODO move to graphixsdvice class
 		m_window.setVsync(false);
 
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+		if(!m_luaConfig.load("./sauroConf.lua"))
+			SAUROBYTE_WARNING_LOG("No config file provided!");
 
-		// Use 4 samples if OpenGL enables multisampling
-		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
+		m_videoDevice = std::unique_ptr<VideoDevice>(new VideoDevice(*this));
+		m_audioDevice = std::unique_ptr<AudioDevice>(new AudioDevice());
 
-		// Initialize GLEW
-		glewExperimental = GL_TRUE;
-		GLenum glewErrCode = glewInit();
-		if(glewErrCode != GLEW_OK)
-			SAUROBYTE_FATAL_LOG("Could not initialize GLEW: ", glewGetErrorString(glewErrCode));
-
+		// TODO init devices here when log is loaded
 
 
 		// Add the built in systems
@@ -161,7 +157,6 @@ namespace Saurobyte
 		return m_luaEnvironment.runScript(filePath);
 	}
 
-
 	EntityPool& Game::getEntityPool()
 	{
 		return m_entityPool;
@@ -178,12 +173,18 @@ namespace Saurobyte
 	{
 		return m_messageCentral;
 	}
-	LuaEnvironment& Game::getLua()
-	{
-		return m_luaEnvironment;
-	}
 	Window& Game::getWindow()
 	{
 		return m_window;
 	}
+
+	LuaEnvironment& Game::getLua()
+	{
+		return m_luaEnvironment;
+	}
+	LuaConfig& Game::getConfig()
+	{
+		return m_luaConfig;
+	}
+
 };

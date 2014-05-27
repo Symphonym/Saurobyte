@@ -12,6 +12,7 @@ modern features such as OpenGL 4.3 and C++11, inevitably making it less cross-pl
 * Cross-platform support (Intended feature, but not tested thoroughly)
 * Based on Entity/Component design
 * Lua scripting (Parts of the engine is exposed to Lua)
+* Config files in Lua (loading/saving)
 * R*-trees for spatial partitioning
 * 3D audio using OpenAL
 

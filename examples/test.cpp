@@ -52,12 +52,14 @@ int main(int argc, const char* argv[]){
 	//conf.writeBool("SauroConf.isCool", true);
 	//conf.save("./luaConf.lua");
 	conf.load("./luaConf.lua");
+	conf.load("./luaManual.lua");
 
 	bool val = false;
 	int value = 0;
 	conf.readBool("SauroConf.isCool", val);
 	conf.readInt("SauroConf.window.width", value);
 	SAUROBYTE_INFO_LOG("VAL ", val, " VALUE ", value);
+	conf.save("luaConf.lua");
 
 	/*env.pushArgs(5);
 	env.writeGlobal("TESTERU");

@@ -28,7 +28,6 @@ namespace Saurobyte
 		ALCcontext *m_context;
 
 		AudioDevice();
-		~AudioDevice();
 
 		// Deleletes unused audio memory, TODO
 		static void bufferCleanup();
@@ -43,6 +42,8 @@ namespace Saurobyte
 		static void wipeSource(unsigned int source);
 
 	public:
+
+		~AudioDevice();
 
 		// Add channel support
 		// store audio etc values by mapped channel names
