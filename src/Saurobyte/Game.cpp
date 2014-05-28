@@ -39,11 +39,12 @@ namespace Saurobyte
 		if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
 			SAUROBYTE_FATAL_LOG("SDL could not be initialized. SDL_Error: ", SDL_GetError());
 
-		// Disable Vsync by default TODO move to graphixsdvice class
-		m_window.setVsync(false);
 
 		if(!m_luaConfig.load("./sauroConf.lua"))
 			SAUROBYTE_WARNING_LOG("No config file provided!");
+
+		// Set window settings
+		m_window.setVsync(m_luaConfig.readBool("SauroConf.video.vsync", false));
 
 		m_videoDevice = std::unique_ptr<VideoDevice>(new VideoDevice(*this));
 		m_audioDevice = std::unique_ptr<AudioDevice>(new AudioDevice());
@@ -143,13 +144,13 @@ namespace Saurobyte
 		m_scenePool.changeScene(sceneName);
 	}
 
-	void Game::sendMessage(Message *message)
+	void Game::sendMessage(const Message &message)
 	{
 		m_messageCentral.sendMessage(message);
 	}
-	void Game::queueMessage(Message *message)
+	void Game::sendMessage(const std::string &messageName, Entity *entity)
 	{
-		m_messageCentral.queueMessage(message);
+		m_messageCentral.sendMessage(Message(messageName, entity));
 	}
 
 	bool Game::runScript(const std::string &filePath)

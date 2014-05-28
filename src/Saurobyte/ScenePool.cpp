@@ -77,7 +77,7 @@ namespace Saurobyte
 				for(auto itr = scene->getEntities().begin(); itr != scene->getEntities().end(); itr++)
 					itr->second->refresh();
 
-				m_game->queueMessage(createMessage<std::string>("SceneLoad", scene->getName()));
+				// TODOm_game->queueMessage(MessageData<std::string>("SceneLoad", scene->getName()));
 			}
 		}
 

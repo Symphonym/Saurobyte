@@ -73,25 +73,29 @@ namespace Saurobyte
 
 		void MessageCentral::sendQueuedMessages()
 		{
-			for(std::size_t i = 0; i < m_messageQueue.size(); i++)
-				sendMessage(m_messageQueue[i]);
+			//for(std::size_t i = 0; i < m_messageQueue.size(); i++)
+			//	sendMessage(m_messageQueue[i]);
 
 			m_messageQueue.clear();
 		}
 
-		void MessageCentral::sendMessage(Message *message)
+		void MessageCentral::sendMessage(const Message &message)
 		{
-			auto iter = m_subscriptionCentral.find(message->name);
+			auto iter = m_subscriptionCentral.find(message.name);
 			if(iter != m_subscriptionCentral.end())
 			{
 				for(std::size_t i = 0; i < iter->second.size(); i++)
 					iter->second[i]->onMessage(message);
 			}
-			delete message;
 		}
+		void MessageCentral::sendMessage(const std::string &messageName, Entity *entity)
+		{
+			sendMessage(Message(messageName, entity));
+		}
+
 		void MessageCentral::queueMessage(Message *message)
 		{
-			m_messageQueue.push_back(message);
+			//m_messageQueue.push_back(message);
 		}
 
 		bool MessageCentral::subscribedTo(const std::string &messageName, const MessageHandler *handler) const

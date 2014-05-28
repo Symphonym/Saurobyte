@@ -28,6 +28,7 @@
 #include <Saurobyte/Logger.hpp>
 #include <Saurobyte/LuaEnvironment.hpp>
 #include <Saurobyte/LuaConfig.hpp>
+#include <Saurobyte/Message.hpp>
 /*
 #include <Saurobyte/Components/LuaComponent.hpp>
 #include <Saurobyte/Systems/MeshSystem.hpp>
@@ -44,6 +45,10 @@ int main(int argc, const char* argv[]){
 	vec = vec * 10.f;
 	SAUROBYTE_INFO_LOG("Initializing test! X=", vec.x, " Y=", vec.y, "Length=", vec.length());
 
+	Saurobyte::MessageData<int> msg("Jebus", 1337);
+
+	Saurobyte::Message &mesg = msg;
+	SAUROBYTE_INFO_LOG("SHIEEET ", mesg.read<int>());
 
 	Saurobyte::LuaEnvironment env;
 

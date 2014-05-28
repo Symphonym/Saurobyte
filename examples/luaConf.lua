@@ -1,9 +1,6 @@
 SauroConf =
 {
-	stuff = 
-	{
-		sweet = false,
-	},
+	isCool = true,
 	[1] = 
 	{
 		wat = "TEST",
@@ -17,5 +14,8 @@ SauroConf =
 		[1] = 5,
 		wat = "TESTERINO",
 	},
-	isCool = true,
+	stuff = 
+	{
+		sweet = false,
+	},
 }

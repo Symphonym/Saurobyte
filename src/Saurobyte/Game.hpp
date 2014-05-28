@@ -75,8 +75,12 @@ namespace Saurobyte
 		Scene* getActiveScene();
 
 		// Message sending
-		void sendMessage(Message *message);
-		void queueMessage(Message *message);
+		void sendMessage(const Message &message);
+		void sendMessage(const std::string &messageName, Entity *entity = nullptr);
+		template<typename TType> void sendMessage(const std::string &messageName, TType data, Entity *entity = nullptr)
+		{
+			sendMessage(MessageData<TType>(messageName, data, entity));
+		};
 
 		// Running Lua scripts
 		bool runScript(const std::string &filePath);

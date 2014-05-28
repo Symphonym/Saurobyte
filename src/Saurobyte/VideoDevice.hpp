@@ -37,12 +37,16 @@ namespace Saurobyte
 
 		~VideoDevice();
 
+		/**
+		 * Toggles wire frame mode rendering
+		 */
 		static void toggleWireFrame();
 
 		//create shader n stuff
 
 	private:
 
+		// Only the game class can create a VideoDevice
 		friend class Game;
 
 		VideoDevice(Game &game);
