@@ -31,6 +31,7 @@
 #include <Saurobyte/SystemPool.hpp>
 #include <Saurobyte/ScenePool.hpp>
 #include <Saurobyte/MessageCentral.hpp>
+#include <Saurobyte/FrameCounter.hpp>
 #include <Saurobyte/LuaEnvironment.hpp>
 #include <Saurobyte/LuaConfig.hpp>
 #include <Saurobyte/Window.hpp>
@@ -58,12 +59,10 @@ namespace Saurobyte
 		explicit Game(const std::string &title, int width, int height, Window::WindowModes windowMode);
 		~Game();
 
-		// TODO game constructor provides only OpenGL context data
-		// TODO OpenGLWindow& createWindow(); 
-		// TODO Hide OpenGLWindow interface with other window class or something
-		// TODO Tidy up includes using window or game
+		void start();
+		void stop();
 
-		void gameLoop();
+		void setFps(unsigned int fps);
 
 		// Creating entities and scenes
 		Entity& createEntity();
@@ -123,6 +122,9 @@ namespace Saurobyte
 			lua_pop(state, 1);
 		};*/
 
+		unsigned int getFps() const;
+		float getDelta() const;
+
 		EntityPool& getEntityPool();
 		SystemPool& getSystemPool();
 		ScenePool& getScenePool();
@@ -139,6 +141,7 @@ namespace Saurobyte
 		SystemPool m_systemPool;
 		ScenePool m_scenePool;
 
+		FrameCounter m_frameCounter;
 
 		std::unique_ptr<AudioDevice> m_audioDevice;
 		std::unique_ptr<VideoDevice> m_videoDevice;

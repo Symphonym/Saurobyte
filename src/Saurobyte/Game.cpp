@@ -22,6 +22,7 @@ namespace Saurobyte
 		m_entityPool(this),
 		m_systemPool(this),
 		m_scenePool(this),
+		m_frameCounter(),
 		m_audioDevice(nullptr),
 		m_videoDevice(nullptr),
 		m_luaEnvironment(),
@@ -44,6 +45,9 @@ namespace Saurobyte
 
 		if(!m_luaConfig.load("./sauroConf.lua"))
 			SAUROBYTE_WARNING_LOG("No config file provided!");
+
+		// Default FPS to 300
+		m_frameCounter.limitFps(300);
 
 		// Set window settings
 		m_window.setVsync(m_luaConfig.readBool("SauroConf.video.vsync", false));
@@ -105,11 +109,15 @@ namespace Saurobyte
 								sendMessage<WindowEvent>("WindowClose", WindowEvent(m_window));
 								break;
 							case SDL_WINDOWEVENT_RESIZED:
-								sendMessage<WindowSizeEvent>("WindowMove", 
-									WindowSizeEvent(
-										m_window,
-										static_cast<unsigned int>(event.window.data1),
-										static_cast<unsigned int>(event.window.data2)));
+								{
+									unsigned int newWidth = static_cast<unsigned int>(event.window.data1);
+									unsigned int newHeight = static_cast<unsigned int>(event.window.data2);
+
+									VideoDevice::resizeViewport(newWidth, newHeight);
+
+									sendMessage<WindowSizeEvent>("WindowMove", 
+										WindowSizeEvent(m_window, newWidth, newHeight));
+								}
 								break;
 							case SDL_WINDOWEVENT_MOVED:
 								sendMessage<WindowEvent>("WindowMove", 
@@ -134,28 +142,46 @@ namespace Saurobyte
 								event.key.repeat));
 					}
 					break;
+				case SDL_MOUSEBUTTONDOWN:
+				case SDL_MOUSEBUTTONUP:
+					{
+						MouseButton button = MouseButton::Left;
+						if(event.button.button != SDL_BUTTON_LEFT)
+							button = event.button.button == SDL_BUTTON_RIGHT ? MouseButton::Right : MouseButton::Middle;
+
+						sendMessage<MouseButtonEvent>(
+							event.type == SDL_MOUSEBUTTONDOWN ? "MouseButtonDown" : "MouseButtonUp",
+							MouseButtonEvent(
+								event.button.x,
+								event.button.y,
+								event.button.which == SDL_TOUCH_MOUSEID,
+								button,
+								event.button.state == SDL_PRESSED,
+								event.button.clicks));
+					}
+					break;
 				case SDL_QUIT:
-					m_window.close();
+					stop();
 					break;
 			}
 
 		}
 	}
 
-	void Game::gameLoop()
+	void Game::start()
 	{
 
-		/*SDL_Event event;
-
-		while(m_window->running())
+		while(m_window.running())
 		{
+			m_frameCounter.update();
+
 			// Process frame start entity cleanup
 			m_scenePool.frameCleanup();
 			m_entityPool.frameCleanup();
-			m_messageCentral.sendQueuedMessages();
 
 			// Poll events
-			while(m_window->pollEvent(event))
+			handleEvents();
+			/*while(m_window->pollEvent(event))
 			{
 				if(event.type == SDL_QUIT)
 					m_window->close();
@@ -182,17 +208,26 @@ namespace Saurobyte
 							static_cast<int>(event.window.data2));
 					}
 				}
-			}
+			}*/
 
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			// Process the systems and their entities
 			m_systemPool.processSystems();
 			
-			glFlush();
+			//glFlush();
 
-			m_window->swapBuffers();
-		}*/
+			m_window.swapBuffers();
+		}
+	}
+	void Game::stop()
+	{
+		m_window.close();
+	}
+
+	void Game::setFps(unsigned int fps)
+	{
+		m_frameCounter.limitFps(fps);
 	}
 
 	Entity& Game::createEntity()
@@ -229,6 +264,15 @@ namespace Saurobyte
 	bool Game::runScript(const std::string &filePath)
 	{
 		return m_luaEnvironment.runScript(filePath);
+	}
+
+	unsigned int Game::getFps() const
+	{
+		return m_frameCounter.getFps();
+	}
+	float Game::getDelta() const
+	{
+		return m_frameCounter.getDelta();
 	}
 
 	EntityPool& Game::getEntityPool()

@@ -52,4 +52,25 @@ namespace Saurobyte
 		pressed(isPressed),
 		keyRepeat(isKeyRepeat)
 	{}
+
+	MouseEvent::MouseEvent(int posX, int posY, bool touchClick)
+		:
+		x(posX),
+		y(posY),
+		touchGenerated(touchClick)
+	{}
+
+	MouseButtonEvent::MouseButtonEvent(
+			int posX,
+			int posY,
+			bool touchClick,
+			MouseButton clickButton,
+			bool isPressed,
+			unsigned int clickCount)
+		:
+		MouseEvent(posX, posY, touchClick),
+		button(clickButton),
+		pressed(isPressed),
+		clicks(clickCount)
+	{}
 }

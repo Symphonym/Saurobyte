@@ -67,4 +67,8 @@ namespace Saurobyte
 		else
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	}
+	void VideoDevice::resizeViewport(unsigned int width, unsigned int height)
+	{
+		glViewport(0, 0, width, height);
+	}
 };

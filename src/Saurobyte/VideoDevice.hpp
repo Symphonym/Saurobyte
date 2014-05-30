@@ -42,7 +42,14 @@ namespace Saurobyte
 		 */
 		static void toggleWireFrame();
 
-		//create shader n stuff
+		/**
+		 * Resizes the OpenGL viewport to match that of the specified arguments, this is called automatically internally
+		 * @param width  The width of the viewport
+		 * @param height The height of the viewport
+		 */
+		static void resizeViewport(unsigned int width, unsigned int height);
+
+		// TODO create shader n stuff
 
 	private:
 

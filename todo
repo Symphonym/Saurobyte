@@ -26,3 +26,7 @@ CHECK	* Optimize sound/stream reusage
 		* Create YAML parser for config files
 		* Create VideoDevice class for initializing and configuring OpenGL/GLEW
 		* Create global settings interface where config files will store data
+		* Create color class
+		* Clean math classes and create more math stuff
+		* FPS limit and delta time counting
+		* Replace SDL stuff with C++11, chrono for timing, sleep and delta time and thread for threading (like audio)

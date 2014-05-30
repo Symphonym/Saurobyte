@@ -30,6 +30,7 @@
 #include <Saurobyte/LuaConfig.hpp>
 #include <Saurobyte/Message.hpp>
 #include <Saurobyte/Input.hpp>
+#include <Saurobyte/FrameCounter.hpp>
 /*
 #include <Saurobyte/Components/LuaComponent.hpp>
 #include <Saurobyte/Systems/MeshSystem.hpp>
@@ -37,15 +38,21 @@
 #include <Saurobyte/Components/TransformComponent.hpp>*/
 //#include <Saurobyte/Game.hpp>
 
-enum TestEnum
-{
-	Swag,
-	Swagger,
-	Test
-};
+
 
 bool audioRunner = true;
 int main(int argc, const char* argv[]){
+
+
+	Saurobyte::FrameCounter counterino;
+	counterino.limitFps(60);
+
+
+	while(true)
+	{
+		counterino.update();
+		SAUROBYTE_INFO_LOG("TEST ", counterino.getFps(), " DELTA ", counterino.getDelta());
+	}
 
 	Saurobyte::Vector3f vec(2, 2);
 	vec = vec * 10.f;
@@ -56,16 +63,6 @@ int main(int argc, const char* argv[]){
 	Saurobyte::Message &mesg = msg;
 	SAUROBYTE_INFO_LOG("SHIEEET ", mesg.read<int>());
 
-	TestEnum en = TestEnum::Swag;
-	std::string enStr = "nol";
-	switch(en)
-	{
-		case TestEnum::Swag: enStr = "Swag";
-		case TestEnum::Swagger: enStr = "SWAGGER";
-		case TestEnum::Test: enStr = "TESTER";
-			SAUROBYTE_INFO_LOG("EN STR ", enStr);
-		break;
-	}
 
 	//while(!Saurobyte::Mouse::isPressed(Saurobyte::Mouse::Left))
 	//{

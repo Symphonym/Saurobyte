@@ -27,6 +27,7 @@
 #ifndef SAUROBYTE_EVENT_HPP
 #define SAUROBYTE_EVENT_HPP
 
+#include <Saurobyte/ApiDefines.hpp>
 #include <Saurobyte/Input.hpp>
 
 namespace Saurobyte
@@ -34,13 +35,13 @@ namespace Saurobyte
 	class Window;
 
 	struct Event {};
-	struct WindowEvent : public Event
+	struct SAUROBYTE_API WindowEvent : public Event
 	{
 		Window &window;
 
 		explicit WindowEvent(Window &windowRef);
 	};
-	struct WindowSizeEvent : public WindowEvent
+	struct SAUROBYTE_API WindowSizeEvent : public WindowEvent
 	{
 		unsigned int width;
 		unsigned int height;
@@ -48,7 +49,7 @@ namespace Saurobyte
 		explicit WindowSizeEvent(Window &window, unsigned int newWidth, unsigned int newHeight);
 	};
 
-	struct WindowMoveEvent : public WindowEvent
+	struct SAUROBYTE_API WindowMoveEvent : public WindowEvent
 	{
 		int x;
 		int y;
@@ -56,13 +57,37 @@ namespace Saurobyte
 		explicit WindowMoveEvent(Window &window, int newX, int newY);
 	};
 
-	struct KeyEvent : public Event
+	struct SAUROBYTE_API KeyEvent : public Event
 	{
 		Key key;
 		bool pressed;
 		bool keyRepeat;
 
 		explicit KeyEvent(Key eventKey, bool isPressed, bool isKeyRepeat);
+	};
+
+	struct SAUROBYTE_API MouseEvent : public Event
+	{
+		int x;
+		int y;
+		bool touchGenerated;
+
+		explicit MouseEvent(int posX, int posY, bool touchClick);
+	};
+
+	struct SAUROBYTE_API MouseButtonEvent : public MouseEvent
+	{
+		MouseButton button;
+		bool pressed;
+		unsigned int clicks;
+
+		explicit MouseButtonEvent(
+			int posX,
+			int posY,
+			bool touchClick,
+			MouseButton clickButton,
+			bool isPressed,
+			unsigned int clickCount);
 	};
 };
 

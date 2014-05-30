@@ -1,16 +1,11 @@
 #include <Saurobyte/FrameCounter.hpp>
-#include <SDL2/SDL.h>
+#include <thread>
 
 namespace Saurobyte
 {
 
 	FrameCounter::FrameCounter() :
-		m_frames(0),
 		m_fps(0),
-		m_lastSecondTick(SDL_GetTicks()),
-		m_lastTick(SDL_GetTicks()),
-		m_targetTickDuration(0),
-		m_highPefLastTick(SDL_GetPerformanceCounter()),
 		m_deltaTime(0)
 	{
 
@@ -18,50 +13,31 @@ namespace Saurobyte
 
 	void FrameCounter::update()
 	{
-		unsigned int curTick = SDL_GetTicks();
-		Uint64 highPefCurTick = SDL_GetPerformanceCounter();
-		++m_frames;
+		FrameClock::time_point curTick = FrameClock::now();
 
-		m_deltaTime = (float)(highPefCurTick - m_highPefLastTick) * (1.0f/SDL_GetPerformanceFrequency());
-		
-		// Limit deltaTime to avoid buggy behaviour at FPS spikes
-		if(m_deltaTime > 0.25)
-			m_deltaTime = 0.25;
+		// This is the time point where we "should" be according to the FPS we want
+		FrameClock::time_point calculatedCurTick = m_lastTick + m_targetTickDuration;
 
-		// Frame rate limiting
-		if(m_targetTickDuration > 0)
+		// If actual time is behind where we should be, sleep until we get there
+		if(curTick < calculatedCurTick)
 		{
-			unsigned int targetTicks = m_lastTick + m_targetTickDuration;
-
-			// If the current elapsed time isn't where we're supposed to be, sleep until we get there
-			if(curTick < targetTicks)
-			{
-				SDL_Delay(targetTicks - curTick);
-
-				// Update curTicks since we used SDL_Delay
-				curTick = SDL_GetTicks();
-			} 
-
+			std::this_thread::sleep_for(FrameClock::duration(calculatedCurTick - curTick));
+			curTick = FrameClock::now(); // Update curTick post-sleep
 		}
 
-		// Update FPS every second
-		if(curTick - m_lastSecondTick >= 1000)
-		{
-			m_fps = m_frames;
-			m_lastSecondTick = curTick;
-			m_frames = 0;
-		}
+		// Calculate fps and deltaTime converting from nanoseconds to seconds
+		FrameClock::duration tickDuration = curTick - m_lastTick;
+		m_fps = 1000000000/std::chrono::duration_cast<std::chrono::nanoseconds>(tickDuration).count();
+		m_deltaTime = 
+			static_cast<float>(std::chrono::duration_cast<std::chrono::nanoseconds>(tickDuration).count())/1000000000.f;
 
-		m_highPefLastTick = highPefCurTick;
 		m_lastTick = curTick;
 	}
 
 	void FrameCounter::limitFps(unsigned int fps)
 	{
-		m_targetTickDuration = 1000.f/(float)fps;
-		//m_tickLeftOvers =  ((1000.f/(float)fps) - m_targetTickDuration) * fps;
-		//SDL_Log("LeftOvers(total): %f", m_tickLeftOvers);
-		//SDL_Log("LeftOvers(per tick): %f", m_tickLeftOvers/fps);
+		std::chrono::nanoseconds nanoSec(1000000000/fps);
+		m_targetTickDuration = FrameClock::duration(nanoSec);
 	}
 
 	unsigned int FrameCounter::getFps() const
