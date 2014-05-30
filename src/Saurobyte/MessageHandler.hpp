@@ -45,6 +45,7 @@ namespace Saurobyte
 		 */
 		virtual void onMessage(const Message &message) {};
 
+	protected:
 		/**
 		 * Subscribe this handler to messages of the specified name
 		 * @param messageName The message name to subscribe to
@@ -86,7 +87,6 @@ namespace Saurobyte
 		 */
 		bool subscribedTo(const std::string &messageName) const;
 
-	protected:
 
 		MessageHandler(MessageCentral *center);
 		~MessageHandler();

@@ -29,6 +29,7 @@
 #include <Saurobyte/LuaEnvironment.hpp>
 #include <Saurobyte/LuaConfig.hpp>
 #include <Saurobyte/Message.hpp>
+#include <Saurobyte/Input.hpp>
 /*
 #include <Saurobyte/Components/LuaComponent.hpp>
 #include <Saurobyte/Systems/MeshSystem.hpp>
@@ -49,6 +50,11 @@ int main(int argc, const char* argv[]){
 
 	Saurobyte::Message &mesg = msg;
 	SAUROBYTE_INFO_LOG("SHIEEET ", mesg.read<int>());
+
+	//while(!Saurobyte::Mouse::isPressed(Saurobyte::Mouse::Left))
+	//{
+	//	SAUROBYTE_INFO_LOG("X ", Saurobyte::Mouse::getMousePosition().x, " Y ", Saurobyte::Mouse::getMousePosition().y);
+	//}
 
 	Saurobyte::LuaEnvironment env;
 

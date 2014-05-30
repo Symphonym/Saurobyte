@@ -28,6 +28,7 @@
 
 #include <Saurobyte/Math/Vector2.hpp>
 #include <Saurobyte/ApiDefines.hpp>
+#include <Saurobyte/NonCopyable.hpp>
 #include <memory>
 #include <string>
 
@@ -38,7 +39,8 @@ namespace Saurobyte
 		class WindowImpl;
 	};
 
-	class SAUROBYTE_API Window
+	class MessageCentral;
+	class SAUROBYTE_API Window : public NonCopyable
 	{
 	private:
 
@@ -153,6 +155,13 @@ namespace Saurobyte
 		 * @return Whether or not the window is still running
 		 */
 		bool running() const;
+
+
+		/**
+		 * The unique ID that represents this window, mainly used internally
+		 * @return The unique ID of this window
+		 */
+		unsigned int getID() const;
 	};
 };
 

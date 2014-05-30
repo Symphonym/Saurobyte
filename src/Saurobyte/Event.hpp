@@ -34,7 +34,17 @@ namespace Saurobyte
 
 	};
 
-	//struct WindowEvent
+	struct SizeEvent
+	{
+		unsigned int width;
+		unsigned int height;
+	};
+
+	struct MoveEvent
+	{
+		float x;
+		float y;
+	};
 };
 
 #endif

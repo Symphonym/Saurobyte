@@ -15,6 +15,7 @@ modern features such as OpenGL 4.3 and C++11, inevitably making it less cross-pl
 * Config files in Lua (loading/saving)
 * R*-trees for spatial partitioning
 * 3D audio using OpenAL
+* Global messaging system using the subscriber pattern
 
 ## Dependencies
 Saurobyte depends on a few other libraries as well, which are dynamically linked to make

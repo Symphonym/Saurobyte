@@ -69,6 +69,38 @@ namespace Saurobyte
 		SDL_Quit();
 	}
 
+	void Game::handleEvents()
+	{
+		SDL_Event event;
+		while(SDL_PollEvent(&event))
+		{
+			std::string eventName = "Unknown";
+			if(event.type == SDL_WINDOWEVENT && event.window.windowID == m_window.getID())
+			{
+				switch (event.window.event)
+				{
+					case SDL_WINDOWEVENT_SHOWN: eventName = "WindowShow"; break;
+					case SDL_WINDOWEVENT_HIDDEN: eventName = "WindowHide"; break;
+					case SDL_WINDOWEVENT_MOVED: eventName = "WindowMove"; break;
+					case SDL_WINDOWEVENT_RESIZED: eventName = "WindowResize"; break;
+					//case SDL_WINDOWEVENT_MINIMIZED: eventName = "WindowMaximize"; break;
+					case SDL_WINDOWEVENT_RESTORED: eventName = "WindowRestored"; break;
+					case SDL_WINDOWEVENT_ENTER: eventName = "WindowMouseEnter"; break;
+					case SDL_WINDOWEVENT_LEAVE: eventName = "WindowMouseLeave"; break;
+					case SDL_WINDOWEVENT_FOCUS_GAINED: eventName = "WindowGainFocus"; break;
+					case SDL_WINDOWEVENT_FOCUS_LOST: eventName = "WindowLostFocus"; break;
+					case SDL_WINDOWEVENT_CLOSE: eventName = "WindowClose"; break;
+					default: eventName = "WindowUnknown"; break;
+       			}
+
+       			if(eventName != "WindowUnknown")
+       				sendMessage<Window*>(eventName, &m_window);
+			}
+			else if(event.type == SDL_QUIT)
+				m_window.close();
+		}
+	}
+
 	void Game::gameLoop()
 	{
 

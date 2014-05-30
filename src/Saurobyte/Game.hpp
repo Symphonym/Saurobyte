@@ -149,6 +149,8 @@ namespace Saurobyte
 		MessageCentral m_messageCentral;
 		Window m_window;
 
+		void handleEvents();
+
 		// Enforce one game instance
 		static bool m_gameInstanceExists;
 	};

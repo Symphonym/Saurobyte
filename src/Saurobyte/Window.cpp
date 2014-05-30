@@ -26,7 +26,9 @@
 #include <Saurobyte/Window.hpp>
 #include <Saurobyte/WindowImpl.hpp>
 #include <Saurobyte/Logger.hpp>
-#include <SDL2/SDL.h>
+#include <Saurobyte/MessageCentral.hpp>
+#include <SDL2/SDL_video.h>
+#include <SDL2/SDL_events.h>
 
 namespace Saurobyte
 {
@@ -170,5 +172,10 @@ namespace Saurobyte
 	bool Window::running() const
 	{
 		return m_running;
+	}
+
+	unsigned int Window::getID() const
+	{
+		return SDL_GetWindowID(m_window->window);
 	}
 };
