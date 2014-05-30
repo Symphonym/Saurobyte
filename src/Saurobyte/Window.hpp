@@ -39,7 +39,6 @@ namespace Saurobyte
 		class WindowImpl;
 	};
 
-	class MessageCentral;
 	class SAUROBYTE_API Window : public NonCopyable
 	{
 	private:

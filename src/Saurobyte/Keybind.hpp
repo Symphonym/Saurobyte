@@ -24,46 +24,28 @@
  */
 
 
-#ifndef SAUROBYTE_EVENT_HPP
-#define SAUROBYTE_EVENT_HPP
+#ifndef SAUROBYTE_KEY_BIND_HPP
+#define SAUROBYTE_KEY_BIND_HPP
 
+#include <Saurobyte/ApiDefines.hpp>
 #include <Saurobyte/Input.hpp>
+#include <vector>
 
 namespace Saurobyte
 {
-	class Window;
-
-	struct Event {};
-	struct WindowEvent : public Event
+	class SAUROBYTE_API Keybind
 	{
-		Window &window;
+	public:
 
-		explicit WindowEvent(Window &windowRef);
-	};
-	struct WindowSizeEvent : public WindowEvent
-	{
-		unsigned int width;
-		unsigned int height;
+		void record();
+		bool isPressed();
 
-		explicit WindowSizeEvent(Window &window, unsigned int newWidth, unsigned int newHeight);
-	};
+	private:
 
-	struct WindowMoveEvent : public WindowEvent
-	{
-		int x;
-		int y;
+		std::vector<Key> m_keybind;
 
-		explicit WindowMoveEvent(Window &window, int newX, int newY);
-	};
-
-	struct KeyEvent : public Event
-	{
-		Key key;
-		bool pressed;
-		bool keyRepeat;
-
-		explicit KeyEvent(Key eventKey, bool isPressed, bool isKeyRepeat);
 	};
 };
+
 
 #endif

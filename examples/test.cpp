@@ -37,7 +37,12 @@
 #include <Saurobyte/Components/TransformComponent.hpp>*/
 //#include <Saurobyte/Game.hpp>
 
-
+enum TestEnum
+{
+	Swag,
+	Swagger,
+	Test
+};
 
 bool audioRunner = true;
 int main(int argc, const char* argv[]){
@@ -50,6 +55,17 @@ int main(int argc, const char* argv[]){
 
 	Saurobyte::Message &mesg = msg;
 	SAUROBYTE_INFO_LOG("SHIEEET ", mesg.read<int>());
+
+	TestEnum en = TestEnum::Swag;
+	std::string enStr = "nol";
+	switch(en)
+	{
+		case TestEnum::Swag: enStr = "Swag";
+		case TestEnum::Swagger: enStr = "SWAGGER";
+		case TestEnum::Test: enStr = "TESTER";
+			SAUROBYTE_INFO_LOG("EN STR ", enStr);
+		break;
+	}
 
 	//while(!Saurobyte::Mouse::isPressed(Saurobyte::Mouse::Left))
 	//{

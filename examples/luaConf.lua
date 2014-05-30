@@ -1,10 +1,14 @@
 SauroConf =
 {
-	isCool = true,
 	[1] = 
 	{
 		wat = "TEST",
 	},
+	stuff = 
+	{
+		sweet = false,
+	},
+	isCool = true,
 	window = 
 	{
 		width = 55,
@@ -13,9 +17,5 @@ SauroConf =
 	{
 		[1] = 5,
 		wat = "TESTERINO",
-	},
-	stuff = 
-	{
-		sweet = false,
 	},
 }

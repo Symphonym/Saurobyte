@@ -23,47 +23,41 @@
 
  */
 
-
-#ifndef SAUROBYTE_EVENT_HPP
-#define SAUROBYTE_EVENT_HPP
-
-#include <Saurobyte/Input.hpp>
+#include <Saurobyte/Keybind.hpp>
+#include <Saurobyte/Util.hpp>
 
 namespace Saurobyte
 {
-	class Window;
+		void Keybind::record()
+		{
+			m_keybind.clear();
+			bool keysArePressed = false;
 
-	struct Event {};
-	struct WindowEvent : public Event
-	{
-		Window &window;
+			// TODO figure out better way to record keybind
+			while(true)
+			{
+				std::vector<Key> currentBind = Input::getPressedKeys();
 
-		explicit WindowEvent(Window &windowRef);
-	};
-	struct WindowSizeEvent : public WindowEvent
-	{
-		unsigned int width;
-		unsigned int height;
+				if(currentBind.size() > 0)
+					keysArePressed = true;
 
-		explicit WindowSizeEvent(Window &window, unsigned int newWidth, unsigned int newHeight);
-	};
+				else if(currentBind.size() == 0 && keysArePressed)
+					break;
 
-	struct WindowMoveEvent : public WindowEvent
-	{
-		int x;
-		int y;
+				if(currentBind.size() >= m_keybind.size())
+					m_keybind = currentBind;
 
-		explicit WindowMoveEvent(Window &window, int newX, int newY);
-	};
+				Saurobyte::sleep(10);
+			}
+		}
+		bool Keybind::isPressed()
+		{
+			for(auto key : m_keybind)
+			{
+				if(!Input::isKeyPressed(key))
+					return false;
+			}
 
-	struct KeyEvent : public Event
-	{
-		Key key;
-		bool pressed;
-		bool keyRepeat;
-
-		explicit KeyEvent(Key eventKey, bool isPressed, bool isKeyRepeat);
-	};
+			return true;
+		}
 };
-
-#endif

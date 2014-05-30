@@ -24,46 +24,37 @@
  */
 
 
-#ifndef SAUROBYTE_EVENT_HPP
-#define SAUROBYTE_EVENT_HPP
+#ifndef SAUROBYTE_INPUT_IMPL_HPP
+#define SAUROBYTE_INPUT_IMPL_HPP
 
+#include <Saurobyte/ApiDefines.hpp>
 #include <Saurobyte/Input.hpp>
+#include <SDL2/SDL_scancode.h>
 
 namespace Saurobyte
 {
-	class Window;
-
-	struct Event {};
-	struct WindowEvent : public Event
+	namespace internal
 	{
-		Window &window;
+		class SAUROBYTE_API InputImpl
+		{
+		public:
 
-		explicit WindowEvent(Window &windowRef);
-	};
-	struct WindowSizeEvent : public WindowEvent
-	{
-		unsigned int width;
-		unsigned int height;
+			/**
+			 * Converts the given Saurobyte key type to an SDL_Scancode key type
+			 * @param  key The Saurobyte key
+			 * @return     The key in SDL_Scancode format
+			 */
+			static SDL_Scancode toSDLKey(Key key);
+			/**
+			 * Converts the given SDL_Scancode key to the same key in Saurobyte key format
+			 * @param  key The SDL_Scancode key
+			 * @return     The key in Saurobyte format
+			 */
+			static Key toSaurobyteKey(SDL_Scancode key);
+		};	
+	}
 
-		explicit WindowSizeEvent(Window &window, unsigned int newWidth, unsigned int newHeight);
-	};
-
-	struct WindowMoveEvent : public WindowEvent
-	{
-		int x;
-		int y;
-
-		explicit WindowMoveEvent(Window &window, int newX, int newY);
-	};
-
-	struct KeyEvent : public Event
-	{
-		Key key;
-		bool pressed;
-		bool keyRepeat;
-
-		explicit KeyEvent(Key eventKey, bool isPressed, bool isKeyRepeat);
-	};
 };
+
 
 #endif

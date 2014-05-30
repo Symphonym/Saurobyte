@@ -8,6 +8,8 @@
 #include <Saurobyte/Lua/LuaEnv_Scene.hpp>
 #include <Saurobyte/Lua/LuaEnv_Audio.hpp>
 #include <Saurobyte/Logger.hpp>
+#include <Saurobyte/Event.hpp>
+#include <Saurobyte/InputImpl.hpp>
 #include <Saurobyte/AudioDevice.hpp>
 #include <Saurobyte/VideoDevice.hpp>
 
@@ -74,30 +76,69 @@ namespace Saurobyte
 		SDL_Event event;
 		while(SDL_PollEvent(&event))
 		{
-			std::string eventName = "Unknown";
-			if(event.type == SDL_WINDOWEVENT && event.window.windowID == m_window.getID())
+			switch(event.type)
 			{
-				switch (event.window.event)
-				{
-					case SDL_WINDOWEVENT_SHOWN: eventName = "WindowShow"; break;
-					case SDL_WINDOWEVENT_HIDDEN: eventName = "WindowHide"; break;
-					case SDL_WINDOWEVENT_MOVED: eventName = "WindowMove"; break;
-					case SDL_WINDOWEVENT_RESIZED: eventName = "WindowResize"; break;
-					//case SDL_WINDOWEVENT_MINIMIZED: eventName = "WindowMaximize"; break;
-					case SDL_WINDOWEVENT_RESTORED: eventName = "WindowRestored"; break;
-					case SDL_WINDOWEVENT_ENTER: eventName = "WindowMouseEnter"; break;
-					case SDL_WINDOWEVENT_LEAVE: eventName = "WindowMouseLeave"; break;
-					case SDL_WINDOWEVENT_FOCUS_GAINED: eventName = "WindowGainFocus"; break;
-					case SDL_WINDOWEVENT_FOCUS_LOST: eventName = "WindowLostFocus"; break;
-					case SDL_WINDOWEVENT_CLOSE: eventName = "WindowClose"; break;
-					default: eventName = "WindowUnknown"; break;
-       			}
+				case SDL_WINDOWEVENT:
+					if(event.window.windowID == m_window.getID())
+					{
+						switch (event.window.event)
+						{
+							case SDL_WINDOWEVENT_SHOWN:
+								sendMessage<WindowEvent>("WindowShow", WindowEvent(m_window));
+								break;
+							case SDL_WINDOWEVENT_HIDDEN:
+								sendMessage<WindowEvent>("WindowHide", WindowEvent(m_window));
+								break;
+							case SDL_WINDOWEVENT_ENTER:
+								sendMessage<WindowEvent>("WindowMouseEnter", WindowEvent(m_window));
+								break;
+							case SDL_WINDOWEVENT_LEAVE:
+								sendMessage<WindowEvent>("WindowMouseLeave", WindowEvent(m_window));
+								break;
+							case SDL_WINDOWEVENT_FOCUS_GAINED:
+								sendMessage<WindowEvent>("WindowGainFocus", WindowEvent(m_window));
+								break;
+							case SDL_WINDOWEVENT_FOCUS_LOST:
+								sendMessage<WindowEvent>("WindowLostFocus", WindowEvent(m_window));
+								break;
+							case SDL_WINDOWEVENT_CLOSE:
+								sendMessage<WindowEvent>("WindowClose", WindowEvent(m_window));
+								break;
+							case SDL_WINDOWEVENT_RESIZED:
+								sendMessage<WindowSizeEvent>("WindowMove", 
+									WindowSizeEvent(
+										m_window,
+										static_cast<unsigned int>(event.window.data1),
+										static_cast<unsigned int>(event.window.data2)));
+								break;
+							case SDL_WINDOWEVENT_MOVED:
+								sendMessage<WindowEvent>("WindowMove", 
+									WindowMoveEvent(
+										m_window,
+										static_cast<int>(event.window.data1),
+										static_cast<int>(event.window.data2)));
+								break;
+						}
+					}
+					break;
 
-       			if(eventName != "WindowUnknown")
-       				sendMessage<Window*>(eventName, &m_window);
+				case SDL_KEYDOWN:
+				case SDL_KEYUP:
+					if(event.key.windowID == m_window.getID())
+					{
+						sendMessage<KeyEvent>(
+							event.type == SDL_KEYDOWN ? "KeyDown" : "KeyUp",
+							KeyEvent(
+								internal::InputImpl::toSaurobyteKey(event.key.keysym.scancode),
+								event.key.state == SDL_PRESSED,
+								event.key.repeat));
+					}
+					break;
+				case SDL_QUIT:
+					m_window.close();
+					break;
 			}
-			else if(event.type == SDL_QUIT)
-				m_window.close();
+
 		}
 	}
 

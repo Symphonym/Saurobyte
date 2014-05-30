@@ -23,47 +23,33 @@
 
  */
 
-
-#ifndef SAUROBYTE_EVENT_HPP
-#define SAUROBYTE_EVENT_HPP
-
-#include <Saurobyte/Input.hpp>
+#include <Saurobyte/Event.hpp>
 
 namespace Saurobyte
 {
-	class Window;
+	WindowEvent::WindowEvent(Window &windowRef)
+		:
+		window(windowRef)
+	{}
 
-	struct Event {};
-	struct WindowEvent : public Event
-	{
-		Window &window;
+	WindowSizeEvent::WindowSizeEvent(Window &window, unsigned int newWidth, unsigned int newHeight)
+		:
+		WindowEvent(window),
+		width(newWidth),
+		height(newHeight)
+	{}
 
-		explicit WindowEvent(Window &windowRef);
-	};
-	struct WindowSizeEvent : public WindowEvent
-	{
-		unsigned int width;
-		unsigned int height;
+	WindowMoveEvent::WindowMoveEvent(Window &window, int newX, int newY)
+		:
+		WindowEvent(window),
+		x(newX),
+		y(newY)
+	{}
 
-		explicit WindowSizeEvent(Window &window, unsigned int newWidth, unsigned int newHeight);
-	};
-
-	struct WindowMoveEvent : public WindowEvent
-	{
-		int x;
-		int y;
-
-		explicit WindowMoveEvent(Window &window, int newX, int newY);
-	};
-
-	struct KeyEvent : public Event
-	{
-		Key key;
-		bool pressed;
-		bool keyRepeat;
-
-		explicit KeyEvent(Key eventKey, bool isPressed, bool isKeyRepeat);
-	};
-};
-
-#endif
+	KeyEvent::KeyEvent(Key eventKey, bool isPressed, bool isKeyRepeat)
+		:
+		key(eventKey),
+		pressed(isPressed),
+		keyRepeat(isKeyRepeat)
+	{}
+}

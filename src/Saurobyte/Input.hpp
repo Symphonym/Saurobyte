@@ -29,6 +29,7 @@
 
 #include <Saurobyte/ApiDefines.hpp>
 #include <Saurobyte/Math/Vector2.hpp>
+#include <vector>
 
 namespace Saurobyte
 {
@@ -64,6 +65,12 @@ namespace Saurobyte
 		Numpad_7,
 		Numpad_8,
 		Numpad_9,
+		NumpadEnter,
+		NumpadPeriod,
+		Add,
+		Minus,
+		Multiply,
+		Divide,
 
 		/**
 		 * Character keys
@@ -138,27 +145,12 @@ namespace Saurobyte
 		RBracket,
 		ForwardSlash,
 		BackSlash,
-		Ampersand,
-		Asterisk,
-		At,
-		Caret,
-		Dollar,
-		Exclaimation,
-		RArrow,
-		LArrow,
-		Hash,
-		Percent,
-		Plus,
-		Minus,
-		Question,
+		Dash,
 		Quote,
-		DoubleQuote,
-		LParen,
-		RParen,
-		Underscore,
 		Equal,
 		Period,
 		Comma,
+		Tilde,
 
 		/**
 		 * Misc keys
@@ -181,6 +173,15 @@ namespace Saurobyte
 		Tab,
 		Pause,
 		PrintScreen,
+		LGui,
+		RGui,
+		Menu,
+
+
+		/**
+		 * Unknown key
+		 */
+		Unknown
 
 
 	};
@@ -208,6 +209,11 @@ namespace Saurobyte
 		 */
 		static void setCursorVisible(bool visible);
 
+		/**
+		 * Queries the current keyboard state and grabs all keys that are currently pressed
+		 * @return A vector of all currently pressed keys
+		 */
+		static std::vector<Key> getPressedKeys();
 		/**
 		 * Queries the screen coordinates of the mouse cursor
 		 * @return Position of the mouse

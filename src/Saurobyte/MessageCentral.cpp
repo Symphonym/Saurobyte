@@ -21,10 +21,6 @@ namespace Saurobyte
 				}
 			}
 			m_subscriptionCentral.clear();
-
-			for(std::size_t i = 0; i < m_messageQueue.size(); i++)
-				delete m_messageQueue[i];
-			m_messageQueue.clear();
 		}
 
 		void MessageCentral::subscribe(const std::string &messageName, MessageHandler *handler)
@@ -71,14 +67,6 @@ namespace Saurobyte
 			handler->m_subscriptions.clear();
 		}
 
-		void MessageCentral::sendQueuedMessages()
-		{
-			//for(std::size_t i = 0; i < m_messageQueue.size(); i++)
-			//	sendMessage(m_messageQueue[i]);
-
-			m_messageQueue.clear();
-		}
-
 		void MessageCentral::sendMessage(const Message &message)
 		{
 			auto iter = m_subscriptionCentral.find(message.name);
@@ -91,11 +79,6 @@ namespace Saurobyte
 		void MessageCentral::sendMessage(const std::string &messageName, Entity *entity)
 		{
 			sendMessage(Message(messageName, entity));
-		}
-
-		void MessageCentral::queueMessage(Message *message)
-		{
-			//m_messageQueue.push_back(message);
 		}
 
 		bool MessageCentral::subscribedTo(const std::string &messageName, const MessageHandler *handler) const

@@ -53,8 +53,6 @@ namespace Saurobyte
 		// , used primarily for cleanup.
 		void unsubscribeAll(MessageHandler *handler);
 
-		void sendQueuedMessages();
-
 		// Broadcast message instantly, sending it to those who subscribes to messages of its type
 		void sendMessage(const Message &message);
 		void sendMessage(const std::string &messageName, Entity *entity = nullptr);
@@ -62,8 +60,6 @@ namespace Saurobyte
 		{
 			sendMessage(MessageData<TType>(messageName, data, entity));
 		};
-		// Queue message, broadcasting it whenever the message queue is sent
-		void queueMessage(Message *message);
 
 		// Checks whether or not the specified handler is subscribed to the specified message
 		bool subscribedTo(const std::string &messageName, const MessageHandler *handler) const;
@@ -71,10 +67,8 @@ namespace Saurobyte
 	private:
 
 		typedef std::unordered_map<std::string, std::vector<MessageHandler*> > MessageSubscriptions;
-		typedef std::vector<Message*> MessageQueue;
 
 		MessageSubscriptions m_subscriptionCentral;
-		MessageQueue m_messageQueue;
 
 	};
 };
