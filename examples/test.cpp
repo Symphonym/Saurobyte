@@ -31,6 +31,7 @@
 #include <Saurobyte/Message.hpp>
 #include <Saurobyte/Input.hpp>
 #include <Saurobyte/FrameCounter.hpp>
+#include <Saurobyte/Game.hpp>
 /*
 #include <Saurobyte/Components/LuaComponent.hpp>
 #include <Saurobyte/Systems/MeshSystem.hpp>
@@ -44,15 +45,8 @@ bool audioRunner = true;
 int main(int argc, const char* argv[]){
 
 
-	Saurobyte::FrameCounter counterino;
-	counterino.limitFps(60);
-
-
-	while(true)
-	{
-		counterino.update();
-		SAUROBYTE_INFO_LOG("TEST ", counterino.getFps(), " DELTA ", counterino.getDelta());
-	}
+	Saurobyte::Game game("Hello world", 800, 600, Saurobyte::Window::Normal);
+	game.start();
 
 	Saurobyte::Vector3f vec(2, 2);
 	vec = vec * 10.f;

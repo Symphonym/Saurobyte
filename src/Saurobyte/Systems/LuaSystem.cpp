@@ -29,7 +29,6 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <Saurobyte/Entity.hpp>
 #include <Saurobyte/Message.hpp>
 #include <Saurobyte/Game.hpp>
-#include <Saurobyte/OpenGLWindow.hpp>
 
 namespace Saurobyte
 {
@@ -68,13 +67,14 @@ namespace Saurobyte
 	}
 	LuaSystem::~LuaSystem()
 	{
-		LuaEnvironment &env = game->getLua();
-		env.pushNil();
-		env.writeGlobal("SAUROBYTE_LUA_SYSTEM");
+		//LuaEnvironment &env = game->getLua();
+		//env.pushNil();
+		//env.writeGlobal("SAUROBYTE_LUA_SYSTEM");
 	}
 
 	void LuaSystem::onMessage(Message *message)
 	{
+
 		if(message->name == "ReloadLua")
 		{
 			for(auto itr = getEntities().begin(); itr != getEntities().end(); itr++)

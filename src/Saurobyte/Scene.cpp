@@ -44,8 +44,8 @@ namespace Saurobyte
 	{
 		return m_sceneName;
 	}
-	Camera& Scene::getCamera()
-	{
-		return m_sceneCamera;
-	}
+	//Camera& Scene::getCamera()
+	//{
+	//	return m_sceneCamera;
+	//}
 };

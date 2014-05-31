@@ -174,9 +174,10 @@ namespace Saurobyte
 		 * @param  percent Percentage determining the interpolation amount 
 		 * @return         The resulting vector that has been interpolated
 		 */
-		Vector3<TType> lerp(const Vector3<TType> &rhs, float percent) const
+		Vector3<TType>& lerp(const Vector3<TType> &rhs, float percent) const
 		{
-			return (*this + percent*(rhs - *this));
+			*this += percent*(rhs - *this);
+			return *this;
 		};
 		/**
 		 * Calclates the length of this vector, as measured from 0,0

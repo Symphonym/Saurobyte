@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include <vector>
 #include <Saurobyte/IdentifierTypes.hpp>
-#include <Saurobyte/Camera.hpp>
+//#include <Saurobyte/Camera.hpp>
 
 namespace Saurobyte
 {
@@ -16,7 +16,7 @@ namespace Saurobyte
 
 		std::string m_sceneName;
 		std::unordered_map<EntityID, Entity*> m_entities;
-		Camera m_sceneCamera;
+		//Camera m_sceneCamera;
 
 	public:
 
@@ -29,7 +29,7 @@ namespace Saurobyte
 
 		const std::unordered_map<EntityID, Entity*>& getEntities();
 		std::string getName() const;
-		Camera& getCamera();
+		//Camera& getCamera();
 	};
 };
 

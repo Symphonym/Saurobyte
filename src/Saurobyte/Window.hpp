@@ -45,17 +45,15 @@ namespace Saurobyte
 
 		std::unique_ptr<internal::WindowImpl> m_window;
 
-		bool m_running;
-
 	public:
 
 		enum WindowModes
 		{
-			Normal = 0, // Normal unresizable window with titlebar
-			Normless = 1, // Normal unresizable window without titlebar/borders
-			Maximized = 2, // Normal window except it's maximized
-			Maxless = 2, // Maximized window without titlebar/borders
-			Fullscreen = 3, // Fullscreen window
+			Normal, // Normal unresizable window with titlebar
+			Normless, // Normal unresizable window without titlebar/borders
+			Maximized, // Normal window except it's maximized
+			Maxless, // Maximized window without titlebar/borders
+			Fullscreen, // Fullscreen window
 		};
 
 		/**
@@ -149,11 +147,6 @@ namespace Saurobyte
 		 * @return Window title
 		 */
 		std::string getTitle() const;
-		/**
-		 * Checks if the window is still running (haven't been closed/destroyed)
-		 * @return Whether or not the window is still running
-		 */
-		bool running() const;
 
 
 		/**

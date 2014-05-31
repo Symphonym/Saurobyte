@@ -30,3 +30,4 @@ CHECK	* Optimize sound/stream reusage
 		* Clean math classes and create more math stuff
 		* FPS limit and delta time counting
 		* Replace SDL stuff with C++11, chrono for timing, sleep and delta time and thread for threading (like audio)
+		* Modifier keys for events and key presses and whatnot

@@ -150,9 +150,12 @@ namespace Saurobyte
 		LuaConfig m_luaConfig;
 
 		MessageCentral m_messageCentral;
-		Window m_window;
 
-		void handleEvents();
+		/**
+		 * Processes system events and broadcasts a select few as messages.
+		 * @return True if the application shutdown event was not received, false otherwise
+		 */
+		bool handleEvents();
 
 		// Enforce one game instance
 		static bool m_gameInstanceExists;

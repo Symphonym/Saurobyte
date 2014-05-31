@@ -23,49 +23,45 @@
 
  */
 
-#include <Saurobyte/WindowImpl.hpp>
-#include <Saurobyte/Logger.hpp>
+
+#ifndef SAUROBYTE_COLOR_HPP
+#define SAUROBYTE_COLOR_HPP
+
+#include <Saurobyte/ApiDefines.hpp>
 
 namespace Saurobyte
 {
-	namespace internal
+	class SAUROBYTE_API Color
 	{
-		WindowImpl::WindowImpl(const std::string &title, int width, int height, Uint32 flags)
-			:
-			window(NULL)
-		{
-			window = SDL_CreateWindow(
-					title.c_str(),
-					SDL_WINDOWPOS_UNDEFINED,
-					SDL_WINDOWPOS_UNDEFINED,
-					width,
-					height,
-					flags);
+	public:
 
-			if(window == NULL)
-				SAUROBYTE_FATAL_LOG("Could not create window by the title '", title, "': ", SDL_GetError());
-			else
-			{
-				openGLContext = SDL_GL_CreateContext(window);
+		typedef unsigned char ColorComponent;
 
-				if(openGLContext == NULL)
-					SAUROBYTE_FATAL_LOG("Could not create OpenGL context: ", SDL_GetError());
-			}
-		}
-		WindowImpl::~WindowImpl()
-		{
-			close();
-			SDL_GL_DeleteContext(openGLContext);
-		}
+		/**
+		 * Creates a color with the specified RGBA values
+		 * @param  r Red value, 0-255
+		 * @param  g Green value, 0-255
+		 * @param  b Blue value, 0-255
+		 * @param  a Alpha value, 0-255
+		 */
+		explicit Color(ColorComponent r, ColorComponent g, ColorComponent b, ColorComponent a = 255);
 
-		void WindowImpl::close()
-		{
-			if(window != NULL)
-			{
-				SDL_DestroyWindow(window);
-				window = NULL;
-			}
-		}
+		ColorComponent r, g, b, a;
+
+		Color operator + (const Color &rhs);
+		Color& operator += (const Color &rhs);
+
+		Color operator - (const Color &rhs);
+		Color& operator -= (const Color &rhs);
+
+		/**
+		 * Predefined colors
+		 */
+		const static Color Red;
+		const static Color Green;
+		const static Color Blue;
 
 	};
 };
+
+#endif

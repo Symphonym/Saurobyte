@@ -27,21 +27,20 @@ namespace Saurobyte
 		m_videoDevice(nullptr),
 		m_luaEnvironment(),
 		m_luaConfig(m_luaEnvironment),
-		m_messageCentral(),
-		m_window(title, width, height, windowMode)
+		m_messageCentral()
 	{
 		if(m_gameInstanceExists)
 			SAUROBYTE_FATAL_LOG("Only one Game instance may exist!");
 		else
 			m_gameInstanceExists = true;
 
-		// Set default logging
-		Logger::setLogStatus(Logger::Info_Error);
 
 		// Initialize libraries
 		if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
 			SAUROBYTE_FATAL_LOG("SDL could not be initialized. SDL_Error: ", SDL_GetError());
 
+		// Set default logging
+		Logger::setLogStatus(Logger::Info_Error);
 
 		if(!m_luaConfig.load("./sauroConf.lua"))
 			SAUROBYTE_WARNING_LOG("No config file provided!");
@@ -49,10 +48,7 @@ namespace Saurobyte
 		// Default FPS to 300
 		m_frameCounter.limitFps(300);
 
-		// Set window settings
-		m_window.setVsync(m_luaConfig.readBool("SauroConf.video.vsync", false));
-
-		m_videoDevice = std::unique_ptr<VideoDevice>(new VideoDevice(*this));
+		m_videoDevice = std::unique_ptr<VideoDevice>(new VideoDevice(*this, title, width, height, windowMode));
 		m_audioDevice = std::unique_ptr<AudioDevice>(new AudioDevice());
 
 		// TODO init devices here when log is loaded
@@ -75,7 +71,7 @@ namespace Saurobyte
 		SDL_Quit();
 	}
 
-	void Game::handleEvents()
+	bool Game::handleEvents()
 	{
 		SDL_Event event;
 		while(SDL_PollEvent(&event))
@@ -83,46 +79,46 @@ namespace Saurobyte
 			switch(event.type)
 			{
 				case SDL_WINDOWEVENT:
-					if(event.window.windowID == m_window.getID())
+					if(event.window.windowID == getWindow().getID())
 					{
 						switch (event.window.event)
 						{
 							case SDL_WINDOWEVENT_SHOWN:
-								sendMessage<WindowEvent>("WindowShow", WindowEvent(m_window));
+								sendMessage<WindowEvent>("WindowShow", WindowEvent(getWindow()));
 								break;
 							case SDL_WINDOWEVENT_HIDDEN:
-								sendMessage<WindowEvent>("WindowHide", WindowEvent(m_window));
+								sendMessage<WindowEvent>("WindowHide", WindowEvent(getWindow()));
 								break;
 							case SDL_WINDOWEVENT_ENTER:
-								sendMessage<WindowEvent>("WindowMouseEnter", WindowEvent(m_window));
+								sendMessage<WindowEvent>("WindowMouseEnter", WindowEvent(getWindow()));
 								break;
 							case SDL_WINDOWEVENT_LEAVE:
-								sendMessage<WindowEvent>("WindowMouseLeave", WindowEvent(m_window));
+								sendMessage<WindowEvent>("WindowMouseLeave", WindowEvent(getWindow()));
 								break;
 							case SDL_WINDOWEVENT_FOCUS_GAINED:
-								sendMessage<WindowEvent>("WindowGainFocus", WindowEvent(m_window));
+								sendMessage<WindowEvent>("WindowGainFocus", WindowEvent(getWindow()));
 								break;
 							case SDL_WINDOWEVENT_FOCUS_LOST:
-								sendMessage<WindowEvent>("WindowLostFocus", WindowEvent(m_window));
+								sendMessage<WindowEvent>("WindowLostFocus", WindowEvent(getWindow()));
 								break;
 							case SDL_WINDOWEVENT_CLOSE:
-								sendMessage<WindowEvent>("WindowClose", WindowEvent(m_window));
+								sendMessage<WindowEvent>("WindowClose", WindowEvent(getWindow()));
 								break;
 							case SDL_WINDOWEVENT_RESIZED:
 								{
 									unsigned int newWidth = static_cast<unsigned int>(event.window.data1);
 									unsigned int newHeight = static_cast<unsigned int>(event.window.data2);
 
-									VideoDevice::resizeViewport(newWidth, newHeight);
+									VideoDevice::setViewport(newWidth, newHeight);
 
 									sendMessage<WindowSizeEvent>("WindowMove", 
-										WindowSizeEvent(m_window, newWidth, newHeight));
+										WindowSizeEvent(getWindow(), newWidth, newHeight));
 								}
 								break;
 							case SDL_WINDOWEVENT_MOVED:
 								sendMessage<WindowEvent>("WindowMove", 
 									WindowMoveEvent(
-										m_window,
+										getWindow(),
 										static_cast<int>(event.window.data1),
 										static_cast<int>(event.window.data2)));
 								break;
@@ -132,7 +128,7 @@ namespace Saurobyte
 
 				case SDL_KEYDOWN:
 				case SDL_KEYUP:
-					if(event.key.windowID == m_window.getID())
+					if(event.key.windowID == getWindow().getID())
 					{
 						sendMessage<KeyEvent>(
 							event.type == SDL_KEYDOWN ? "KeyDown" : "KeyUp",
@@ -161,17 +157,20 @@ namespace Saurobyte
 					}
 					break;
 				case SDL_QUIT:
-					stop();
-					break;
+					return false;
 			}
 
 		}
+
+		return true;
 	}
 
 	void Game::start()
-	{
+	
+		// Engine has been started, so lets show the Window
+		getWindow().show();
 
-		while(m_window.running())
+		while(handleEvents())
 		{
 			m_frameCounter.update();
 
@@ -179,50 +178,21 @@ namespace Saurobyte
 			m_scenePool.frameCleanup();
 			m_entityPool.frameCleanup();
 
-			// Poll events
-			handleEvents();
-			/*while(m_window->pollEvent(event))
-			{
-				if(event.type == SDL_QUIT)
-					m_window->close();
-				else if(event.type == SDL_KEYDOWN)
-				{
-					sendMessage(createMessage<SDL_Event>("KeyDown", event));
-
-					if(event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
-						m_window->close();
-					else if(event.key.keysym.scancode == SDL_SCANCODE_R &&
-						SDL_GetModState() & KMOD_LCTRL)
-						sendMessage(createMessage("ReloadLua"));
-
-				}
-				else if(event.type == SDL_KEYUP)
-					sendMessage(createMessage<SDL_Event>("KeyUp", event));
-				else if(event.type == SDL_WINDOWEVENT)
-				{
-					if(event.window.event == SDL_WINDOWEVENT_RESIZED)
-					{
-						glViewport(
-							0,0,
-							static_cast<int>(event.window.data1),
-							static_cast<int>(event.window.data2));
-					}
-				}
-			}*/
-
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			m_videoDevice->clearBuffers();
 
 			// Process the systems and their entities
 			m_systemPool.processSystems();
 			
 			//glFlush();
 
-			m_window.swapBuffers();
+			getWindow().swapBuffers();
 		}
 	}
 	void Game::stop()
 	{
-		m_window.close();
+		SDL_Event event;
+		event.type = SDL_QUIT;
+		SDL_PushEvent(&event);
 	}
 
 	void Game::setFps(unsigned int fps)
@@ -293,7 +263,7 @@ namespace Saurobyte
 	}
 	Window& Game::getWindow()
 	{
-		return m_window;
+		return m_videoDevice->getWindow();
 	}
 
 	LuaEnvironment& Game::getLua()

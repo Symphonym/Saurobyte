@@ -27,6 +27,9 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define SAUROBYTE_VIDEO_DEVICE_HPP
 
 #include <Saurobyte/ApiDefines.hpp>
+#include <Saurobyte/Window.hpp>
+#include <Saurobyte/Color.hpp>
+#include <memory>
 
 namespace Saurobyte
 {
@@ -38,6 +41,11 @@ namespace Saurobyte
 		~VideoDevice();
 
 		/**
+		 * Clears the OpenGL color, depth and stencil buffers depending on what features are enabled
+		 */
+		void clearBuffers();
+
+		/**
 		 * Toggles wire frame mode rendering
 		 */
 		static void toggleWireFrame();
@@ -47,18 +55,33 @@ namespace Saurobyte
 		 * @param width  The width of the viewport
 		 * @param height The height of the viewport
 		 */
-		static void resizeViewport(unsigned int width, unsigned int height);
+		static void setViewport(unsigned int width, unsigned int height);
+
+		/**
+		 * Sets the default background color used by OpenGL
+		 * @param color The color to use
+		 */
+		static void setBackgroundColor(const Color &color);
 
 		// TODO create shader n stuff
+		// 
+		Window& getWindow();
 
 	private:
 
 		// Only the game class can create a VideoDevice
 		friend class Game;
 
-		VideoDevice(Game &game);
+		VideoDevice(
+			Game &game,
+			const std::string &windowTitle,
+			unsigned int windowWidth,
+			unsigned int windowHeight,
+			Window::WindowModes windowMode = Window::Normal);
 
 		Game &m_game;
+
+		std::unique_ptr<Window> m_window;
 	};
 }
 

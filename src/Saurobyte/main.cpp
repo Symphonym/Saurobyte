@@ -1,4 +1,4 @@
-#include <iostream>
+/*#include <iostream>
 #include <string>
 #include <sstream>
 #include <SDL2/SDL.h>
@@ -17,7 +17,6 @@
 
 #include <Saurobyte/Shader.hpp>
 #include <Saurobyte/ShaderProgram.hpp>
-#include <Saurobyte/OpenGLWindow.hpp>
 #include <Saurobyte/Mesh.hpp>
 #include <Saurobyte/Camera.hpp>
 #include <Saurobyte/Entity.hpp>
@@ -37,8 +36,7 @@
 #include <Saurobyte/Systems/MeshSystem.hpp>
 #include <Saurobyte/Components/MeshComponent.hpp>
 #include <Saurobyte/Components/TransformComponent.hpp>
-
-
+*/
 
 bool audioRunner = true;
 int main(int argc, const char* argv[]){

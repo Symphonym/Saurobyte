@@ -23,49 +23,60 @@
 
  */
 
-#include <Saurobyte/WindowImpl.hpp>
-#include <Saurobyte/Logger.hpp>
+
+#include <Saurobyte/Color.hpp>
 
 namespace Saurobyte
 {
-	namespace internal
+	const Color Color::Red = Color(255, 0, 0);
+	const Color Color::Green = Color(0, 255, 0);
+	const Color Color::Blue = Color(0, 0, 255);
+
+	Color::Color(ColorComponent newR, ColorComponent newG, ColorComponent newB, ColorComponent newA)
+		:
+		r(newR),
+		g(newG),
+		b(newB),
+		a(newA)
 	{
-		WindowImpl::WindowImpl(const std::string &title, int width, int height, Uint32 flags)
-			:
-			window(NULL)
-		{
-			window = SDL_CreateWindow(
-					title.c_str(),
-					SDL_WINDOWPOS_UNDEFINED,
-					SDL_WINDOWPOS_UNDEFINED,
-					width,
-					height,
-					flags);
 
-			if(window == NULL)
-				SAUROBYTE_FATAL_LOG("Could not create window by the title '", title, "': ", SDL_GetError());
-			else
-			{
-				openGLContext = SDL_GL_CreateContext(window);
+	}
 
-				if(openGLContext == NULL)
-					SAUROBYTE_FATAL_LOG("Could not create OpenGL context: ", SDL_GetError());
-			}
-		}
-		WindowImpl::~WindowImpl()
-		{
-			close();
-			SDL_GL_DeleteContext(openGLContext);
-		}
+	Color Color::operator + (const Color &rhs)
+	{
+		Color color(*this);
+		color.r += rhs.r;
+		color.g += rhs.g;
+		color.b += rhs.b;
+		color.a += rhs.a;
 
-		void WindowImpl::close()
-		{
-			if(window != NULL)
-			{
-				SDL_DestroyWindow(window);
-				window = NULL;
-			}
-		}
+		return color;
+	}
+	Color& Color::operator += (const Color &rhs)
+	{
+		r += rhs.r;
+		g += rhs.g;
+		b += rhs.b;
+		a += rhs.a;
+		return *this;
+	}
 
-	};
+	Color Color::operator - (const Color &rhs)
+	{
+		Color color(*this);
+		color.r -= rhs.r;
+		color.g -= rhs.g;
+		color.b -= rhs.b;
+		color.a -= rhs.a;
+
+		return color;
+	}
+	Color& Color::operator -= (const Color &rhs)
+	{
+		r += rhs.r;
+		g += rhs.g;
+		b += rhs.b;
+		a += rhs.a;
+		return *this;
+	}
 };

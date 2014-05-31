@@ -32,29 +32,50 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 namespace Saurobyte
 {
-	VideoDevice::VideoDevice(Game &game)
+	VideoDevice::VideoDevice(
+		Game &game,
+		const std::string &windowTitle,
+		unsigned int windowWidth,
+		unsigned int windowHeight,
+		Window::WindowModes windowMode)
 		:
-		m_game(game)
+		m_game(game),
+		m_window(nullptr)
 	{
-		// Initialzie GLEW
-		glewExperimental = GL_TRUE;
-		GLenum glewErrCode = glewInit();
-		if(glewErrCode != GLEW_OK)
-			SAUROBYTE_FATAL_LOG("Could not initialize GLEW: ", glewGetErrorString(glewErrCode));
 
+		// Set OpenGL context settings
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 
 		// Read config data or use defaults
 		LuaConfig &conf = game.getConfig();
-
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, conf.readBool("SauroConf.video.multisampling.on", false));
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, conf.readInt("SauroConf.video.multisampling.samples", 4));
+
+		// Create window and OpenGL context
+		m_window = std::unique_ptr<Window>(new Window(windowTitle, windowWidth, windowHeight, windowMode));
+		m_window->hide(); // Hide window by default, shown at engine startup
+		m_window->setVsync(conf.readBool("SauroConf.video.vsync", false));
+
+		// Initialzie GLEW
+		glewExperimental = GL_TRUE;
+		GLenum glewErrCode = glewInit();
+		if(glewErrCode != GLEW_OK)
+			SAUROBYTE_FATAL_LOG("Could not initialize GLEW: ", glewGetErrorString(glewErrCode));
+
+		// Configure OpenGL
+		glEnable(GL_DEPTH);
+		// TODO
 	}
 	VideoDevice::~VideoDevice()
 	{
 
+	}
+
+	void VideoDevice::clearBuffers()
+	{
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
 	void VideoDevice::toggleWireFrame()
@@ -67,8 +88,17 @@ namespace Saurobyte
 		else
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	}
-	void VideoDevice::resizeViewport(unsigned int width, unsigned int height)
+	void VideoDevice::setViewport(unsigned int width, unsigned int height)
 	{
 		glViewport(0, 0, width, height);
+	}
+	void VideoDevice::setBackgroundColor(const Color &color)
+	{
+		glClearColor(color.r, color.g, color.b, color.a);
+	}
+
+	Window& VideoDevice::getWindow()
+	{
+		return *m_window;
 	}
 };

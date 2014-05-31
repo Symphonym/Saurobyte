@@ -3,7 +3,6 @@
 #include <Saurobyte/Message.hpp>
 #include <Saurobyte/Game.hpp>
 #include <Saurobyte/Components/MeshComponent.hpp>
-#include <Saurobyte/OpenGLWindow.hpp>
 #include <SDL2/SDL.h>
 
 namespace Saurobyte
@@ -36,7 +35,7 @@ namespace Saurobyte
 
 	void MeshSystem::processEntity(Entity &entity)
 	{
-		GLint mousePosLoc = m_shaderProgram.getUniformLoc("MousePos");
+		/*GLint mousePosLoc = m_shaderProgram.getUniformLoc("MousePos");
 		GLint transforMatLoc = m_shaderProgram.getUniformLoc("TransformMat");
 		GLint textureLoc = m_shaderProgram.getUniformLoc("tex");
 
@@ -65,7 +64,7 @@ namespace Saurobyte
 		glDrawArrays(GL_TRIANGLES, 0, comp->getVertexCount());
 
 		glBindVertexArray(0);
-		glBindTexture(GL_TEXTURE_2D, 0);
+		glBindTexture(GL_TEXTURE_2D, 0);*/
 	}
 
 

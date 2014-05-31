@@ -34,8 +34,7 @@ namespace Saurobyte
 {
 	Window::Window(const std::string &title, int width, int height, WindowModes windowMode)
 		:
-		m_window(nullptr),
-		m_running(true)
+		m_window(nullptr)
 	{
 		Uint32 sdlFlags = 0;
 
@@ -53,6 +52,7 @@ namespace Saurobyte
 			windowMode == WindowModes::Maximized)
 		{
 			sdlFlags |= SDL_WINDOW_MAXIMIZED;
+			sdlFlags |= SDL_WINDOW_RESIZABLE;
 		}
 
 		if(windowMode == WindowModes::Fullscreen)
@@ -71,7 +71,6 @@ namespace Saurobyte
 	void Window::close()
 	{
 		m_window->close();
-		m_running = false;
 	}
 	void Window::show()
 	{
@@ -168,10 +167,6 @@ namespace Saurobyte
 	{
 		std::string title(SDL_GetWindowTitle(m_window->window));
 		return title;
-	}
-	bool Window::running() const
-	{
-		return m_running;
 	}
 
 	unsigned int Window::getID() const
