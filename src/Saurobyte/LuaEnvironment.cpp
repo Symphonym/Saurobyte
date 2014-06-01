@@ -517,11 +517,7 @@ namespace Saurobyte
 	void LuaEnvironment::reportError()
 	{
 		if(lua_isstring(m_lua->state, -1))
-		{
-
 			SAUROBYTE_ERROR_LOG("Lua error: ", readStack<std::string>());
-			throw "";
-		}
 	}
 
 	bool LuaEnvironment::isNumber() const
