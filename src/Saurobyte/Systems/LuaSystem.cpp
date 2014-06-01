@@ -143,7 +143,7 @@ namespace Saurobyte
 		LuaEnvironment &env = game->getLua();
 
 		//env.pushArgs(game->getWindow().getDelta());
-		env.callFunction("entity.update", 1, luaComp->sandBox);
+		//env.callFunction("entity.update", 1, luaComp->sandBox);
 
 		// Call lua script as usual
 		if(luaComp->runningStatus == LuaComponent::Running)

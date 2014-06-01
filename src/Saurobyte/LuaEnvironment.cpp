@@ -462,7 +462,7 @@ namespace Saurobyte
 	{
 		int loadErrCode = luaL_loadfile(m_lua->state, filePath.c_str());
 
-		if(loadErrCode == LUA_ERRSYNTAX)
+		if(loadErrCode != LUA_OK)
 		{
 			reportError();
 			return false;
@@ -517,7 +517,11 @@ namespace Saurobyte
 	void LuaEnvironment::reportError()
 	{
 		if(lua_isstring(m_lua->state, -1))
+		{
+
 			SAUROBYTE_ERROR_LOG("Lua error: ", readStack<std::string>());
+			throw "";
+		}
 	}
 
 	bool LuaEnvironment::isNumber() const

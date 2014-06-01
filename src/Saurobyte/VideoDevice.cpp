@@ -67,6 +67,9 @@ namespace Saurobyte
 		// Configure OpenGL
 		glEnable(GL_DEPTH);
 		// TODO
+		
+		
+		SAUROBYTE_INFO_LOG("Using OpenGL version: ", glGetString(GL_VERSION));
 	}
 	VideoDevice::~VideoDevice()
 	{

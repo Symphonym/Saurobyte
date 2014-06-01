@@ -17,7 +17,7 @@ namespace Saurobyte
 {
 	bool Game::m_gameInstanceExists = false;
 
-	Game::Game(const std::string &title, int width, int height, Window::WindowModes windowMode)
+	Game::Game(const std::string &title, unsigned int width, unsigned int height, Window::WindowModes windowMode)
 		:
 		m_entityPool(this),
 		m_systemPool(this),
@@ -78,6 +78,7 @@ namespace Saurobyte
 		{
 			switch(event.type)
 			{
+				// Broadcast window events
 				case SDL_WINDOWEVENT:
 					if(event.window.windowID == getWindow().getID())
 					{
@@ -126,6 +127,7 @@ namespace Saurobyte
 					}
 					break;
 
+				// Broadcast keyboard events
 				case SDL_KEYDOWN:
 				case SDL_KEYUP:
 					if(event.key.windowID == getWindow().getID())
@@ -138,6 +140,8 @@ namespace Saurobyte
 								event.key.repeat));
 					}
 					break;
+
+				// Broadcast mouse events
 				case SDL_MOUSEBUTTONDOWN:
 				case SDL_MOUSEBUTTONUP:
 					{
@@ -156,6 +160,8 @@ namespace Saurobyte
 								event.button.clicks));
 					}
 					break;
+
+				// Shutdown signal
 				case SDL_QUIT:
 					return false;
 			}
@@ -166,6 +172,7 @@ namespace Saurobyte
 	}
 
 	void Game::start()
+	{
 	
 		// Engine has been started, so lets show the Window
 		getWindow().show();

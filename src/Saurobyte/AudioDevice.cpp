@@ -3,6 +3,7 @@
 #include <Saurobyte/AudioChunk.hpp>
 #include <Saurobyte/AudioListener.hpp>
 #include <Saurobyte/Logger.hpp>
+#include <Saurobyte/OpenALImpl.hpp>
 
 #include <unordered_map>
 #include <string>
@@ -26,7 +27,8 @@ namespace Saurobyte
 			std::string fileName;
 		};
 
-		std::unordered_map<std::string, AudioData> m_audioFiles;
+		// Map string ID's to audio filepaths
+		std::unordered_map<std::string, std::string> m_audioFiles;
 
 		typedef std::pair<PriorityType, AudioHandle> SoundData;
 
@@ -49,43 +51,20 @@ namespace Saurobyte
 
 	AudioDevice::AudioDevice()
 		:
-		m_device(nullptr),
-		m_context(nullptr)
+		m_openAL(nullptr)
 	{
 		m_lastCleanupTick = SDL_GetTicks() + CleanupMSInterval;
 
-		// Initialize OpenAL device with default settings
-		m_device = alcOpenDevice(NULL);
+		m_openAL = std::unique_ptr<internal::OpenALImpl>(new internal::OpenALImpl());
 
-		if(!m_device)
-			SAUROBYTE_FATAL_LOG("Could not Initialize OpenAL device");
-
-		m_context = alcCreateContext(m_device, NULL);
-
-		if(!m_context || !alcMakeContextCurrent(m_context))
-			SAUROBYTE_FATAL_LOG("Could not create and set OpenAL context.");
-
-		SAUROBYTE_INFO_LOG("OpenAL Vendor: ", alGetString(AL_VENDOR));
-		SAUROBYTE_INFO_LOG("OpenAL Version: ", alGetString(AL_VERSION));
-
-		ALCint maxMono = 0, maxStereo = 0;
-		alcGetIntegerv(m_device, ALC_MONO_SOURCES, 1, &maxMono);
-		alcGetIntegerv(m_device, ALC_STEREO_SOURCES, 1, &maxStereo);
-		SAUROBYTE_INFO_LOG("OpenAL supports a maximum of ", maxMono, " mono sources.");
-		SAUROBYTE_INFO_LOG("OpenAL supports a maximum of ", maxStereo," stereo sources.");
-		//SAUROBYTE_INFO_LOG("OpenAL opened device: %s", alcGetString(m_device, ALC_DEFAULT_DEVICE_SPECIFIER));
 	}
 	AudioDevice::~AudioDevice()
 	{
-		for(auto itr = m_audioFiles.begin(); itr != m_audioFiles.end(); itr++)
-		{
-			if(alIsBuffer(*itr->second.buffer))
-				alDeleteBuffers(1, itr->second.buffer.get());
-		}
-
-		alcMakeContextCurrent(NULL);
-		alcDestroyContext(m_context);
-		alcCloseDevice(m_device);
+		//for(auto itr = m_audioFiles.begin(); itr != m_audioFiles.end(); itr++)
+		//{
+		//	if(alIsBuffer(*itr->second.buffer))
+		//		alDeleteBuffers(1, itr->second.buffer.get());
+		//}
 	}
 
 	int AudioDevice::getFormatFromChannels(unsigned int channelCount)
@@ -108,11 +87,11 @@ namespace Saurobyte
 		auto itr = m_audioFiles.find(name);
 		if(itr == m_audioFiles.end())
 		{
-			AudioData data;
-			data.fileName = fileName;
-			data.buffer = AudioBufferHandle(new unsigned int(0));
+			//AudioData data;
+			//data.fileName = fileName;
+			//data.buffer = AudioBufferHandle(new unsigned int(0));
 
-			m_audioFiles[name] = data;
+			m_audioFiles[name] = fileName;//data;
 		}
 	}
 
@@ -127,7 +106,7 @@ namespace Saurobyte
 			m_sounds.push_back(
 				std::make_pair(
 					priority,
-					AudioHandle(new AudioStream(newSource, itr->second.fileName))));
+					AudioHandle(new AudioStream(newSource, itr->second))));
 
 			//freeForStream(m_streams.back().get());
 			return m_sounds.back().second;
@@ -148,7 +127,7 @@ namespace Saurobyte
 
 	AudioHandle AudioDevice::createSound(const std::string &name, PriorityType priority)
 	{
-		auto itr = m_audioFiles.find(name);
+		/*auto itr = m_audioFiles.find(name);
 		if(itr != m_audioFiles.end())
 		{
 			// Check if data hasn't been loaded for this file previously
@@ -196,7 +175,7 @@ namespace Saurobyte
 		{
 			SAUROBYTE_WARNING_LOG("Couldn't find any sound by the name '", name, "'");
 			return AudioHandle(new AudioChunk());
-		}
+		}*/
 	}
 	AudioHandle AudioDevice::playSound(const std::string &name, PriorityType priority)
 	{
@@ -209,7 +188,7 @@ namespace Saurobyte
 
 	void AudioDevice::bufferCleanup()
 	{
-		std::size_t buffersRemoved = 0;
+		/*std::size_t buffersRemoved = 0;
 
 		// Clean buffers
 		for(auto itr = m_audioFiles.begin(); itr != m_audioFiles.end(); itr++)
@@ -225,7 +204,7 @@ namespace Saurobyte
 		}
 
 		if(buffersRemoved > 0)
-			SAUROBYTE_DEBUG_LOG("Removed ", buffersRemoved, " audio buffers");
+			SAUROBYTE_DEBUG_LOG("Removed ", buffersRemoved, " audio buffers");*/
 	}
 
 	void AudioDevice::wipeSource(unsigned int source)

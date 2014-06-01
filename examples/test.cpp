@@ -32,6 +32,7 @@
 #include <Saurobyte/Input.hpp>
 #include <Saurobyte/FrameCounter.hpp>
 #include <Saurobyte/Game.hpp>
+#include <Saurobyte/VideoDevice.hpp>
 /*
 #include <Saurobyte/Components/LuaComponent.hpp>
 #include <Saurobyte/Systems/MeshSystem.hpp>
@@ -46,9 +47,10 @@ int main(int argc, const char* argv[]){
 
 
 	Saurobyte::Game game("Hello world", 800, 600, Saurobyte::Window::Normal);
+	Saurobyte::VideoDevice::setBackgroundColor(Saurobyte::Color::Gray);
 	game.start();
 
-	Saurobyte::Vector3f vec(2, 2);
+	/*Saurobyte::Vector3f vec(2, 2);
 	vec = vec * 10.f;
 	SAUROBYTE_INFO_LOG("Initializing test! X=", vec.x, " Y=", vec.y, "Length=", vec.length());
 
@@ -77,7 +79,7 @@ int main(int argc, const char* argv[]){
 	conf.readBool("SauroConf.isCool", val);
 	conf.readInt("SauroConf.window.width", value);
 	SAUROBYTE_INFO_LOG("VAL ", val, " VALUE ", value);
-	conf.save("luaConf.lua");
+	conf.save("luaConf.lua");*/
 
 	/*env.pushArgs(5);
 	env.writeGlobal("TESTERU");

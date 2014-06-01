@@ -56,7 +56,11 @@ namespace Saurobyte
 		 * @param  height     Height of the window
 		 * @param  windowMode Display mode of the window
 		 */
-		explicit Game(const std::string &title, int width, int height, Window::WindowModes windowMode);
+		explicit Game(
+			const std::string &title,
+			unsigned int width,
+			unsigned int height, 
+			Window::WindowModes windowMode = Window::Normal);
 		~Game();
 
 		void start();

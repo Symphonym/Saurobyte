@@ -35,16 +35,20 @@ namespace Saurobyte
 	{
 	public:
 
-		typedef unsigned char ColorComponent;
+		typedef float ColorComponent;
 
 		/**
-		 * Creates a color with the specified RGBA values
-		 * @param  r Red value, 0-255
-		 * @param  g Green value, 0-255
-		 * @param  b Blue value, 0-255
-		 * @param  a Alpha value, 0-255
+		 * Creates a color with all components set to zero except the alpha channel; the color black.
 		 */
-		explicit Color(ColorComponent r, ColorComponent g, ColorComponent b, ColorComponent a = 255);
+		Color();
+		/**
+		 * Creates a color with the specified RGBA values
+		 * @param  r Red value, 0-1
+		 * @param  g Green value, 0-1
+		 * @param  b Blue value, 0-1
+		 * @param  a Alpha value, 0-1
+		 */
+		explicit Color(ColorComponent r, ColorComponent g, ColorComponent b, ColorComponent a = 1.0f);
 
 		ColorComponent r, g, b, a;
 
@@ -60,6 +64,9 @@ namespace Saurobyte
 		const static Color Red;
 		const static Color Green;
 		const static Color Blue;
+		const static Color Black;
+		const static Color White;
+		const static Color Gray;
 
 	};
 };

@@ -24,71 +24,29 @@
  */
 
 
-#include <Saurobyte/Color.hpp>
+#ifndef SAUROBYTE_OPENAL_IMPL_HPP
+#define SAUROBYTE_OPENAL_IMPL_HPP
+
+#include <Saurobyte/ApiDefines.hpp>
+#include <AL/alc.h>
+#include <AL/al.h>
 
 namespace Saurobyte
 {
-	const Color Color::Red = Color(1, 0, 0);
-	const Color Color::Green = Color(0, 1, 0);
-	const Color Color::Blue = Color(0, 0, 1);
-	const Color Color::Black = Color(0, 0, 0);
-	const Color Color::White = Color(1, 1, 1);
-	const Color Color::Gray = Color(0.5f, 0.5f, 0.5f);
-
-	Color::Color()
-		:
-		r(0),
-		g(0),
-		b(0),
-		a(1.0f)
+	namespace internal
 	{
+		class SAUROBYTE_API OpenALImpl
+		{
+		public:
 
-	}
-	Color::Color(ColorComponent newR, ColorComponent newG, ColorComponent newB, ColorComponent newA)
-		:
-		r(newR),
-		g(newG),
-		b(newB),
-		a(newA)
-	{
+			ALCdevice *openALDevice;
+			ALCcontext *openALContext;
 
+			OpenALImpl();
+			~OpenALImpl();
+		};
 	}
+}
 
-	Color Color::operator + (const Color &rhs)
-	{
-		Color color(*this);
-		color.r += rhs.r;
-		color.g += rhs.g;
-		color.b += rhs.b;
-		color.a += rhs.a;
 
-		return color;
-	}
-	Color& Color::operator += (const Color &rhs)
-	{
-		r += rhs.r;
-		g += rhs.g;
-		b += rhs.b;
-		a += rhs.a;
-		return *this;
-	}
-
-	Color Color::operator - (const Color &rhs)
-	{
-		Color color(*this);
-		color.r -= rhs.r;
-		color.g -= rhs.g;
-		color.b -= rhs.b;
-		color.a -= rhs.a;
-
-		return color;
-	}
-	Color& Color::operator -= (const Color &rhs)
-	{
-		r += rhs.r;
-		g += rhs.g;
-		b += rhs.b;
-		a += rhs.a;
-		return *this;
-	}
-};
+#endif
