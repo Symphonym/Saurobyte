@@ -5,18 +5,14 @@
 
 #include <string>
 #include <array>
-#include <SndFile/sndfile.h>
+#include <memory>
 
 namespace Saurobyte
 {
+
 	class AudioStream : public AudioSource
 	{
 	private:
-
-		// File data
-		SNDFILE *m_file;
-		SF_INFO m_fileInfo;
-		std::string m_fileName;
 
 		bool m_loop;
 		float m_duration;
@@ -34,8 +30,8 @@ namespace Saurobyte
 
 	public:
 
-		AudioStream();
-		explicit AudioStream(unsigned int source, const std::string &filePath);
+		//AudioStream();
+		explicit AudioStream(AudioSource::AudioFilePtr audioPtr, std::uint32_t newSource);
 		~AudioStream();
 
 		void setStreamingFile(const std::string &filePath);

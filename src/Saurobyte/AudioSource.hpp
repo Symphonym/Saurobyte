@@ -1,53 +1,35 @@
 #ifndef JL_AUDIOSOURCE_HPP
 #define JL_AUDIOSOURCE_HPP
 
-#include <string>
 #include <Saurobyte/NonCopyable.hpp>
 #include <Saurobyte/Math/Vector3.hpp>
+#include <memory>
+#include <string>
+#include <vector>
+#include <thread>
+#include <cstdint>
 
-class SDL_Thread;
 namespace Saurobyte
 {
+	namespace internal
+	{
+		class AudioFileImpl;
+	}
+
 	class AudioSource : public NonCopyable
 	{
 	public:
+
 		enum AudioStatus
 		{
 			Playing,
 			Paused,
 			Stopped
 		};
-	private:
 
-		friend class AudioDevice;
 
-		// Run by separate thread, keeps track of the audio source
-		int updateData();
-
-		virtual void onUpdate() {};
-
-		virtual void onPlay() {};
-		virtual void onPause() {};
-		virtual void onStop() {};
-
-		// Whether or not the source was generated successfully
-		bool m_isValidSource;
-
-		SDL_Thread *m_thread;
-
-		Vector3f m_position;
-
-	protected:
-
-		// OpenAL source handle
-		unsigned int m_source;
-
-		AudioStatus m_audioStatus;
-
-	public:
-
-		AudioSource();
-		explicit AudioSource(unsigned int source);
+		//AudioSource();
+		explicit AudioSource(std::unique_ptr<internal::AudioFileImpl> filePtr, std::uint32_t newSource);
 		virtual ~AudioSource();
 
 		void play();
@@ -76,6 +58,49 @@ namespace Saurobyte
 
 		// Whether or not the internal OpenAL source is valid
 		bool isValid() const;
+
+
+	protected:
+
+		struct BufferWrapper
+		{
+			std::uint32_t buffer;
+			BufferWrapper();
+			~BufferWrapper();
+		};
+
+		typedef std::unique_ptr<internal::AudioFileImpl> AudioFilePtr;
+
+		// OpenAL source handle
+		//unsigned int m_source;
+		std::uint32_t m_source;
+		std::unique_ptr<internal::AudioFileImpl> m_file;
+
+		AudioStatus m_audioStatus;
+
+	private:
+
+		friend class AudioDevice;
+
+		// Run by separate thread, keeps track of the audio source
+		int updateData();
+
+		virtual void onUpdate() {};
+
+		virtual void onPlay() {};
+		virtual void onPause() {};
+		virtual void onStop() {};
+
+		// Whether or not the source was generated successfully
+		bool m_isValidSource;
+
+		std::uint32_t invalidate();
+
+		//SDL_Thread *m_thread;
+		std::thread m_thread;
+
+		Vector3f m_position;
+
 	};
 };
 

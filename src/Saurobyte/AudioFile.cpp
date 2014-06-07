@@ -50,7 +50,7 @@ namespace Saurobyte
 	{
 		// Close any previously loaded file (only applies to 
 		// streamed files since loaded files close after reading the file)
-		if(m_hasLoadedFile && m_readingType == ReadingTypes::Stream)
+		/*if(m_hasLoadedFile && m_readingType == ReadingTypes::Stream)
 		{
 			stop(); // Don't read new data more stopping the current file
 			sf_close(m_file);
@@ -119,7 +119,7 @@ namespace Saurobyte
 			fillBuffers();
 		}
 
-		return true;
+		return true;*/
 	}
 
 	void AudioFile::play()
@@ -234,7 +234,7 @@ namespace Saurobyte
 	void AudioFile::fillBuffers()
 	{
 		// Load second chunks of data
-		std::size_t sampleSecondCount = m_fileInfo.channels*m_fileInfo.samplerate;
+		/*std::size_t sampleSecondCount = m_fileInfo.channels*m_fileInfo.samplerate;
 
 		std::vector<ALshort> fileData(sampleSecondCount);
 
@@ -250,13 +250,13 @@ namespace Saurobyte
 				m_fileInfo.samplerate);
 
 		}
-		alSourceQueueBuffers(m_source, StreamBufferCount, &m_buffers[0]);
+		alSourceQueueBuffers(m_source, StreamBufferCount, &m_buffers[0]);*/
 
 	}
 	void AudioFile::updateData()
 	{
 		
-		ALint processedBuffers = 0, state = 0;
+		/*ALint processedBuffers = 0, state = 0;
 		alGetSourcei(m_source, AL_SOURCE_STATE, &state);
 		alGetSourcei(m_source, AL_BUFFERS_PROCESSED, &processedBuffers);
 
@@ -314,7 +314,7 @@ namespace Saurobyte
 
 			alGetSourcei(m_source, AL_BUFFERS_PROCESSED, &processedBuffers);
 			alGetSourcei(m_source, AL_SOURCE_STATE, &state);
-		}
+		}*/
 	}
 
 };

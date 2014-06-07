@@ -2,47 +2,45 @@
 #include <Saurobyte/AudioDevice.hpp>
 #include <Saurobyte/Logger.hpp>
 #include <AL/al.h>
+#include <Saurobyte/AudioFileImpl.hpp>
 #include <vector>
 
 namespace Saurobyte
 {
 
-	AudioStream::AudioStream()
+	//AudioStream::AudioStream()
+	//	:
+	//	m_file(nullptr),
+	//	m_fileInfo(),
+	//	m_fileName(""),
+	//	m_loop(false),
+	///	m_duration(0)
+	//{
+//	}
+	AudioStream::AudioStream(AudioSource::AudioFilePtr audioPtr, std::uint32_t newSource)
 		:
-		m_file(nullptr),
-		m_fileInfo(),
-		m_fileName(""),
+		AudioSource(std::move(audioPtr), newSource),
 		m_loop(false),
 		m_duration(0)
 	{
-	}
-	AudioStream::AudioStream(unsigned int source, const std::string &filePath)
-		:
-		AudioSource(source),
-		m_file(nullptr),
-		m_fileInfo(),
-		m_fileName(filePath),
-		m_loop(false),
-		m_duration(0)
-	{
-		alGenBuffers(m_buffers.size(), &m_buffers[0]);
+		//alGenBuffers(m_buffers.size(), &m_buffers[0]);
 
-		setStreamingFile(filePath);
+		//setStreamingFile(filePath);
 	}
 	AudioStream::~AudioStream()
 	{
-		alDeleteBuffers(m_buffers.size(), &m_buffers[0]);
+		//alDeleteBuffers(m_buffers.size(), &m_buffers[0]);
 
-		if(m_file != nullptr)
-		{
-			sf_close(m_file);
-			m_file = nullptr;
-		}
+		//if(m_file != nullptr)
+		//{
+		//	sf_close(m_file);
+		//	m_file = nullptr;
+		//}
 	}
 
 	void AudioStream::setStreamingFile(const std::string &filePath)
 	{
-		stop();
+		/*stop();
 
 		// Remove any buffers queued onto the source
 		alSourcei(m_source, AL_BUFFER, 0);
@@ -63,7 +61,7 @@ namespace Saurobyte
 		m_duration = static_cast<float>(m_fileInfo.frames)/static_cast<float>(m_fileInfo.samplerate);
 
 		if(m_file != nullptr)
-			fillBuffers();
+			fillBuffers();*/
 	}
 
 	void AudioStream::setLooping(bool looping)
@@ -91,7 +89,7 @@ namespace Saurobyte
 
 	void AudioStream::onUpdate()
 	{
-		ALint processedBuffers = 0;
+		/*ALint processedBuffers = 0;
 		alGetSourcei(m_source, AL_BUFFERS_PROCESSED, &processedBuffers);
 
 		// Process finished buffers
@@ -134,14 +132,14 @@ namespace Saurobyte
 		
 
 			--processedBuffers;
-		}
+		}*/
 	}
 
 
 	void AudioStream::fillBuffers()
 	{
 		// Load second chunks of data
-		std::size_t sampleSecondCount = m_fileInfo.channels*m_fileInfo.samplerate;
+		/*std::size_t sampleSecondCount = m_fileInfo.channels*m_fileInfo.samplerate;
 
 		std::vector<ALshort> fileData(sampleSecondCount);
 
@@ -157,6 +155,6 @@ namespace Saurobyte
 				m_fileInfo.samplerate);
 
 		}
-		alSourceQueueBuffers(m_source, StreamBufferCount, &m_buffers[0]);
+		alSourceQueueBuffers(m_source, StreamBufferCount, &m_buffers[0]);*/
 	}
 };

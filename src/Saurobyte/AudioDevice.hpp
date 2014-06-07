@@ -32,8 +32,6 @@
 #include <Saurobyte/Priority.hpp>
 #include <string>
 #include <memory>
-#include <AL/alc.h>
-#include <AL/al.h>
 
 
 namespace Saurobyte
@@ -59,8 +57,6 @@ namespace Saurobyte
 		// Add channel support
 		// store audio etc values by mapped channel names
 		// set these values to audios put in that channel TODO
-
-		static int getFormatFromChannels(unsigned int channelCount);
 
 		static void registerAudio(const std::string &fileName, const std::string &name);
 
@@ -90,13 +86,13 @@ namespace Saurobyte
 		static void bufferCleanup();
 
 		// Grabs an OpenAL source handle to use
-		static unsigned int grabAudioSource();
+		static std::uint32_t grabAudioSource();
 
 		// Finds the least important source that is currently active
-		static unsigned int leastImportantSource();
+		static std::uint32_t leastImportantSource();
 
 		// Wipe the specified source's data to default
-		static void wipeSource(unsigned int source);
+		static void wipeSource(std::uint32_t source);
 	};
 };
 

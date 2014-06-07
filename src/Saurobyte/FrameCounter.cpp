@@ -24,6 +24,7 @@ namespace Saurobyte
 			std::this_thread::sleep_for(FrameClock::duration(calculatedCurTick - curTick));
 			curTick = FrameClock::now(); // Update curTick post-sleep
 		}
+		// TODO use sleep_until instead
 
 		// Calculate fps and deltaTime converting from nanoseconds to seconds
 		FrameClock::duration tickDuration = curTick - m_lastTick;

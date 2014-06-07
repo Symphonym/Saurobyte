@@ -4,29 +4,32 @@
 #include <AL/al.h>
 #include <Saurobyte/Logger.hpp>
 #include <Saurobyte/AudioDevice.hpp>
+#include <Saurobyte/AudioFileImpl.hpp>
 
 namespace Saurobyte
 {
-	AudioSource::AudioSource()
+	//AudioSource::AudioSource()
+	//	:
+	//	m_isValidSource(false),
+	//	m_thread(nullptr),
+	//	m_position(0,0,0),
+	//	m_source(0),
+	//	m_audioStatus(AudioStatus::Stopped)
+	//{
+
+	//}
+	AudioSource::AudioSource(AudioFilePtr audioFilePtr, std::uint32_t newSource)
 		:
 		m_isValidSource(false),
-		m_thread(nullptr),
+		m_thread(),
 		m_position(0,0,0),
-		m_source(0),
-		m_audioStatus(AudioStatus::Stopped)
-	{
-
-	}
-	AudioSource::AudioSource(unsigned int source)
-		:
-		m_isValidSource(true),
-		m_thread(nullptr),
-		m_position(0,0,0),
-		m_source(source),
+		m_source(newSource),
+		m_file(std::move(audioFilePtr)),
 		m_audioStatus(AudioStatus::Stopped)
 	{
 		// Create source
 		//revalidateSource();
+		m_isValidSource = m_file->isOpen();
 	}
 
 	AudioSource::~AudioSource()
@@ -34,17 +37,26 @@ namespace Saurobyte
 		stop();
 
 		if(alIsSource(m_source) && m_isValidSource)
-		{
 			alDeleteSources(1, &m_source);
-			m_isValidSource = false; // Just because
-		}
+	}
+
+	std::uint32_t AudioSource::invalidate()
+	{
+		stop();
+		m_file->close();
+		m_isValidSource = false;
+
+		std::uint32_t tempSource = m_source;
+		m_source = 0;
+
+		return tempSource;
 	}
 
 	void AudioSource::play()
 	{
 		if(m_isValidSource && !isPlaying())
 		{
-			auto threadFunc = [] (void *data) -> int
+			/*auto threadFunc = [] (void *data) -> int
 			{	
 				AudioSource *audio = static_cast<AudioSource*>(data);
 				int returnValue = audio->updateData();
@@ -54,12 +66,14 @@ namespace Saurobyte
 				//if(returnValue == 0)
 
 				return returnValue;
-			};
+			};*/
 			m_audioStatus = AudioSource::Playing;
 
 			alSourcePlay(m_source);
 			std::string threadName = "AudioSource(" + std::to_string(m_source) + ")";
-			m_thread = SDL_CreateThread(threadFunc, threadName.c_str(), this);
+
+			m_thread = std::thread(&AudioSource::updateData, this);
+			//m_thread = SDL_CreateThread(threadFunc, threadName.c_str(), this);
 			onPlay();
 		}
 	}
@@ -77,7 +91,8 @@ namespace Saurobyte
 		if(m_isValidSource && (isPlaying() || m_audioStatus == AudioStatus::Paused))
 		{
 			m_audioStatus = AudioSource::Stopped;
-			SDL_WaitThread(m_thread, NULL);
+			m_thread.join();
+			//SDL_WaitThread(m_thread, NULL);
 			alSourceStop(m_source);
 			onStop();
 		}
@@ -173,5 +188,20 @@ namespace Saurobyte
 	bool AudioSource::isValid() const
 	{
 		return m_isValidSource;
+	}
+
+
+
+
+
+	AudioSource::BufferWrapper::BufferWrapper()
+		:
+		buffer(0)
+	{
+		alGenBuffers(1, &buffer);
+	}
+	AudioSource::BufferWrapper::~BufferWrapper()
+	{
+		alDeleteBuffers(1, &buffer);
 	}
 };

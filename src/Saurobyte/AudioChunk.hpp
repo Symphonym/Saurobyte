@@ -35,31 +35,12 @@
 namespace Saurobyte
 {
 
-	// Audio buffer handle used for statically played sounds in order
-	// to keep track of how many AudioChunks that are using the buffer.
-	typedef std::shared_ptr<unsigned int> AudioBufferHandle;
-
-	namespace internal
-	{
-		template<unsigned int bufferCount> class AudioImpl;
-	};
-
 	class AudioChunk : public AudioSource
 	{
-	private:
-
-		// OpenAL buffer handle
-		AudioBufferHandle m_buffer;
-
-		std::string m_fileName;
-		float m_duration;
 
 	public:
 
-		AudioChunk();
-		explicit AudioChunk(unsigned int source, AudioBufferHandle buffer, const std::string &fileName);
-
-		void setBuffer(AudioBufferHandle buffer, const std::string &filePath);
+		~AudioChunk();
 
 		virtual void setLooping(bool looping);
 		virtual void setOffset(float secondOffset);
@@ -68,7 +49,15 @@ namespace Saurobyte
 		virtual float getDuration() const;
 		virtual bool isLooping() const;
 
-		std::string getFileName() const;
+	private:
+
+		// Only the AudioDevice can create AudioChunk's
+		friend class AudioDevice;
+		explicit AudioChunk(AudioSource::AudioFilePtr audioPtr, std::uint32_t newSource);
+
+		// OpenAL buffer handle
+		AudioSource::BufferWrapper m_buffer;
+		float m_duration;
 
 	};
 };

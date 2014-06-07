@@ -2,71 +2,69 @@
 #include <AL/al.h>
 #include <SDL2/SDL_timer.h>
 #include <Saurobyte/Logger.hpp>
+#include <Saurobyte/AudioFileImpl.hpp>
 
 namespace Saurobyte
 {
 
-	AudioChunk::AudioChunk()
+	AudioChunk::AudioChunk(AudioSource::AudioFilePtr audioPtr, std::uint32_t newSource)
 		:
-		m_buffer(0),
-		m_fileName(""),
+		AudioSource(std::move(audioPtr), newSource),
 		m_duration(0)
 	{
+		//m_buffer->open(filePath);
+		//m_buffer->readFileIntoBuffer(m_buffer->buffers[0].buffer);
+		//m_buffer->close();
+		//m_file->readFileIntoBuffer()
+		//m_buffer = AudioSource::ALBufferPtr(new internal::ALBufferWrapper());
+		//m_file.readFileIntoBuffer(m_buffer->buffer);
+		//m_file.close();
+		if(isValid())
+		{
+			m_file->readFileIntoBuffer(m_buffer.buffer);
+			m_file->close();
+			alSourceQueueBuffers(m_source, 1, &m_buffer.buffer);
+
+			m_duration = 
+				m_file->getFileInfo().frames / m_file->getFileInfo().samplerate;
+
+			SAUROBYTE_INFO_LOG("DURATION ", m_duration, "s");
+			//float sampleLength = (byteSize * 8) / (channelCount * bitPerSample);
+		//m_duration = sampleLength / static_cast<float>(frequency);*/
+		}
+
+
+		// Queue our buffer
+		//alSourceQueueBuffers(m_source, 1, &m_buffer->buffers[0].buffer);
 
 	}
-	AudioChunk::AudioChunk(unsigned int source, AudioBufferHandle buffer, const std::string &fileName)
-		:
-		AudioSource(source),
-		m_buffer(buffer),
-		m_fileName(fileName),
-		m_duration(0)
+	AudioChunk::~AudioChunk()
 	{
-		// Queue our buffer
-		alSourceQueueBuffers(m_source, 1, buffer.get());
-
-	}
-
-	void AudioChunk::setBuffer(AudioBufferHandle buffer, const std::string &filePath)
-	{
-		stop();
-		alSourcei(m_source, AL_BUFFER, 0);
-
-		m_buffer = buffer;
-		m_fileName = filePath;
-
-		// Queue our buffer
-		alSourceQueueBuffers(m_source, 1, buffer.get());
-
-		// Calculate length from buffer data
-		ALint byteSize = 0;
-		ALint channelCount = 0;
-		ALint bitPerSample = 0;
-		ALint frequency = 0;
-
-		alGetBufferi(*buffer, AL_SIZE, &byteSize);
-		alGetBufferi(*buffer, AL_CHANNELS, &channelCount);
-		alGetBufferi(*buffer, AL_BITS, &bitPerSample);
-		alGetBufferi(*buffer, AL_FREQUENCY, &frequency);
-
-		float sampleLength = (byteSize * 8) / (channelCount * bitPerSample);
-		m_duration = sampleLength / static_cast<float>(frequency);
 	}
 
 	void AudioChunk::setLooping(bool looping)
 	{
-		alSourcei(m_source, AL_LOOPING, looping ? AL_TRUE : AL_FALSE);
+		if(isValid())
+			alSourcei(m_source, AL_LOOPING, looping ? AL_TRUE : AL_FALSE);
 	}
 	void AudioChunk::setOffset(float secondOffset)
 	{
-		alSourcef(m_source, AL_SEC_OFFSET, secondOffset);
+		if(isValid())
+			alSourcef(m_source, AL_SEC_OFFSET, secondOffset);
 	}
 
 	float AudioChunk::getOffset() const
 	{
-		ALfloat seconds = 0;
-		alGetSourcef(m_source, AL_SEC_OFFSET, &seconds);
+		if(isValid())
+		{
+			ALfloat seconds = 0;
+			alGetSourcef(m_source, AL_SEC_OFFSET, &seconds);
 
-		return seconds;
+			return seconds;
+		}
+		else
+			return -1;
+	
 	}
 	float AudioChunk::getDuration() const
 	{
@@ -74,14 +72,14 @@ namespace Saurobyte
 	}
 	bool AudioChunk::isLooping() const
 	{
-		ALint looping = 0;
-		alGetSourcei(m_source, AL_LOOPING, &looping);
+		if(isValid())
+		{
+			ALint looping = 0;
+			alGetSourcei(m_source, AL_LOOPING, &looping);
 
-		return looping;
-	}
-
-	std::string AudioChunk::getFileName() const
-	{
-		return m_fileName;
+			return looping;
+		}
+		else
+			return false;
 	}
 };
