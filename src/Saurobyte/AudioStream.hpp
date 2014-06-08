@@ -15,7 +15,6 @@ namespace Saurobyte
 	private:
 
 		bool m_loop;
-		float m_duration;
 
 		// How many buffers to use when streaming
 		static const unsigned char StreamBufferCount = 3;
@@ -37,10 +36,9 @@ namespace Saurobyte
 		void setStreamingFile(const std::string &filePath);
 
 		virtual void setLooping(bool looping);
-		virtual void setOffset(float secondOffset);
+		virtual void setOffset(Time offset);
 
-		virtual float getOffset() const;
-		virtual float getDuration() const;
+		virtual Time getOffset() const;
 		bool isLooping() const;
 	};
 };

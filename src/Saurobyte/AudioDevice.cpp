@@ -339,8 +339,8 @@ namespace Saurobyte
 		std::sort(m_sounds.begin(), m_sounds.begin() + furthestDistanceCount,
 			[](const SoundData &lhs, const SoundData &rhs) -> bool
 			{
-				return (lhs.second->getDuration()-lhs.second->getOffset()) <
-					(rhs.second->getDuration()-rhs.second->getOffset());
+				return (lhs.second->getDuration().asSeconds()-lhs.second->getOffset().asSeconds()) <
+					(rhs.second->getDuration().asSeconds()-rhs.second->getOffset().asSeconds());
 			});
 
 		// The sound at the bottom of the sorted list will be used no matter what,

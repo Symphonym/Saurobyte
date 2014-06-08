@@ -20,8 +20,7 @@ namespace Saurobyte
 	AudioStream::AudioStream(AudioSource::AudioFilePtr audioPtr, std::uint32_t newSource)
 		:
 		AudioSource(std::move(audioPtr), newSource),
-		m_loop(false),
-		m_duration(0)
+		m_loop(false)
 	{
 		//alGenBuffers(m_buffers.size(), &m_buffers[0]);
 
@@ -68,18 +67,14 @@ namespace Saurobyte
 	{
 		m_loop = looping;
 	}
-	void AudioStream::setOffset(float secondOffset)
+	void AudioStream::setOffset(Time offset)
 	{
 		//TODO alSourcef(m_source, AL_SEC_OFFSET, secondOffset);
 	}
 
-	float AudioStream::getOffset() const
+	Time AudioStream::getOffset() const
 	{
-		return 0;
-	}
-	float AudioStream::getDuration() const
-	{
-		return m_duration;
+		//return 0;
 	}
 	bool AudioStream::isLooping() const
 	{

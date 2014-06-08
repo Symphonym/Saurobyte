@@ -30,6 +30,13 @@ namespace Saurobyte
 		// Create source
 		//revalidateSource();
 		m_isValidSource = m_file->isOpen();
+
+		unsigned int sampleCount = m_file->getFileInfo().frames*m_file->getFileInfo().channels;
+
+		m_duration = Saurobyte::seconds(
+			(static_cast<float>(sampleCount) / 
+			static_cast<float>(m_file->getFileInfo().samplerate)) /
+			static_cast<float>(m_file->getFileInfo().channels));
 	}
 
 	AudioSource::~AudioSource()
@@ -164,6 +171,10 @@ namespace Saurobyte
 			alSourcef(m_source, AL_GAIN, volume);
 	}
 
+	const Time& AudioSource::getDuration() const
+	{
+		return m_duration;
+	}
 	float AudioSource::getVolume() const
 	{
 		if(m_isValidSource)

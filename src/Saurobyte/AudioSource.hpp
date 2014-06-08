@@ -3,9 +3,9 @@
 
 #include <Saurobyte/NonCopyable.hpp>
 #include <Saurobyte/Math/Vector3.hpp>
+#include <Saurobyte/Time.hpp>
 #include <memory>
 #include <string>
-#include <vector>
 #include <thread>
 #include <cstdint>
 
@@ -45,12 +45,12 @@ namespace Saurobyte
 
 		// AudioSources must implement their own functionality in the following
 		virtual void setLooping(bool looping) = 0;
-		virtual void setOffset(float secondOffset) = 0;
+		virtual void setOffset(Time offset) = 0;
 
-		virtual float getOffset() const = 0;
-		virtual float getDuration() const = 0;
+		virtual Time getOffset() const = 0;
 		virtual bool isLooping() const = 0;
 
+		const Time& getDuration() const;
 		float getVolume() const;
 		const Vector3f& getPosition() const;
 
@@ -98,6 +98,7 @@ namespace Saurobyte
 
 		//SDL_Thread *m_thread;
 		std::thread m_thread;
+		Time m_duration;
 
 		Vector3f m_position;
 

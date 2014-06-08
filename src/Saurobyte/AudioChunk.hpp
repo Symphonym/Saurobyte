@@ -43,10 +43,9 @@ namespace Saurobyte
 		~AudioChunk();
 
 		virtual void setLooping(bool looping);
-		virtual void setOffset(float secondOffset);
+		virtual void setOffset(Time offset);
 
-		virtual float getOffset() const;
-		virtual float getDuration() const;
+		Time getOffset() const;
 		virtual bool isLooping() const;
 
 	private:
@@ -57,7 +56,6 @@ namespace Saurobyte
 
 		// OpenAL buffer handle
 		AudioSource::BufferWrapper m_buffer;
-		float m_duration;
 
 	};
 };
