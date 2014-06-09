@@ -25,6 +25,11 @@ namespace Saurobyte
 		//alGenBuffers(m_buffers.size(), &m_buffers[0]);
 
 		//setStreamingFile(filePath);
+		for(std::size_t i = 0; i < m_buffers.size(); i++)
+		{
+			m_file->readSecondIntoBuffer(m_buffers[i].buffer);
+			alSourceQueueBuffers(m_source, 1, &m_buffers[i].buffer);
+		}
 	}
 	AudioStream::~AudioStream()
 	{
@@ -69,6 +74,16 @@ namespace Saurobyte
 	}
 	void AudioStream::setOffset(Time offset)
 	{
+		stop();
+		alSourceRewind(m_source);
+		alSourcei(m_source, AL_BUFFER, 0); // Clear buffers
+
+		m_file->setReadingOffset(offset.asSeconds());
+		for(std::size_t i = 0; i < m_buffers.size(); i++)
+		{
+			m_file->readSecondIntoBuffer(m_buffers[i].buffer);
+			alSourceQueueBuffers(m_source, 1, &m_buffers[i].buffer);
+		}
 		//TODO alSourcef(m_source, AL_SEC_OFFSET, secondOffset);
 	}
 
@@ -84,7 +99,7 @@ namespace Saurobyte
 
 	void AudioStream::onUpdate()
 	{
-		/*ALint processedBuffers = 0;
+		ALint processedBuffers = 0;
 		alGetSourcei(m_source, AL_BUFFERS_PROCESSED, &processedBuffers);
 
 		// Process finished buffers
@@ -100,7 +115,9 @@ namespace Saurobyte
 			alSourceUnqueueBuffers(m_source, 1, &buffer);
 
 			// Read a 1s chunk of data
-			int sampleSecondCount = m_fileInfo.channels*m_fileInfo.samplerate;
+			m_file->readSecondIntoBuffer(buffer);
+			alSourceQueueBuffers(m_source, 1, &buffer);
+			/*int sampleSecondCount = m_fileInfo.channels*m_fileInfo.samplerate;
 			std::vector<ALshort> fileData(sampleSecondCount);
 			int readCount = sf_read_short(m_file, &fileData[0], sampleSecondCount);
 
@@ -123,11 +140,11 @@ namespace Saurobyte
 					sizeof(ALushort)*sampleSecondCount,
 					m_fileInfo.samplerate);
 				alSourceQueueBuffers(m_source, 1, &buffer);
-			}
+			}*/
 		
 
 			--processedBuffers;
-		}*/
+		}
 	}
 
 

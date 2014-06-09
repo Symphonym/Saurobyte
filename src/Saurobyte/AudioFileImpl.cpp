@@ -69,6 +69,10 @@ namespace Saurobyte
 			return m_file != NULL;
 		}
 
+		void AudioFileImpl::setReadingOffset(float seconds)
+		{
+			sf_seek(m_file, m_fileInfo.channels*m_fileInfo.samplerate*seconds, SEEK_SET);
+		}
 		void AudioFileImpl::readSecondIntoBuffer(ALuint buffer, bool allowLooping)
 		{
 			// Read one second chunk of data

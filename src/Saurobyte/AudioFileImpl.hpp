@@ -51,6 +51,12 @@ namespace Saurobyte
 			bool isOpen() const;
 
 			/**
+			 * Sets the offset of the reading head the specified amount of seconds into the audio file
+			 * @param seconds Offset in seconds into the audio file, starting from the beginning
+			 */
+			void setReadingOffset(float seconds);
+
+			/**
 			 * Reads from the currently opened file one second worth of audio data
 			 * @param buffer       The buffer in which to store the audio data
 			 * @param allowLooping If set to true, if less than one second of data was read it moves to the beginning of the file

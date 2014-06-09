@@ -51,9 +51,9 @@ int main(int argc, const char* argv[]){
 	Saurobyte::Game game("Hello world", 800, 600, Saurobyte::Window::Normal);
 	Saurobyte::VideoDevice::setBackgroundColor(Saurobyte::Color::Gray);
 
-	Saurobyte::AudioHandle handle = Saurobyte::AudioDevice::playSound("./Ove Melaa - ItaloLoopDikkoDikko_1.ogg");
+	Saurobyte::AudioHandle handle = Saurobyte::AudioDevice::playStream("./Ove Melaa - ItaloLoopDikkoDikko_1.ogg");
 	SAUROBYTE_INFO_LOG("IS VALID ", handle->isValid(), " Seconderu file ", handle->getDuration().asSeconds());
-	handle->setOffset(Saurobyte::nanoseconds(9587586588));
+	handle->setOffset(Saurobyte::seconds(5));
 	game.start();
 
 	/*Saurobyte::Vector3f vec(2, 2);

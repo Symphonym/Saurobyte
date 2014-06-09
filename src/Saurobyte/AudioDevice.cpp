@@ -55,6 +55,35 @@ namespace Saurobyte
 
 	AudioHandle AudioDevice::createStream(const std::string &name, PriorityType priority)
 	{
+		auto itr = m_audioFiles.find(name);
+		std::string fileName = name;
+
+		if(itr != m_audioFiles.end())
+			fileName = itr->second;
+
+		AudioSource::AudioFilePtr filePtr(new internal::AudioFileImpl());
+		filePtr->open(fileName);
+
+		std::uint32_t newSource = 0;
+
+		// If the sound wasen't given a file, it will not be given a source since it
+		// would be wasteful. (The AudioSource is invalid)
+		if(filePtr->isOpen())
+			newSource = grabAudioSource();
+
+		AudioHandle handle = AudioHandle(new AudioStream(std::move(filePtr), newSource));
+
+		// Valid sounds are stored in the audio device and returned
+		if(handle->isValid())
+		{
+			m_sounds.push_back(std::make_pair(priority, handle));
+			return m_sounds.back().second;
+		}
+
+		// Invalid sounds are simply returned since they don't contain a valid
+		// source which could be reused.
+		else
+			return handle;
 		/*auto itr = m_audioFiles.find(name);
 		if(itr != m_audioFiles.end())
 		{

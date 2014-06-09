@@ -16,11 +16,8 @@ namespace Saurobyte
 
 		bool m_loop;
 
-		// How many buffers to use when streaming
-		static const unsigned char StreamBufferCount = 3;
-
 		// Array of OpenAL buffer handles
-		std::array<unsigned int, StreamBufferCount> m_buffers;
+		std::array<AudioSource::BufferWrapper, 3> m_buffers;
 
 		// Handles the streaming
 		virtual void onUpdate();
