@@ -69,10 +69,7 @@ namespace Saurobyte
 		// If the sound wasen't given a file, it will not be given a source since it
 		// would be wasteful. (The AudioSource is invalid)
 		if(filePtr->isOpen())
-		{
-			SAUROBYTE_INFO_LOG("IS OPENERU");
 			newSource = grabAudioSource();
-		}
 
 		AudioHandle handle = AudioHandle(new AudioStream(std::move(filePtr), newSource));
 
@@ -87,25 +84,6 @@ namespace Saurobyte
 		// source which could be reused.
 		else
 			return handle;
-		/*auto itr = m_audioFiles.find(name);
-		if(itr != m_audioFiles.end())
-		{
-			unsigned int newSource = grabAudioSource();
-
-			// Create new stream
-			m_sounds.push_back(
-				std::make_pair(
-					priority,
-					AudioHandle(new AudioStream(newSource, itr->second))));
-
-			//freeForStream(m_streams.back().get());
-			return m_sounds.back().second;
-		}
-		else
-		{
-			SAUROBYTE_WARNING_LOG("Couldn't find any stream by the name '", name, "'");
-			return AudioHandle(new AudioStream());
-		}*/
 	}
 	AudioHandle AudioDevice::playStream(const std::string &name, PriorityType priority)
 	{
@@ -146,56 +124,6 @@ namespace Saurobyte
 		// source which could be reused.
 		else
 			return handle;
-
-		/*auto itr = m_audioFiles.find(name);
-		if(itr != m_audioFiles.end())
-		{
-			// Check if data hasn't been loaded for this file previously
-			if(!alIsBuffer(*itr->second.buffer) || *itr->second.buffer == 0)
-			{
-				// Open file and save initial data
-				SF_INFO fileInfo;
-				SNDFILE *file = sf_open(itr->second.fileName.c_str(), SFM_READ, &fileInfo);
-
-				if(file == NULL)
-				{
-					SAUROBYTE_WARNING_LOG("Could not open audio file '", itr->second.fileName, "'");
-					return AudioHandle(new AudioChunk());
-				}
-
-				// Create new buffer
-				alGenBuffers(1, itr->second.buffer.get());
-
-				// Read whole file
-				int sampleCount = fileInfo.frames * fileInfo.channels;
-				std::vector<ALshort> fileData(sampleCount);
-				sf_read_short(file, &fileData[0], sampleCount);
-				alBufferData(
-					*itr->second.buffer,
-					AudioDevice::getFormatFromChannels(fileInfo.channels),
-					&fileData[0],
-					sampleCount*sizeof(ALushort),
-					fileInfo.samplerate);
-
-				sf_close(file);
-			}
-
-			unsigned int newSource = grabAudioSource();
-
-			m_sounds.push_back(
-				std::make_pair(
-					priority,
-					AudioHandle(new AudioChunk(newSource, itr->second.buffer, itr->second.fileName))
-				));
-
-			return m_sounds.back().second;
-
-		}
-		else
-		{
-			SAUROBYTE_WARNING_LOG("Couldn't find any sound by the name '", name, "'");
-			return AudioHandle(new AudioChunk());
-		}*/
 	}
 	AudioHandle AudioDevice::playSound(const std::string &name, PriorityType priority)
 	{
