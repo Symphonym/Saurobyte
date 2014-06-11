@@ -71,7 +71,7 @@ namespace Saurobyte
 
 		void AudioFileImpl::setReadingOffset(float seconds)
 		{
-			sf_seek(m_file, m_fileInfo.channels*m_fileInfo.samplerate*seconds, SEEK_SET);
+			sf_seek(m_file, m_fileInfo.samplerate*seconds, SEEK_SET);
 		}
 		void AudioFileImpl::readSecondIntoBuffer(ALuint buffer, bool allowLooping)
 		{
@@ -79,6 +79,7 @@ namespace Saurobyte
 			int sampleSecondCount = m_fileInfo.channels*m_fileInfo.samplerate;
 			std::vector<ALshort> fileData(sampleSecondCount);
 			int readCount = sf_read_short(m_file, &fileData[0], sampleSecondCount);
+			SAUROBYTE_INFO_LOG("READ NORMAL ", readCount);
 
 			// Not enough data was read
 			if(readCount < sampleSecondCount && allowLooping)
@@ -90,7 +91,9 @@ namespace Saurobyte
 				while(readCount < sampleSecondCount)
 				{
 					int leftToRead = sampleSecondCount - readCount;
-					int newReadCount = sf_read_short(m_file, &fileData[0], leftToRead);
+					int newReadCount = sf_read_short(m_file, fileData.data() + readCount, leftToRead);
+
+					SAUROBYTE_INFO_LOG("READ SPECIAL ", newReadCount, " SHOLD READ ", leftToRead);
 
 					readCount += newReadCount;
 

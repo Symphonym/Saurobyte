@@ -98,7 +98,12 @@ namespace Saurobyte
 		if(m_isValidSource && (isPlaying() || m_audioStatus == AudioStatus::Paused))
 		{
 			m_audioStatus = AudioSource::Stopped;
-			m_thread.join();
+
+			if(m_thread.joinable())
+				m_thread.join();
+
+			m_file->setReadingOffset(0);
+
 			//SDL_WaitThread(m_thread, NULL);
 			alSourceStop(m_source);
 			onStop();

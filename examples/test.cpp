@@ -34,6 +34,7 @@
 #include <Saurobyte/Game.hpp>
 #include <Saurobyte/VideoDevice.hpp>
 #include <Saurobyte/AudioDevice.hpp>
+#include <Saurobyte/AudioListener.hpp>
 #include <Saurobyte/Time.hpp>
 /*
 #include <Saurobyte/Components/LuaComponent.hpp>
@@ -51,9 +52,18 @@ int main(int argc, const char* argv[]){
 	Saurobyte::Game game("Hello world", 800, 600, Saurobyte::Window::Normal);
 	Saurobyte::VideoDevice::setBackgroundColor(Saurobyte::Color::Gray);
 
-	Saurobyte::AudioHandle handle = Saurobyte::AudioDevice::playStream("./Ove Melaa - ItaloLoopDikkoDikko_1.ogg");
+	Saurobyte::AudioListener::setVolume(0.5f);
+	Saurobyte::AudioHandle handle = Saurobyte::AudioDevice::createStream("./Ove Melaa - ItaloLoopDikkoDikko_1.ogg");
+	handle->setLooping(true);
+	Saurobyte::AudioHandle handle2 = Saurobyte::AudioDevice::createSound("./Ove Melaa - ItaloLoopDikkoDikko_1.ogg");
+	handle2->setLooping(true);
+
+	handle->setOffset(Saurobyte::seconds(12.37));
+	handle2->setOffset(Saurobyte::seconds(12.37));
+
+	handle->play();
+	handle2->play();
 	SAUROBYTE_INFO_LOG("IS VALID ", handle->isValid(), " Seconderu file ", handle->getDuration().asSeconds());
-	handle->setOffset(Saurobyte::seconds(5));
 	game.start();
 
 	/*Saurobyte::Vector3f vec(2, 2);

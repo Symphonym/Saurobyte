@@ -22,15 +22,10 @@ namespace Saurobyte
 		// Handles the streaming
 		virtual void onUpdate();
 
-		void fillBuffers();
-
 	public:
 
-		//AudioStream();
 		explicit AudioStream(AudioSource::AudioFilePtr audioPtr, std::uint32_t newSource);
 		~AudioStream();
-
-		void setStreamingFile(const std::string &filePath);
 
 		virtual void setLooping(bool looping);
 		virtual void setOffset(Time offset);

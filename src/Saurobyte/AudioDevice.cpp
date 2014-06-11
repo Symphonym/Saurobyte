@@ -69,7 +69,10 @@ namespace Saurobyte
 		// If the sound wasen't given a file, it will not be given a source since it
 		// would be wasteful. (The AudioSource is invalid)
 		if(filePtr->isOpen())
+		{
+			SAUROBYTE_INFO_LOG("IS OPENERU");
 			newSource = grabAudioSource();
+		}
 
 		AudioHandle handle = AudioHandle(new AudioStream(std::move(filePtr), newSource));
 
@@ -244,19 +247,11 @@ namespace Saurobyte
 	{
 		std::uint32_t newSource = 0;
 
-		// Sort sounds by priority first so we don't grab a sound of highest 
-		// importance immediately just because it was not currently playing.
-		std::sort(m_sounds.begin(), m_sounds.end(),
-			[](const SoundData &lhs, const SoundData &rhs) -> bool
-			{
-				return lhs.first < rhs.first;
-			});
-
-		// Try to find an unused source
+		// Try to find a completely unused source
 		for(std::size_t i = 0; i < m_sounds.size(); i++)
 		{
 			AudioHandle &handle = m_sounds[i].second;
-			if(!handle->isPlaying())
+			if(!handle->isPlaying() && handle.use_count() == 1)
 			{
 				newSource = handle->invalidate();
 				wipeSource(newSource);
@@ -294,14 +289,14 @@ namespace Saurobyte
 			m_sounds.erase(m_sounds.begin());
 			return newSource;
 		};
-		/*
+		
 		// Sort sounds by priority
 		std::sort(m_sounds.begin(), m_sounds.end(),
 			[](const SoundData &lhs, const SoundData &rhs) -> bool
 			{
 				return lhs.first < rhs.first;
 			});
-		*/
+		
 	
 		// Check how many elements are tied at the same lowest priority
 		PriorityType lowestPriority = m_sounds[0].first;

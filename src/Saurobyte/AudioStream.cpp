@@ -8,65 +8,26 @@
 namespace Saurobyte
 {
 
-	//AudioStream::AudioStream()
-	//	:
-	//	m_file(nullptr),
-	//	m_fileInfo(),
-	//	m_fileName(""),
-	//	m_loop(false),
-	///	m_duration(0)
-	//{
-//	}
 	AudioStream::AudioStream(AudioSource::AudioFilePtr audioPtr, std::uint32_t newSource)
 		:
 		AudioSource(std::move(audioPtr), newSource),
 		m_loop(false)
 	{
-		//alGenBuffers(m_buffers.size(), &m_buffers[0]);
-
-		//setStreamingFile(filePath);
-		for(std::size_t i = 0; i < m_buffers.size(); i++)
+		if(isValid())
 		{
-			m_file->readSecondIntoBuffer(m_buffers[i].buffer);
-			alSourceQueueBuffers(m_source, 1, &m_buffers[i].buffer);
+			for(std::size_t i = 0; i < m_buffers.size(); i++)
+			{
+				m_file->readSecondIntoBuffer(m_buffers[i].buffer);
+				alSourceQueueBuffers(m_source, 1, &m_buffers[i].buffer);
+			}
 		}
+		
 	}
 	AudioStream::~AudioStream()
 	{
-		//alDeleteBuffers(m_buffers.size(), &m_buffers[0]);
-
-		//if(m_file != nullptr)
-		//{
-		//	sf_close(m_file);
-		//	m_file = nullptr;
-		//}
+	
 	}
 
-	void AudioStream::setStreamingFile(const std::string &filePath)
-	{
-		/*stop();
-
-		// Remove any buffers queued onto the source
-		alSourcei(m_source, AL_BUFFER, 0);
-
-		if(m_file != nullptr)
-		{
-			sf_close(m_file);
-			m_file = nullptr;
-		}
-
-		// Open file and save initial data
-		m_file = sf_open(filePath.c_str(), SFM_READ, &m_fileInfo);
-
-		if(m_file == nullptr)
-			SAUROBYTE_WARNING_LOG("Could not open audio file for streaming '%s'", filePath.c_str());
-
-		m_fileName = filePath;
-		m_duration = static_cast<float>(m_fileInfo.frames)/static_cast<float>(m_fileInfo.samplerate);
-
-		if(m_file != nullptr)
-			fillBuffers();*/
-	}
 
 	void AudioStream::setLooping(bool looping)
 	{
@@ -74,16 +35,21 @@ namespace Saurobyte
 	}
 	void AudioStream::setOffset(Time offset)
 	{
-		stop();
-		alSourceRewind(m_source);
-		alSourcei(m_source, AL_BUFFER, 0); // Clear buffers
-
-		m_file->setReadingOffset(offset.asSeconds());
-		for(std::size_t i = 0; i < m_buffers.size(); i++)
+		if(isValid())
 		{
-			m_file->readSecondIntoBuffer(m_buffers[i].buffer);
-			alSourceQueueBuffers(m_source, 1, &m_buffers[i].buffer);
+			stop();
+			alSourceRewind(m_source);
+			alSourcei(m_source, AL_BUFFER, 0); // Clear buffers
+
+			m_file->setReadingOffset(offset.asSeconds());
+			for(std::size_t i = 0; i < m_buffers.size(); i++)
+			{
+				alSourceUnqueueBuffers(m_source, 1, &m_buffers[i].buffer);
+				m_file->readSecondIntoBuffer(m_buffers[i].buffer, m_loop);
+				alSourceQueueBuffers(m_source, 1, &m_buffers[i].buffer);
+			}
 		}
+		
 		//TODO alSourcef(m_source, AL_SEC_OFFSET, secondOffset);
 	}
 
@@ -115,58 +81,10 @@ namespace Saurobyte
 			alSourceUnqueueBuffers(m_source, 1, &buffer);
 
 			// Read a 1s chunk of data
-			m_file->readSecondIntoBuffer(buffer);
+			m_file->readSecondIntoBuffer(buffer, m_loop);
 			alSourceQueueBuffers(m_source, 1, &buffer);
-			/*int sampleSecondCount = m_fileInfo.channels*m_fileInfo.samplerate;
-			std::vector<ALshort> fileData(sampleSecondCount);
-			int readCount = sf_read_short(m_file, &fileData[0], sampleSecondCount);
-
-			// If looping is enabled and we reached end of file, just move to the
-			// beginning of the file and start reading there.
-			if(readCount < sampleSecondCount && m_loop)
-			{
-				//m_playingOffset = 0;
-				sf_seek(m_file, 0, SEEK_SET);
-				readCount = sf_read_short(m_file, &fileData[0], sampleSecondCount);
-			}
-
-			// Queue more data into audio stream
-			if(readCount > 0)
-			{
-				alBufferData(
-					buffer,
-					AudioDevice::getFormatFromChannels(m_fileInfo.channels),
-					&fileData[0],
-					sizeof(ALushort)*sampleSecondCount,
-					m_fileInfo.samplerate);
-				alSourceQueueBuffers(m_source, 1, &buffer);
-			}*/
-		
 
 			--processedBuffers;
 		}
-	}
-
-
-	void AudioStream::fillBuffers()
-	{
-		// Load second chunks of data
-		/*std::size_t sampleSecondCount = m_fileInfo.channels*m_fileInfo.samplerate;
-
-		std::vector<ALshort> fileData(sampleSecondCount);
-
-		// Read 1s chunks of data into the buffers
-		for(int i = 0; i < StreamBufferCount; i++)
-		{
-			sf_read_short(m_file, &fileData[0], sampleSecondCount);
-			alBufferData(
-				m_buffers[i],
-				AudioDevice::getFormatFromChannels(m_fileInfo.channels),
-				&fileData[0],
-				sampleSecondCount*sizeof(ALushort),
-				m_fileInfo.samplerate);
-
-		}
-		alSourceQueueBuffers(m_source, StreamBufferCount, &m_buffers[0]);*/
 	}
 };
