@@ -43,8 +43,6 @@
 #include <Saurobyte/Components/TransformComponent.hpp>*/
 //#include <Saurobyte/Game.hpp>
 
-
-
 bool audioRunner = true;
 int main(int argc, const char* argv[]){
 
@@ -54,16 +52,36 @@ int main(int argc, const char* argv[]){
 
 	Saurobyte::AudioListener::setVolume(0.5f);
 	Saurobyte::AudioHandle handle = Saurobyte::AudioDevice::createStream("./Ove Melaa - ItaloLoopDikkoDikko_1.ogg");
-	handle->setLooping(true);
-	Saurobyte::AudioHandle handle2 = Saurobyte::AudioDevice::createSound("./Ove Melaa - ItaloLoopDikkoDikko_1.ogg");
-	handle2->setLooping(true);
 
-	handle->setOffset(Saurobyte::seconds(12.37));
-	handle2->setOffset(Saurobyte::seconds(12.37));
-
+	SAUROBYTE_INFO_LOG("Offset: ", handle->getOffset().asSeconds(), " Playing: ", handle->isPlaying());
 	handle->play();
-	handle2->play();
-	SAUROBYTE_INFO_LOG("IS VALID ", handle->isValid(), " Seconderu file ", handle->getDuration().asSeconds());
+	Saurobyte::sleep(3500);
+	SAUROBYTE_INFO_LOG("Offset: ", handle->getOffset().asSeconds(), " Playing: ", handle->isPlaying());
+	handle->pause();
+	Saurobyte::sleep(1000);
+	SAUROBYTE_INFO_LOG("Offset: ", handle->getOffset().asSeconds(), " Playing: ", handle->isPlaying());
+	handle->play();
+	Saurobyte::sleep(1000);
+	handle->setOffset(Saurobyte::seconds(0));
+	//handle->setOffset(Saurobyte::seconds(0));
+	SAUROBYTE_INFO_LOG("Offset: ", handle->getOffset().asSeconds(), " Playing: ", handle->isPlaying());
+	Saurobyte::sleep(6000);
+	SAUROBYTE_INFO_LOG("Offset: ", handle->getOffset().asSeconds(), " Playing: ", handle->isPlaying());
+	//handle->setLooping(true);
+	//Saurobyte::AudioHandle handle2 = Saurobyte::AudioDevice::createSound("./Ove Melaa - ItaloLoopDikkoDikko_1.ogg");
+	//handle2->setLooping(true);
+
+	//handle->setOffset(Saurobyte::seconds(12.37));
+	//handle2->setOffset(Saurobyte::seconds(12.37));
+
+	//handle->play(); // TODO stream isPlaying is incorrect
+	//handle2->play(); // TODO threading bug not fixederu
+	//while(handle2->isPlaying())
+	//{
+		//Saurobyte::sleep(500);
+		//SAUROBYTE_INFO_LOG("TIME ", handle->getOffset().asSeconds(), " seconds");
+	//}
+	//SAUROBYTE_INFO_LOG("IS VALID ", handle2->isValid(), " Seconderu file ", handle2->getDuration().asSeconds());
 	game.start();
 
 	/*Saurobyte::Vector3f vec(2, 2);

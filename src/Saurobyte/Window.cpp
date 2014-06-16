@@ -41,6 +41,7 @@ namespace Saurobyte
 		// OpenGL and High-dpi mode is enabled by default
 		sdlFlags |= SDL_WINDOW_OPENGL;
 		sdlFlags |= SDL_WINDOW_ALLOW_HIGHDPI;
+		sdlFlags |= SDL_WINDOW_HIDDEN; // The window is also hidden by default, shown when the engine starts
 
 		if(windowMode == WindowModes::Normless ||
 			windowMode == WindowModes::Maxless)

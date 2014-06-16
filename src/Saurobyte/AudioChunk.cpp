@@ -1,5 +1,6 @@
 #include <Saurobyte/AudioChunk.hpp>
 #include <Saurobyte/AudioFileImpl.hpp>
+#include <Saurobyte/Util.hpp>
 #include <AL/al.h>
 
 namespace Saurobyte
@@ -19,6 +20,26 @@ namespace Saurobyte
 	}
 	AudioChunk::~AudioChunk()
 	{
+		
+	}
+
+	void AudioChunk::play()
+	{
+		if(isValid() && !isPlaying())
+			alSourcePlay(m_source);
+	}
+	void AudioChunk::pause()
+	{
+		if(isValid() && isPlaying())
+			alSourcePause(m_source);
+	}
+	void AudioChunk::stop()
+	{
+		if(isValid() && isPlaying())
+		{
+			m_file->setReadingOffset(0);
+			alSourceStop(m_source);
+		}
 	}
 
 	void AudioChunk::setLooping(bool looping)

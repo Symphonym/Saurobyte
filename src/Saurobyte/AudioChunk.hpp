@@ -54,6 +54,10 @@ namespace Saurobyte
 		friend class AudioDevice;
 		explicit AudioChunk(AudioSource::AudioFilePtr audioPtr, std::uint32_t newSource);
 
+		virtual void play();
+		virtual void pause();
+		virtual void stop();
+
 		// OpenAL buffer handle
 		AudioSource::BufferWrapper m_buffer;
 

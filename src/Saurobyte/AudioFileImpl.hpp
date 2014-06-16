@@ -30,8 +30,6 @@
 #include <Saurobyte/ApiDefines.hpp>
 #include <SndFile/sndfile.h>
 #include <AL/al.h>
-#include <array>
-#include <memory>
 #include <string>
 
 namespace Saurobyte
@@ -58,10 +56,11 @@ namespace Saurobyte
 
 			/**
 			 * Reads from the currently opened file one second worth of audio data
-			 * @param buffer       The buffer in which to store the audio data
-			 * @param allowLooping If set to true, if less than one second of data was read it moves to the beginning of the file
+			 * @param  buffer       The buffer in which to store the audio data
+			 * @param  allowLooping If set to true, if less than one second of data was read it moves to the beginning of the file
+			 * @return              True if data was read successfully, false otherwise (only occurs without looping)
 			 */
-			void readSecondIntoBuffer(ALuint buffer, bool allowLooping = false);
+			bool readSecondIntoBuffer(ALuint buffer, bool allowLooping = false);
 			/**
 			 * Reads from the currently opened file all audio data
 			 * @param buffer The buffer in which to store the audio data

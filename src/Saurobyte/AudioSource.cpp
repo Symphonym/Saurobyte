@@ -1,34 +1,43 @@
+/*
+
+	The MIT License (MIT)
+
+	Copyright (c) 2014 by Jakob Larsson
+
+	Permission is hereby granted, free of charge, to any person obtaining 
+	a copy of this software and associated documentation files (the "Software"), 
+	to deal in the Software without restriction, including without limitation the 
+	rights to use, copy, modify, merge, publish, distribute, sublicense, and/or 
+	sell copies of the Software, and to permit persons to whom the Software is 
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in 
+	all copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+	WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR 
+	IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+ */
+
+
 #include <Saurobyte/AudioSource.hpp>
-#include <SDL2/SDL_thread.h>
-#include <SDL2/SDL_timer.h>
-#include <AL/al.h>
-#include <Saurobyte/Logger.hpp>
-#include <Saurobyte/AudioDevice.hpp>
 #include <Saurobyte/AudioFileImpl.hpp>
+#include <AL/al.h>
 
 namespace Saurobyte
 {
-	//AudioSource::AudioSource()
-	//	:
-	//	m_isValidSource(false),
-	//	m_thread(nullptr),
-	//	m_position(0,0,0),
-	//	m_source(0),
-	//	m_audioStatus(AudioStatus::Stopped)
-	//{
 
-	//}
 	AudioSource::AudioSource(AudioFilePtr audioFilePtr, std::uint32_t newSource)
 		:
 		m_isValidSource(false),
-		m_thread(),
 		m_position(0,0,0),
 		m_source(newSource),
-		m_file(std::move(audioFilePtr)),
-		m_audioStatus(AudioStatus::Stopped)
+		m_file(std::move(audioFilePtr))
 	{
-		// Create source
-		//revalidateSource();
 		m_isValidSource = m_file->isOpen();
 
 		unsigned int sampleCount = m_file->getFileInfo().frames*m_file->getFileInfo().channels;
@@ -41,8 +50,6 @@ namespace Saurobyte
 
 	AudioSource::~AudioSource()
 	{
-		stop();
-
 		if(alIsSource(m_source) && m_isValidSource)
 			alDeleteSources(1, &m_source);
 	}
@@ -59,83 +66,6 @@ namespace Saurobyte
 		return tempSource;
 	}
 
-	void AudioSource::play()
-	{
-		if(m_isValidSource && !isPlaying())
-		{
-			/*auto threadFunc = [] (void *data) -> int
-			{	
-				AudioSource *audio = static_cast<AudioSource*>(data);
-				int returnValue = audio->updateData();
-
-				// This means that the reason for stopping the thread was that playback
-				// finished.
-				//if(returnValue == 0)
-
-				return returnValue;
-			};*/
-			m_audioStatus = AudioSource::Playing;
-
-			alSourcePlay(m_source);
-			std::string threadName = "AudioSource(" + std::to_string(m_source) + ")";
-
-			m_thread = std::thread(&AudioSource::updateData, this);
-			//m_thread = SDL_CreateThread(threadFunc, threadName.c_str(), this);
-			onPlay();
-		}
-	}
-	void AudioSource::pause()
-	{
-		if(m_isValidSource && isPlaying())
-		{
-			m_audioStatus = AudioSource::Paused;
-			alSourcePause(m_source);
-			onPause();
-		}
-	}
-	void AudioSource::stop()
-	{
-		if(m_isValidSource && (isPlaying() || m_audioStatus == AudioStatus::Paused))
-		{
-			m_audioStatus = AudioSource::Stopped;
-
-			if(m_thread.joinable())
-				m_thread.join();
-
-			m_file->setReadingOffset(0);
-
-			//SDL_WaitThread(m_thread, NULL);
-			alSourceStop(m_source);
-			onStop();
-		}
-	}
-	int AudioSource::updateData()
-	{
-		ALint state = -1;
-		alGetSourcei(m_source, AL_SOURCE_STATE, &state);
-		while(isPlaying())
-		{
-			// Spare some CPU
-			SDL_Delay(10);
-
-			alGetSourcei(m_source, AL_SOURCE_STATE, &state);
-
-			// Playback has finished
-			if(state == AL_STOPPED && m_audioStatus != AudioStatus::Stopped)
-			{
-				m_audioStatus = AudioStatus::Stopped;
-				return 0;
-			}
-
-			// If the playback paused without reason, resume the playback
-			if(state == AL_PAUSED && m_audioStatus != AudioStatus::Paused)
-				alSourcePlay(m_source);
-
-			onUpdate();
-		}
-
-		return 1;
-	}
 
 	void AudioSource::setPitch(float pitch)
 	{
@@ -199,15 +129,26 @@ namespace Saurobyte
 
 	bool AudioSource::isPlaying() const
 	{
-		return m_audioStatus == AudioStatus::Playing;
+		return getStatus() == AudioStatus::Playing;
+	}
+	AudioSource::AudioStatus AudioSource::getStatus() const
+	{
+		if(!isValid())
+			return AudioStatus::Stopped;
+
+		ALint state = AL_INITIAL;
+		alGetSourcei(m_source, AL_SOURCE_STATE, &state);
+		switch(state)
+		{
+			case AL_PLAYING: return AudioStatus::Playing;
+			case AL_PAUSED: return AudioStatus::Paused;
+			default: return AudioStatus::Stopped;
+		}
 	}
 	bool AudioSource::isValid() const
 	{
 		return m_isValidSource;
 	}
-
-
-
 
 
 	AudioSource::BufferWrapper::BufferWrapper()

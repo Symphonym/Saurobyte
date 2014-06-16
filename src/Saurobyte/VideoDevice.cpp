@@ -55,7 +55,6 @@ namespace Saurobyte
 
 		// Create window and OpenGL context
 		m_window = std::unique_ptr<Window>(new Window(windowTitle, windowWidth, windowHeight, windowMode));
-		m_window->hide(); // Hide window by default, shown at engine startup
 		m_window->setVsync(conf.readBool("SauroConf.video.vsync", false));
 
 		// Initialzie GLEW

@@ -1,12 +1,36 @@
-#ifndef JL_AUDIOSOURCE_HPP
-#define JL_AUDIOSOURCE_HPP
+/*
+
+	The MIT License (MIT)
+
+	Copyright (c) 2014 by Jakob Larsson
+
+	Permission is hereby granted, free of charge, to any person obtaining 
+	a copy of this software and associated documentation files (the "Software"), 
+	to deal in the Software without restriction, including without limitation the 
+	rights to use, copy, modify, merge, publish, distribute, sublicense, and/or 
+	sell copies of the Software, and to permit persons to whom the Software is 
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in 
+	all copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+	WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR 
+	IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+ */
+
+
+#ifndef SAUROBYTE_AUDIOSOURCE_HPP
+#define SAUROBYTE_AUDIOSOURCE_HPP
 
 #include <Saurobyte/NonCopyable.hpp>
 #include <Saurobyte/Math/Vector3.hpp>
 #include <Saurobyte/Time.hpp>
 #include <memory>
-#include <string>
-#include <thread>
 #include <cstdint>
 
 namespace Saurobyte
@@ -32,9 +56,9 @@ namespace Saurobyte
 		explicit AudioSource(std::unique_ptr<internal::AudioFileImpl> filePtr, std::uint32_t newSource);
 		virtual ~AudioSource();
 
-		void play();
-		void pause();
-		void stop();
+		virtual void play() = 0;
+		virtual void pause() = 0;
+		virtual void stop() = 0;
 
 		void setPitch(float pitch);
 		void setPosition(Vector3f position);
@@ -55,6 +79,7 @@ namespace Saurobyte
 		const Vector3f& getPosition() const;
 
 		bool isPlaying() const;
+		AudioStatus getStatus() const;
 
 		// Whether or not the internal OpenAL source is valid
 		bool isValid() const;
@@ -72,32 +97,22 @@ namespace Saurobyte
 		typedef std::unique_ptr<internal::AudioFileImpl> AudioFilePtr;
 
 		// OpenAL source handle
-		//unsigned int m_source;
 		std::uint32_t m_source;
 		std::unique_ptr<internal::AudioFileImpl> m_file;
-
-		AudioStatus m_audioStatus;
 
 	private:
 
 		friend class AudioDevice;
 
-		// Run by separate thread, keeps track of the audio source
-		int updateData();
-
-		virtual void onUpdate() {};
-
-		virtual void onPlay() {};
-		virtual void onPause() {};
-		virtual void onStop() {};
-
 		// Whether or not the source was generated successfully
 		bool m_isValidSource;
 
+		/**
+		 * Invalidates the source and returns it's internal OpenAL source identifier
+		 * @return OpenAL source handle
+		 */
 		std::uint32_t invalidate();
 
-		//SDL_Thread *m_thread;
-		std::thread m_thread;
 		Time m_duration;
 
 		Vector3f m_position;
