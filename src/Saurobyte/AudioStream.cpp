@@ -41,6 +41,7 @@ namespace Saurobyte
 	}
 	AudioStream::~AudioStream()
 	{
+		// Make sure to stop the streaming thread
 		m_requestStop = true;
 
 		if(m_thread.joinable())
@@ -73,9 +74,11 @@ namespace Saurobyte
 	{
 		if(isValid() && isPlaying())
 		{
+			// Reset offset and stop the OpenAL source
 			m_playingOffset = Time();
 			m_requestStop = true;
 			alSourceStop(m_source);
+
 			if(m_thread.joinable())
 				m_thread.join();
 
@@ -152,7 +155,7 @@ namespace Saurobyte
 			bool wasPlaying = isPlaying();
 			stop();
 
-			// Set reading offset in file
+			// Set reading offset of the file
 			m_playingOffset = offset;
 			m_file->setReadingOffset(offset.asSeconds());
 

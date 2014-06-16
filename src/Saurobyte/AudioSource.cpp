@@ -40,6 +40,7 @@ namespace Saurobyte
 	{
 		m_isValidSource = m_file->isOpen();
 
+		// Multi-channel sample count
 		unsigned int sampleCount = m_file->getFileInfo().frames*m_file->getFileInfo().channels;
 
 		m_duration = Saurobyte::seconds(

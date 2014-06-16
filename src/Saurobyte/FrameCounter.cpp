@@ -4,7 +4,8 @@
 namespace Saurobyte
 {
 
-	FrameCounter::FrameCounter() :
+	FrameCounter::FrameCounter()
+		:
 		m_fps(0),
 		m_deltaTime(0)
 	{
@@ -13,24 +14,17 @@ namespace Saurobyte
 
 	void FrameCounter::update()
 	{
-		FrameClock::time_point curTick = FrameClock::now();
 
 		// This is the time point where we "should" be according to the FPS we want
 		FrameClock::time_point calculatedCurTick = m_lastTick + m_targetTickDuration;
 
-		// If actual time is behind where we should be, sleep until we get there
-		if(curTick < calculatedCurTick)
-		{
-			std::this_thread::sleep_for(FrameClock::duration(calculatedCurTick - curTick));
-			curTick = FrameClock::now(); // Update curTick post-sleep
-		}
-		// TODO use sleep_until instead
+		std::this_thread::sleep_until(calculatedCurTick); // Sleep until we get there
+		FrameClock::time_point curTick = FrameClock::now();
 
 		// Calculate fps and deltaTime converting from nanoseconds to seconds
 		FrameClock::duration tickDuration = curTick - m_lastTick;
-		m_fps = 1000000000/std::chrono::duration_cast<std::chrono::nanoseconds>(tickDuration).count();
-		m_deltaTime = 
-			static_cast<float>(std::chrono::duration_cast<std::chrono::nanoseconds>(tickDuration).count())/1000000000.f;
+		m_deltaTime = std::chrono::duration_cast<std::chrono::duration<float> >(tickDuration).count();
+		m_fps = 1.0f / m_deltaTime;
 
 		m_lastTick = curTick;
 	}

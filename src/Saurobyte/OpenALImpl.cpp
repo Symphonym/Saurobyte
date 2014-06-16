@@ -58,6 +58,7 @@ namespace Saurobyte
 		}
 		OpenALImpl::~OpenALImpl()
 		{
+			SAUROBYTE_INFO_LOG("DESTROYING AL");
 			alcMakeContextCurrent(NULL);
 			alcDestroyContext(openALContext);
 			alcCloseDevice(openALDevice);

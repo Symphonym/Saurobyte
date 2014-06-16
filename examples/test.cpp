@@ -55,17 +55,18 @@ int main(int argc, const char* argv[]){
 
 	SAUROBYTE_INFO_LOG("Offset: ", handle->getOffset().asSeconds(), " Playing: ", handle->isPlaying());
 	handle->play();
-	Saurobyte::sleep(3500);
+	handle->stop();
+	//Saurobyte::sleep(3500);
 	SAUROBYTE_INFO_LOG("Offset: ", handle->getOffset().asSeconds(), " Playing: ", handle->isPlaying());
-	handle->pause();
-	Saurobyte::sleep(1000);
+	//handle->pause();
+	//Saurobyte::sleep(1000);
 	SAUROBYTE_INFO_LOG("Offset: ", handle->getOffset().asSeconds(), " Playing: ", handle->isPlaying());
-	handle->play();
-	Saurobyte::sleep(1000);
-	handle->setOffset(Saurobyte::seconds(0));
+	//handle->play();
+	//Saurobyte::sleep(1000);
+	//handle->setOffset(Saurobyte::seconds(0));
 	//handle->setOffset(Saurobyte::seconds(0));
 	SAUROBYTE_INFO_LOG("Offset: ", handle->getOffset().asSeconds(), " Playing: ", handle->isPlaying());
-	Saurobyte::sleep(6000);
+	//Saurobyte::sleep(6000);
 	SAUROBYTE_INFO_LOG("Offset: ", handle->getOffset().asSeconds(), " Playing: ", handle->isPlaying());
 	//handle->setLooping(true);
 	//Saurobyte::AudioHandle handle2 = Saurobyte::AudioDevice::createSound("./Ove Melaa - ItaloLoopDikkoDikko_1.ogg");
