@@ -1,4 +1,10 @@
+
+-- Grab a utility function for file copying
 dofile("./luautil.lua")
+
+-----------------------------------------------------------------------------------------------
+--  Declaring global variables
+-----------------------------------------------------------------------------------------------
 
 Saurobyte_OperatingSystem = os.get()
 
@@ -11,26 +17,55 @@ Saurobyte_Dep_IncDir = "dependencies/inc/"
 Saurobyte_BaseSourceDir = "src/"
 Saurobyte_SourceDir = Saurobyte_BaseSourceDir.."Saurobyte/"
 
-
 Saurobyte_Premake_BuildDir = Saurobyte_BuildDir.."premake"
 
 Saurobyte_Solution_Name = "Saurobyte_Solution"
 Saurobyte_Project_Name = "Saurobyte"
 
--- Remove all previous binary output
+Saurobyte_Linux_Links =
+{
+	"GL", "GLEW", "SDL2", "SDL2_image", "lua5.2", "openal", "sndfile"
+}
+Saurobyte_Mac_Links =
+{
+	"Don't even know cause not supported yet"
+}
+Saurobyte_Window_Links =
+{
+	"Don't even know cause not supported yet"
+}
+
+-----------------------------------------------------------------------------------------------
+--  Print some system specific info
+-----------------------------------------------------------------------------------------------
+
+if(Saurobyte_OperatingSystem == "linux") then
+	print("Linux based operating systems requires development packages of the following to be installed on your system:")
+	
+	for _, val in pairs(Saurobyte_Linux_Links) do
+		print("* " .. val)
+	end
+end
+
+
+-----------------------------------------------------------------------------------------------
+--  Prepare output
+-----------------------------------------------------------------------------------------------
+
+-- Remove and recreate output directories
 os.rmdir(path.getdirectory(Saurobyte_OutputDir))
 os.mkdir(path.getdirectory(Saurobyte_OutputDir))
 
 os.rmdir(path.getdirectory(Saurobyte_OutputIncDir))
 os.mkdir(path.getdirectory(Saurobyte_OutputIncDir))
 
--- Copy all dependencies to output dir
-os.copydir(Saurobyte_Dep_LibDir, Saurobyte_OutputDir)
-
 -- Copy Saurobyte headers to output dir
 os.copydir(path.getdirectory(Saurobyte_BaseSourceDir), path.getdirectory(Saurobyte_OutputIncDir), "**.hpp")
 
--- A solution contains projects, and defines the available configurations
+-----------------------------------------------------------------------------------------------
+--  Saurobyte solution setup
+-----------------------------------------------------------------------------------------------
+
 solution(Saurobyte_Solution_Name)
 	location(Saurobyte_Premake_BuildDir)
 	configurations({ "Debug", "Release" })
@@ -51,7 +86,10 @@ solution(Saurobyte_Solution_Name)
 		buildoptions({"-std=c++11"})
 
 
-	-- Set project options
+-----------------------------------------------------------------------------------------------
+--  Saurobyte library project setup
+-----------------------------------------------------------------------------------------------
+	
 	project(Saurobyte_Project_Name)
 		kind("SharedLib")
 		language("C++")
@@ -60,7 +98,7 @@ solution(Saurobyte_Solution_Name)
 			Saurobyte_BaseSourceDir, -- Saurobyte headers
 			Saurobyte_Dep_IncDir -- Dependency headers
 		})
-		libdirs(Saurobyte_OutputDir)
+		libdirs(Saurobyte_Dep_LibDir)
 		targetdir(Saurobyte_OutputDir)
 
 
@@ -74,7 +112,11 @@ solution(Saurobyte_Solution_Name)
 
 		-- Link libraries per platform
 		configuration("linux")
-			links({"GL", "GLEW", "SDL2", "SDL2_image", "lua5.2", "openal", "sndfile"})
+			links(Saurobyte_Linux_Links)
+		configuration("windows")
+			links(Saurobyte_Windows_Links)
+		configuration("macosx")
+			links(Saurobyte_Mac_Links)
 
 		configuration("Debug")
 			flags({"Symbols"})
@@ -86,57 +128,3 @@ solution(Saurobyte_Solution_Name)
 -- Compile examples
 include(Saurobyte_ExampleDir)
 
-
--- Compile release action
-newaction(
-{
-	trigger = "compile-release",
-	description = "Compiles the program",
-	execute = function ()
-
-		print("\n<<< Compiling (release) project >>>> \n")
-		os.execute("make config=release -C./"..Saurobyte_Premake_BuildDir)
-	end
-})
-
--- Compile debug action
-newaction(
-{
-	trigger = "compile-debug",
-	description = "Compiles the program",
-	execute = function ()
-		print("\n<<< Compiling (debug) project >>>> \n")
-		os.execute("make config=debug -C./"..Saurobyte_Premake_BuildDir)
-	end
-})
-
-
-
-
--- Run action
-newaction(
-{
-	trigger = "run",
-	description = "Runs the program",
-	execute = function ()
-
-		if(operatingSystem == "linux") then
-			print("\n<<< Running (release) project >>>> \n")
-			os.execute("cd ./bin && ./"..Saurobyte_Project_Name)
-		end
-	end
-})
-
--- GDB debug action
-newaction(
-{
-	trigger = "debug",
-	description = "Debugs the program",
-	execute = function ()
-
-		if(operatingSystem == "linux") then
-			print("\n<<< Running (debug) project >>>> \n")
-			os.execute("cd ./bin && gdb -tui ./"..Saurobyte_Project_Name)
-		end
-	end
-})

@@ -19,16 +19,15 @@ modern features such as OpenGL 4.3 and C++11, inevitably making it less cross-pl
 
 ## Dependencies
 Saurobyte depends on a few other libraries as well, which are dynamically linked to make
-updating the engine more flexible. Libraries marked with an asterisk (*) are included
-included with the project. Other libraries has to be installed on the system that tries to run
-or compile the program.
+updating the engine more flexible. These dependencies are included in the source files on
+Windows and MacOSX. Other operating systems and platforms are required to have the development versions of the dependencies installed on their system.
 
 * OpenGL 4.3
-* OpenAL Soft (*)
-* Sndfile (*)
-* Lua5.2 (*)
-* SDL2 (*)
-* SDL2_image (*)
+* OpenAL Soft
 * GLEW
+* Sndfile
+* Lua5.2
+* SDL2
+* SDL2_image
 
 The engine also uses many C++11 features.
