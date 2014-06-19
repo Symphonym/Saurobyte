@@ -32,7 +32,7 @@
 #include <Saurobyte/Priority.hpp>
 #include <string>
 #include <memory>
-
+#include <vector>
 
 namespace Saurobyte
 {
@@ -67,11 +67,17 @@ namespace Saurobyte
 		static AudioHandle playSound(const std::string &name, PriorityType priority = Priority::Medium);
 
 
+		void setPlaybackDevice(const std::string &playbackDevice);
+		void setCaptureDevice(const std::string &captureDevice);
+
 		// Stops all running sounds
 		static void stopAllAudio();
 
 		// Get size of sound pools
 		static std::size_t getTotalSoundCount();
+
+		static std::vector<std::string> getPlaybackDevices();
+		static std::vector<std::string> getCaptureDevices();
 
 	private:
 

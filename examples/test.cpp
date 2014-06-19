@@ -51,19 +51,27 @@ int main(int argc, const char* argv[]){
 	Saurobyte::VideoDevice::setBackgroundColor(Saurobyte::Color::Gray);
 
 	Saurobyte::AudioListener::setVolume(0.5f);
+
+	std::vector<std::string> pb = Saurobyte::AudioDevice::getPlaybackDevices();
+	for(std::size_t i = 0; i < pb.size(); i++)
+		SAUROBYTE_INFO_LOG("Device ", i, " ", pb[i]);
+	std::vector<std::string> pc = Saurobyte::AudioDevice::getCaptureDevices();
+	for(std::size_t i = 0; i < pc.size(); i++)
+		SAUROBYTE_INFO_LOG("Device ", i, " ", pc[i]);
+
 	Saurobyte::AudioHandle handle = Saurobyte::AudioDevice::createStream("./Ove Melaa - ItaloLoopDikkoDikko_1.ogg");
 
 	SAUROBYTE_INFO_LOG("Offset: ", handle->getOffset().asSeconds(), " Playing: ", handle->isPlaying());
 	handle->play();
-	handle->stop();
-	//Saurobyte::sleep(3500);
+	//handle->stop();
+	Saurobyte::sleep(3500);
 	SAUROBYTE_INFO_LOG("Offset: ", handle->getOffset().asSeconds(), " Playing: ", handle->isPlaying());
-	//handle->pause();
-	//Saurobyte::sleep(1000);
+	handle->pause();
+	Saurobyte::sleep(1000);
 	SAUROBYTE_INFO_LOG("Offset: ", handle->getOffset().asSeconds(), " Playing: ", handle->isPlaying());
-	//handle->play();
-	//Saurobyte::sleep(1000);
-	//handle->setOffset(Saurobyte::seconds(0));
+	handle->play();
+	Saurobyte::sleep(1000);
+	handle->setOffset(Saurobyte::seconds(0));
 	//handle->setOffset(Saurobyte::seconds(0));
 	SAUROBYTE_INFO_LOG("Offset: ", handle->getOffset().asSeconds(), " Playing: ", handle->isPlaying());
 	//Saurobyte::sleep(6000);

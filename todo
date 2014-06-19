@@ -31,3 +31,8 @@ CHECK	* Optimize sound/stream reusage
 		* FPS limit and delta time counting
 		* Replace SDL stuff with C++11, chrono for timing, sleep and delta time and thread for threading (like audio)
 		* Modifier keys for events and key presses and whatnot
+
+
+		* Create components in Lua idea, LuaEnvironment constructor for components
+		and registering functors using that constructor. Or have default constructor for
+		all components.

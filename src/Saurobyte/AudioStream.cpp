@@ -37,7 +37,10 @@ namespace Saurobyte
 		m_loop(false),
 		m_requestStop(false)
 	{
-		
+		// TODO streaming has undefined behaviour since occasionally it will get stuck
+		// in streaming and play the same segment over and over even though the file is
+		// continously read and eventually the end of the file is reached, as it should, which
+		// is weird seeing how that audio never reaches the stream buffers.
 	}
 	AudioStream::~AudioStream()
 	{

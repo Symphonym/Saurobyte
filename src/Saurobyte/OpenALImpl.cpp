@@ -32,36 +32,69 @@ namespace Saurobyte
 	{
 		OpenALImpl::OpenALImpl()
 			:
-			openALDevice(NULL),
+			openALPlaybackDevice(NULL),
+			openALCaptureDevice(NULL),
 			openALContext(NULL)
 		{
+			// Use default system device
+			changePlaybackDevice(NULL);
+			changeCaptureDevice(NULL);
 
-			// Initialize OpenAL device with default settings
-			openALDevice = alcOpenDevice(NULL);
+			SAUROBYTE_INFO_LOG("OpenAL startup information: ");
 
-			if(!openALDevice)
-				SAUROBYTE_FATAL_LOG("Could not Initialize OpenAL device");
-
-			openALContext = alcCreateContext(openALDevice, NULL);
-
-			if(!openALContext || !alcMakeContextCurrent(openALContext))
-				SAUROBYTE_FATAL_LOG("Could not create and set OpenAL context.");
-
-			SAUROBYTE_INFO_LOG("OpenAL Vendor: ", alGetString(AL_VENDOR));
-			SAUROBYTE_INFO_LOG("OpenAL Version: ", alGetString(AL_VERSION));
+			SAUROBYTE_INFO_LOG("\tVendor: ", alGetString(AL_VENDOR));
+			SAUROBYTE_INFO_LOG("\tVersion: ", alGetString(AL_VERSION));
 
 			ALCint maxMono = 0, maxStereo = 0;
-			alcGetIntegerv(openALDevice, ALC_MONO_SOURCES, 1, &maxMono);
-			alcGetIntegerv(openALDevice, ALC_STEREO_SOURCES, 1, &maxStereo);
-			SAUROBYTE_INFO_LOG("OpenAL supports a maximum of: ", maxMono, " mono source(s) and ", maxStereo, " stereo source(s)");
-			//SAUROBYTE_INFO_LOG("OpenAL opened device: %s", alcGetString(openALDevice, ALC_DEFAULT_DEVICE_SPECIFIER));
+			alcGetIntegerv(openALPlaybackDevice, ALC_MONO_SOURCES, 1, &maxMono);
+			alcGetIntegerv(openALPlaybackDevice, ALC_STEREO_SOURCES, 1, &maxStereo);
+
+			SAUROBYTE_INFO_LOG("\tSupported source (mono) count: ", maxMono);
+			SAUROBYTE_INFO_LOG("\tSupported source (stereo) count: ", maxStereo);
 		}
 		OpenALImpl::~OpenALImpl()
 		{
-			SAUROBYTE_INFO_LOG("DESTROYING AL");
 			alcMakeContextCurrent(NULL);
 			alcDestroyContext(openALContext);
-			alcCloseDevice(openALDevice);
+			alcCloseDevice(openALPlaybackDevice);
+			alcCaptureCloseDevice(openALCaptureDevice);
+		}
+
+		void OpenALImpl::changePlaybackDevice(const ALchar *deviceName)
+		{
+			alcMakeContextCurrent(NULL);
+
+			// Close devices if they're already active
+			if (openALPlaybackDevice)
+				alcCloseDevice(openALPlaybackDevice);
+			if (openALContext)
+				alcDestroyContext(openALContext);
+
+			// Initialize OpenAL device with default settings
+			openALPlaybackDevice = alcOpenDevice(deviceName);
+
+			if(!openALPlaybackDevice)
+				SAUROBYTE_FATAL_LOG("Could not initialize OpenAL playback device. ", alcGetError(openALPlaybackDevice));
+			else
+				SAUROBYTE_INFO_LOG("OpenAL playback device opened: ", alcGetString(openALPlaybackDevice, ALC_ALL_DEVICES_SPECIFIER));
+
+			openALContext = alcCreateContext(openALPlaybackDevice, NULL);
+
+			if(!openALContext || !alcMakeContextCurrent(openALContext))
+				SAUROBYTE_FATAL_LOG("Could not create and set OpenAL context.");
+		}
+		void OpenALImpl::changeCaptureDevice(const ALchar *deviceName)
+		{
+			if (openALCaptureDevice)
+				alcCaptureCloseDevice(openALCaptureDevice);
+
+			const ALCuint frequency = 44110;
+			openALCaptureDevice = alcCaptureOpenDevice(deviceName, 44100, AL_FORMAT_MONO16, frequency/2);
+			
+			if(!openALCaptureDevice)
+				SAUROBYTE_ERROR_LOG("Could not initialize OpenAL capture device. ", alcGetError(openALCaptureDevice));
+			else
+				SAUROBYTE_INFO_LOG("OpenAL capture device opened: ", alcGetString(openALCaptureDevice, ALC_CAPTURE_DEVICE_SPECIFIER));
 		}
 	}
 }

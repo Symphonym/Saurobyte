@@ -5,12 +5,14 @@
 #include <Saurobyte/Logger.hpp>
 #include <Saurobyte/OpenALImpl.hpp>
 #include <Saurobyte/AudioFileImpl.hpp>
+#include <Saurobyte/Util.hpp>
 
 #include <unordered_map>
 #include <string>
 #include <vector>
 #include <memory>
 #include <limits>
+#include <sstream>
 #include <algorithm>
 #include <SDL2/SDL_thread.h>
 #include <SDL2/SDL_timer.h>
@@ -31,7 +33,7 @@ namespace Saurobyte
 		// Sounds can be played through channels which allows their volume
 		// to be set collectively. TODO
 		//std::unordered_map<std::string, float> m_audioChannels;
-		
+
 	};
 
 
@@ -301,6 +303,15 @@ namespace Saurobyte
 
 	}
 
+	void AudioDevice::setPlaybackDevice(const std::string &playbackDevice)
+	{
+		m_openAL->changePlaybackDevice(playbackDevice.c_str());
+	}
+	void AudioDevice::setCaptureDevice(const std::string &captureDevice)
+	{
+		m_openAL->changeCaptureDevice(captureDevice.c_str());
+	}
+
 	void AudioDevice::stopAllAudio()
 	{
 		for(auto& value : m_sounds)
@@ -314,5 +325,34 @@ namespace Saurobyte
 	std::size_t AudioDevice::getTotalSoundCount()
 	{
 		return m_sounds.size();
+	}
+
+	std::vector<std::string> AudioDevice::getPlaybackDevices()
+	{
+		const ALCchar *rawList = alcGetString(NULL, ALC_ALL_DEVICES_SPECIFIER);
+		std::vector<std::string> realList;
+
+		while (*rawList)
+		{
+			std::string curDevice = std::string(rawList);
+			rawList += curDevice.size() + 1; // Move to next device string
+			realList.push_back(curDevice);
+		}
+
+		return realList;
+	}
+	std::vector<std::string> AudioDevice::getCaptureDevices()
+	{
+		const ALCchar *rawList = alcGetString(NULL, ALC_CAPTURE_DEVICE_SPECIFIER);
+		std::vector<std::string> realList;
+
+		while (*rawList)
+		{
+			std::string curDevice = std::string(rawList);
+			rawList += curDevice.size() + 1; // Move to next device string
+			realList.push_back(curDevice);
+		}
+
+		return realList;
 	}
 };

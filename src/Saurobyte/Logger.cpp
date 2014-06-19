@@ -42,7 +42,8 @@ namespace Saurobyte
 
 			if(priority != SDL_LOG_PRIORITY_VERBOSE)
 			{
-				std::string logMsg = toStr("(", file, ":", line, "): ", logMessage).c_str();
+				std::string logMsg = 
+					logType == LogTypes::Info ? logMessage : toStr("(", file, ":", line, "): ", logMessage).c_str();
 				SDL_LogMessage(category, priority, logMsg.c_str());
 			}
 

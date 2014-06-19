@@ -39,11 +39,15 @@ namespace Saurobyte
 		{
 		public:
 
-			ALCdevice *openALDevice;
+			ALCdevice *openALPlaybackDevice;
+			ALCdevice *openALCaptureDevice;
 			ALCcontext *openALContext;
 
 			OpenALImpl();
 			~OpenALImpl();
+
+			void changePlaybackDevice(const ALchar *deviceName);
+			void changeCaptureDevice(const ALchar *deviceName);
 		};
 	}
 }
