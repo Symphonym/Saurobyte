@@ -44,24 +44,24 @@ namespace Saurobyte
 
 	class AudioDevice;
 	class VideoDevice;
-	class SAUROBYTE_API Game : public NonCopyable
+	class SAUROBYTE_API Engine : public NonCopyable
 	{
 	public:
 
 
 		/**
-		 * Initializes the Game instance of the Saurobyte engine, of which there may be only one and creates an OpenGL window
+		 * Initializes the Engine instance of the Saurobyte engine, of which there may be only one and creates an OpenGL window
 		 * @param  title      Title of the window
 		 * @param  width      Width of the window
 		 * @param  height     Height of the window
 		 * @param  windowMode Display mode of the window
 		 */
-		explicit Game(
+		explicit Engine(
 			const std::string &title,
 			unsigned int width,
 			unsigned int height, 
 			Window::WindowModes windowMode = Window::Normal);
-		~Game();
+		~Engine();
 
 		void start();
 		void stop();
@@ -161,8 +161,8 @@ namespace Saurobyte
 		 */
 		bool handleEvents();
 
-		// Enforce one game instance
-		static bool m_gameInstanceExists;
+		// Enforce one Engine instance
+		static bool m_engineInstanceExists;
 	};
 };
 

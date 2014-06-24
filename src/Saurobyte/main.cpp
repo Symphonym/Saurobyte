@@ -22,7 +22,7 @@
 #include <Saurobyte/Entity.hpp>
 #include <Saurobyte/Message.hpp>
 #include <Saurobyte/MessageHandler.hpp>
-#include <Saurobyte/Game.hpp>
+#include <Saurobyte/Engine.hpp>
 #include <Saurobyte/System.hpp>
 #include <Saurobyte/IdentifierTypes.hpp>
 #include <Saurobyte/Logger.hpp>
@@ -52,17 +52,17 @@ int main(int argc, const char* argv[]){
 	//REPLACE MESSAGING WITH GLOBAL EVENT SYSTEM IN GAME CLASS WHERE SHIT IS PUSHED TO AND
 	//WHICH CAN BE POLLED BY SYSTEMS AND WHATNOT
 
-	jl::Game game("HERRO", 800, 600);
-	game.setLogging(jl::GameLogging::Debug);
+	jl::Engine engine("HERRO", 800, 600);
+	engine.setLogging(jl::EngineLogging::Debug);
 
-	jl::SystemPool& sysPool = game.getSystemPool();
-	sysPool.addSystem(new jl::MeshSystem(&game));
+	jl::SystemPool& sysPool = engine.getSystemPool();
+	sysPool.addSystem(new jl::MeshSystem(&engine));
 
-	jl::Entity& ent = game.createEntity();
+	jl::Entity& ent = engine.createEntity();
 
 	//ent.save("FancyCompiz");
 
-	jl::Entity& ent2 = game.createEntity();
+	jl::Entity& ent2 = engine.createEntity();
 	/*ent2.addComponent<jl::MeshComponent, const std::vector<jl::MeshComponent::Triangle>& >(
 	{
 		{{-1.0f,-1.0f,-1.0f}, {0.583f, 0.771f, 0.014f}, {0.000059f, 1.0f-0.000004f}},
@@ -105,19 +105,19 @@ int main(int argc, const char* argv[]){
 	"panda.jpg");*/
 /*	ent2.addComponent<jl::LuaComponent>("luaFile.lua");
 	ent2.addComponent<jl::TransformComponent>(0,1,0);
-	jl::Scene& sc = game.createScene("HUE");
+	jl::Scene& sc = engine.createScene("HUE");
 
-	jl::Scene& sc2 = game.createScene("H");
-	sc2.getCamera().setAspectRatio((float)game.getWindow().getWidth()/(float)game.getWindow().getHeight());
+	jl::Scene& sc2 = engine.createScene("H");
+	sc2.getCamera().setAspectRatio((float)engine.getWindow().getWidth()/(float)engine.getWindow().getHeight());
 	sc2.getCamera().setPosition(glm::vec3(0,0,7));
 	sc2.attach(ent2);
 	sc2.attach(ent);
 	//sc.attach(ent);
 
-	sc.getCamera().setAspectRatio((float)game.getWindow().getWidth()/(float)game.getWindow().getHeight());
+	sc.getCamera().setAspectRatio((float)engine.getWindow().getWidth()/(float)engine.getWindow().getHeight());
 	sc.getCamera().setPosition(glm::vec3(0,0,7));
 	SAUROBYTE_INFO_LOG("SIZE %i", sizeof(jl::MeshComponent));
-	game.changeScene("H");
+	engine.changeScene("H");
 
 	// Background color
 	glClearColor(0,1,0,1);
@@ -202,7 +202,7 @@ int main(int argc, const char* argv[]){
 	SAUROBYTE_INFO_LOG("QUERY COUNT %i", leTree.query(err).size());
 	for(std::size_t i = 0; i < queryTree.size(); i++)
 	{
-		jl::Entity &treeCube = game.createEntity();
+		jl::Entity &treeCube = engine.createEntity();
 		jl::BoundingBox box = queryTree[i];
 		jl::Vector3f min = box.getMinPoint();
 		jl::Vector3f max = box.getMaxPoint();
@@ -305,7 +305,7 @@ int main(int argc, const char* argv[]){
 			SDL_Delay(100);
 		}
 	}
-	game.gameLoop();*/
+	engine.engineLoop();*/
 
 
 	/*SDL_Event event;
@@ -326,7 +326,7 @@ int main(int argc, const char* argv[]){
 	glm::mat4 MVP = camera.getTransform() * transformMat;
 	while(window.running())
 	{
-		game.updateGame();
+		engine.updateEngine();
 
 		// Create normalized values from mouse position
 		SDL_GetMouseState(&mouseX, &mouseY);
@@ -345,23 +345,23 @@ int main(int argc, const char* argv[]){
 				window.close();
 			else if(event.type == SDL_KEYDOWN)
 			{
-				game.broadcast(jl::createMessage<SDL_Event>("KeyDown", event));
+				engine.broadcast(jl::createMessage<SDL_Event>("KeyDown", event));
 				if(event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
 					window.close();
 				else if(event.key.keysym.scancode == SDL_SCANCODE_A)
-					game.changeScene("HUE");
+					engine.changeScene("HUE");
 				else if(event.key.keysym.scancode == SDL_SCANCODE_Q)
 					sc.attach(ent);
 				else if(event.key.keysym.scancode == SDL_SCANCODE_W)
-					game.broadcast(jl::createMessage("ReloadLua"));
+					engine.broadcast(jl::createMessage("ReloadLua"));
 
 			}
 			else if(event.type == SDL_KEYUP)
-				game.broadcast(jl::createMessage<SDL_Event>("KeyUp", event));
+				engine.broadcast(jl::createMessage<SDL_Event>("KeyUp", event));
 			else if(event.type == SDL_MOUSEBUTTONDOWN)
 			{
 				//SDL_Log("VAR %i", ent.getComponent<Compiz>()->compizVariable);
-				//game.changeScene("H");
+				//engine.changeScene("H");
 				//sc.detach(ent);
 				mesh.setColor(1, 1, 1, 1);
 				mesh.setRotation(6.28f, 0, 0);

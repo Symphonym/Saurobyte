@@ -1,14 +1,14 @@
 #include <Saurobyte/ScenePool.hpp>
-#include <Saurobyte/Game.hpp>
+#include <Saurobyte/Engine.hpp>
 #include <Saurobyte/Message.hpp>
 #include <Saurobyte/Logger.hpp>
 
 namespace Saurobyte
 {
-	ScenePool::ScenePool(Game *game)
+	ScenePool::ScenePool(Engine *engine)
 		:
 		m_activeScene(nullptr),
-		m_game(game)
+		m_engine(engine)
 	{
 	}
 	ScenePool::~ScenePool()
@@ -61,7 +61,7 @@ namespace Saurobyte
 			{
 				// Empty systems if we deleted the active scene
 				if(scene == m_activeScene)
-					m_game->getSystemPool().emptySystems();
+					m_engine->getSystemPool().emptySystems();
 
 				SAUROBYTE_DEBUG_LOG("Deleting scene '", scene->getName(), "'");
 				delete scene;
@@ -69,7 +69,7 @@ namespace Saurobyte
 			else if(action == SceneActions::Change)
 			{
 				// Clear systems from entities
-				m_game->getSystemPool().emptySystems();
+				m_engine->getSystemPool().emptySystems();
 
 				SAUROBYTE_DEBUG_LOG("Changing to scene '", scene->getName(), "'");
 
@@ -77,7 +77,7 @@ namespace Saurobyte
 				for(auto itr = scene->getEntities().begin(); itr != scene->getEntities().end(); itr++)
 					itr->second->refresh();
 
-				// TODOm_game->queueMessage(MessageData<std::string>("SceneLoad", scene->getName()));
+				// TODOm_engine->queueMessage(MessageData<std::string>("SceneLoad", scene->getName()));
 			}
 		}
 

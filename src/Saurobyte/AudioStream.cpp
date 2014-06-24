@@ -26,6 +26,7 @@
 
 #include <Saurobyte/AudioStream.hpp>
 #include <Saurobyte/AudioFileImpl.hpp>
+#include <Saurobyte/Util.hpp>
 #include <AL/al.h>
 
 namespace Saurobyte
@@ -80,11 +81,11 @@ namespace Saurobyte
 			// Reset offset and stop the OpenAL source
 			m_playingOffset = Time();
 			m_requestStop = true;
-			alSourceStop(m_source);
 
 			if(m_thread.joinable())
 				m_thread.join();
 
+			alSourceStop(m_source); // TODO this was previously above the thread joining, check if better
 			m_file->setReadingOffset(0);
 		}
 	}
@@ -109,11 +110,27 @@ namespace Saurobyte
 
 	void AudioStream::processStream()
 	{
+		bool regularStop = false;
 		while(!m_requestStop)
 		{
+
 			// Ignore interrupts
-			if(!getStatus() == AudioSource::Stopped && !m_requestStop)
-				alSourcePlay(m_source);
+			if(getStatus() == AudioSource::Stopped)
+			{
+				if(!regularStop)
+					alSourcePlay(m_source);
+				else
+				{
+					// TODO this won't cause the last buffer to be processed 
+					printf("\nWOOP\n");
+					// Grab the last offset as the sound reaches end of the file
+					//ALfloat secOffset = 0;
+					//alGetSourcef(m_source, AL_SEC_OFFSET, &secOffset);
+					//m_playingOffset = Saurobyte::seconds(m_playingOffset.asSeconds() + secOffset);
+					//break;
+				}
+			}
+
 
 			ALint processedBuffers = 0;
 			alGetSourcei(m_source, AL_BUFFERS_PROCESSED, &processedBuffers);
@@ -131,11 +148,19 @@ namespace Saurobyte
 				ALuint buffer;
 				alSourceUnqueueBuffers(m_source, 1, &buffer);
 
+				if(regularStop)
+					return;
+
 				// Read a 1s chunk of data
 				if(!m_file->readSecondIntoBuffer(buffer, m_loop))
 				{
-					m_playingOffset = Time();
-					m_requestStop = true; // End of file was reached
+					regularStop = true; // TODO fix this, not good enough
+					//while(isPlaying())
+					//{
+						//Saurobyte::sleep(Saurobyte::milliseconds(10));
+					//}
+					//m_playingOffset = Time();
+					//return;//m_requestStop = true; // End of file was reached
 				}
 				else
 					alSourceQueueBuffers(m_source, 1, &buffer);
@@ -143,6 +168,8 @@ namespace Saurobyte
 
 				--processedBuffers;
 			}
+
+			Saurobyte::sleep(Saurobyte::milliseconds(10));
 		}
 
 	}

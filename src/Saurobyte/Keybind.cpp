@@ -47,7 +47,7 @@ namespace Saurobyte
 				if(currentBind.size() >= m_keybind.size())
 					m_keybind = currentBind;
 
-				Saurobyte::sleep(10);
+				Saurobyte::sleep(Saurobyte::milliseconds(10));
 			}
 		}
 		bool Keybind::isPressed()

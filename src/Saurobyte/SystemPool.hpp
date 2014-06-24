@@ -9,7 +9,7 @@
 
 namespace Saurobyte
 {
-	class Game;
+	class Engine;
 	class Entity;
 	class SystemPool
 	{
@@ -20,11 +20,11 @@ namespace Saurobyte
 		std::unordered_map<TypeID, SystemPtr> m_systemPool;
 		std::vector<SystemPtr> m_pendingDeletes;
 
-		Game *m_game;
+		Engine *m_engine;
 
 	public:
 
-		SystemPool(Game *game);
+		SystemPool(Engine *engine);
 		~SystemPool();
 
 		void addSystem(BaseSystem *newSystem);

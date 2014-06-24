@@ -1,7 +1,7 @@
 #include <Saurobyte/Systems/MeshSystem.hpp>
 #include <Saurobyte/Entity.hpp>
 #include <Saurobyte/Message.hpp>
-#include <Saurobyte/Game.hpp>
+#include <Saurobyte/Engine.hpp>
 #include <Saurobyte/Components/MeshComponent.hpp>
 #include <SDL2/SDL.h>
 
@@ -9,9 +9,9 @@ namespace Saurobyte
 {
 
 
-	MeshSystem::MeshSystem(Game *game)
+	MeshSystem::MeshSystem(Engine *engine)
 		:
-		System<MeshSystem>(game),
+		System<MeshSystem>(engine),
 		m_fragShader(GL_FRAGMENT_SHADER, "./Fraggy.frag"),
 		m_vertShader(GL_VERTEX_SHADER, "./Verty.vert")
 	{
@@ -45,9 +45,9 @@ namespace Saurobyte
 		SDL_GetMouseState(&mouseX, &mouseY);
 
 		// Give mousepos to shader
-		glUniform2f(mousePosLoc, mouseX, game->getWindow().getSize().y-mouseY);
+		glUniform2f(mousePosLoc, mouseX, engine->getWindow().getSize().y-mouseY);
 
-		glm::mat4 transform = glm::mat4(1) * game->getScenePool().getActiveScene()->getCamera().getTransform();
+		glm::mat4 transform = glm::mat4(1) * engine->getScenePool().getActiveScene()->getCamera().getTransform();
 		glUniformMatrix4fv(transforMatLoc, 1, GL_FALSE, &transform[0][0]);
 		glUniform1i(textureLoc, 0);
 

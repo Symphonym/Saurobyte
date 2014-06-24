@@ -110,12 +110,12 @@ typedef enum
     SDL_JOYDEVICEADDED,         /**< A new joystick has been inserted into the system */
     SDL_JOYDEVICEREMOVED,       /**< An opened joystick has been removed */
 
-    /* Game controller events */
-    SDL_CONTROLLERAXISMOTION  = 0x650, /**< Game controller axis motion */
-    SDL_CONTROLLERBUTTONDOWN,          /**< Game controller button pressed */
-    SDL_CONTROLLERBUTTONUP,            /**< Game controller button released */
-    SDL_CONTROLLERDEVICEADDED,         /**< A new Game controller has been inserted into the system */
-    SDL_CONTROLLERDEVICEREMOVED,       /**< An opened Game controller has been removed */
+    /* Engine controller events */
+    SDL_CONTROLLERAXISMOTION  = 0x650, /**< Engine controller axis motion */
+    SDL_CONTROLLERBUTTONDOWN,          /**< Engine controller button pressed */
+    SDL_CONTROLLERBUTTONUP,            /**< Engine controller button released */
+    SDL_CONTROLLERDEVICEADDED,         /**< A new Engine controller has been inserted into the system */
+    SDL_CONTROLLERDEVICEREMOVED,       /**< An opened Engine controller has been removed */
     SDL_CONTROLLERDEVICEREMAPPED,      /**< The controller mapping was updated */
 
     /* Touch events */
@@ -339,14 +339,14 @@ typedef struct SDL_JoyDeviceEvent
 
 
 /**
- *  \brief Game controller axis motion event structure (event.caxis.*)
+ *  \brief Engine controller axis motion event structure (event.caxis.*)
  */
 typedef struct SDL_ControllerAxisEvent
 {
     Uint32 type;        /**< ::SDL_CONTROLLERAXISMOTION */
     Uint32 timestamp;
     SDL_JoystickID which; /**< The joystick instance id */
-    Uint8 axis;         /**< The controller axis (SDL_GameControllerAxis) */
+    Uint8 axis;         /**< The controller axis (SDL_EngineControllerAxis) */
     Uint8 padding1;
     Uint8 padding2;
     Uint8 padding3;
@@ -356,14 +356,14 @@ typedef struct SDL_ControllerAxisEvent
 
 
 /**
- *  \brief Game controller button event structure (event.cbutton.*)
+ *  \brief Engine controller button event structure (event.cbutton.*)
  */
 typedef struct SDL_ControllerButtonEvent
 {
     Uint32 type;        /**< ::SDL_CONTROLLERBUTTONDOWN or ::SDL_CONTROLLERBUTTONUP */
     Uint32 timestamp;
     SDL_JoystickID which; /**< The joystick instance id */
-    Uint8 button;       /**< The controller button (SDL_GameControllerButton) */
+    Uint8 button;       /**< The controller button (SDL_EngineControllerButton) */
     Uint8 state;        /**< ::SDL_PRESSED or ::SDL_RELEASED */
     Uint8 padding1;
     Uint8 padding2;
@@ -511,9 +511,9 @@ typedef union SDL_Event
     SDL_JoyHatEvent jhat;           /**< Joystick hat event data */
     SDL_JoyButtonEvent jbutton;     /**< Joystick button event data */
     SDL_JoyDeviceEvent jdevice;     /**< Joystick device change event data */
-    SDL_ControllerAxisEvent caxis;      /**< Game Controller axis event data */
-    SDL_ControllerButtonEvent cbutton;  /**< Game Controller button event data */
-    SDL_ControllerDeviceEvent cdevice;  /**< Game Controller device event data */
+    SDL_ControllerAxisEvent caxis;      /**< Engine Controller axis event data */
+    SDL_ControllerButtonEvent cbutton;  /**< Engine Controller button event data */
+    SDL_ControllerDeviceEvent cdevice;  /**< Engine Controller device event data */
     SDL_QuitEvent quit;             /**< Quit request event data */
     SDL_UserEvent user;             /**< Custom event data */
     SDL_SysWMEvent syswm;           /**< System dependent window event data */

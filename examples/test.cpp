@@ -15,7 +15,7 @@
 #include <Saurobyte/Entity.hpp>
 #include <Saurobyte/Message.hpp>
 #include <Saurobyte/MessageHandler.hpp>
-#include <Saurobyte/Game.hpp>
+#include <Saurobyte/Engine.hpp>
 #include <Saurobyte/System.hpp>
 #include <Saurobyte/IdentifierTypes.hpp>
 #include <Saurobyte/Logger.hpp>
@@ -31,24 +31,57 @@
 #include <Saurobyte/Message.hpp>
 #include <Saurobyte/Input.hpp>
 #include <Saurobyte/FrameCounter.hpp>
-#include <Saurobyte/Game.hpp>
+#include <Saurobyte/Engine.hpp>
 #include <Saurobyte/VideoDevice.hpp>
 #include <Saurobyte/AudioDevice.hpp>
 #include <Saurobyte/AudioListener.hpp>
 #include <Saurobyte/Time.hpp>
+#include <Saurobyte/IdentifierTypes.hpp>
+#include <chrono>
+
 /*
 #include <Saurobyte/Components/LuaComponent.hpp>
 #include <Saurobyte/Systems/MeshSystem.hpp>
 #include <Saurobyte/Components/MeshComponent.hpp>
 #include <Saurobyte/Components/TransformComponent.hpp>*/
-//#include <Saurobyte/Game.hpp>
+//#include <Saurobyte/Engine.hpp>
 
-bool audioRunner = true;
 int main(int argc, const char* argv[]){
 
 
-	Saurobyte::Game game("Hello world", 800, 600, Saurobyte::Window::Normal);
+	Saurobyte::Engine game("Hello world", 800, 600, Saurobyte::Window::Normal);
 	Saurobyte::VideoDevice::setBackgroundColor(Saurobyte::Color::Gray);
+
+	SAUROBYTE_INFO_LOG("SPEED TEST C++11 typeid");
+
+	const long testCount = 1000000000;
+	typedef std::chrono::high_resolution_clock FrameClock;
+	FrameClock::time_point nowSar = FrameClock::now();
+	for(int i = 0; i < testCount; i++)
+	{
+		typeid(Saurobyte::Engine);
+		typeid(Saurobyte::Time);
+		typeid(Saurobyte::VideoDevice);
+		typeid(Saurobyte::AudioDevice);
+		typeid(Saurobyte::AudioHandle);
+		typeid(Saurobyte::Message);
+	}
+	FrameClock::time_point thenSar = FrameClock::now();
+	SAUROBYTE_INFO_LOG("SPEED TEST C++11 typeid: ", std::chrono::duration_cast<std::chrono::duration<float> >(FrameClock::duration(thenSar-nowSar)).count(), " seconds");
+
+	SAUROBYTE_INFO_LOG("SPEED TEST SaurobyteGrabber");
+	nowSar = FrameClock::now();
+	for(int i = 0; i < testCount; i++)
+	{
+		Saurobyte::TypeIdGrabber::getUniqueTypeID<Saurobyte::Engine>();
+		Saurobyte::TypeIdGrabber::getUniqueTypeID<Saurobyte::Time>();
+		Saurobyte::TypeIdGrabber::getUniqueTypeID<Saurobyte::VideoDevice>();
+		Saurobyte::TypeIdGrabber::getUniqueTypeID<Saurobyte::AudioDevice>();
+		Saurobyte::TypeIdGrabber::getUniqueTypeID<Saurobyte::AudioHandle>();
+		Saurobyte::TypeIdGrabber::getUniqueTypeID<Saurobyte::Message>();
+	}
+	thenSar = FrameClock::now();
+	SAUROBYTE_INFO_LOG("SPEED TEST SaurobyteGrabber: ", std::chrono::duration_cast<std::chrono::duration<float> >(FrameClock::duration(thenSar-nowSar)).count(), " seconds");
 
 	Saurobyte::AudioListener::setVolume(0.5f);
 
@@ -63,15 +96,22 @@ int main(int argc, const char* argv[]){
 
 	SAUROBYTE_INFO_LOG("Offset: ", handle->getOffset().asSeconds(), " Playing: ", handle->isPlaying());
 	handle->play();
+
+	//while(handle->isPlaying())
+	{
+		//Saurobyte::sleep(Saurobyte::seconds(0.01));
+		//SAUROBYTE_INFO_LOG("Progress ", handle->getOffset().asSeconds(), " / ", handle->getDuration().asSeconds());
+	}
+
 	//handle->stop();
-	Saurobyte::sleep(3500);
+	//Saurobyte::sleep(Saurobyte::seconds(3.5));
 	SAUROBYTE_INFO_LOG("Offset: ", handle->getOffset().asSeconds(), " Playing: ", handle->isPlaying());
-	handle->pause();
-	Saurobyte::sleep(1000);
+	//handle->pause();
+	//Saurobyte::sleep(Saurobyte::seconds(1));
 	SAUROBYTE_INFO_LOG("Offset: ", handle->getOffset().asSeconds(), " Playing: ", handle->isPlaying());
-	handle->play();
-	Saurobyte::sleep(1000);
-	handle->setOffset(Saurobyte::seconds(0));
+	//handle->play();
+	//Saurobyte::sleep(Saurobyte::seconds(1));
+	//handle->setOffset(Saurobyte::seconds(0));
 	//handle->setOffset(Saurobyte::seconds(0));
 	SAUROBYTE_INFO_LOG("Offset: ", handle->getOffset().asSeconds(), " Playing: ", handle->isPlaying());
 	//Saurobyte::sleep(6000);
@@ -203,8 +243,8 @@ int main(int argc, const char* argv[]){
 	//REPLACE MESSAGING WITH GLOBAL EVENT SYSTEM IN GAME CLASS WHERE SHIT IS PUSHED TO AND
 	//WHICH CAN BE POLLED BY SYSTEMS AND WHATNOT
 
-	//jl::Game game("HERRO", 800, 600);
-	//game.setLogging(jl::GameLogging::Debug);
+	//jl::Engine game("HERRO", 800, 600);
+	//game.setLogging(jl::EngineLogging::Debug);
 
 	/*jl::SystemPool& sysPool = game.getSystemPool();
 	sysPool.addSystem(new jl::MeshSystem(&game));
@@ -477,7 +517,7 @@ int main(int argc, const char* argv[]){
 	glm::mat4 MVP = camera.getTransform() * transformMat;
 	while(window.running())
 	{
-		game.updateGame();
+		game.updateEngine();
 
 		// Create normalized values from mouse position
 		SDL_GetMouseState(&mouseX, &mouseY);

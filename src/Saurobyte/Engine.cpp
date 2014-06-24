@@ -1,7 +1,7 @@
-#include <Saurobyte/Game.hpp>
+#include <Saurobyte/Engine.hpp>
 #include <Saurobyte/Message.hpp>
 #include <Saurobyte/Systems/LuaSystem.hpp>
-#include <Saurobyte/Lua/LuaEnv_Game.hpp>
+#include <Saurobyte/Lua/LuaEnv_Engine.hpp>
 #include <Saurobyte/Lua/LuaEnv_Entity.hpp>
 #include <Saurobyte/Lua/LuaEnv_Input.hpp>
 #include <Saurobyte/Lua/LuaEnv_Component.hpp>
@@ -15,9 +15,9 @@
 
 namespace Saurobyte
 {
-	bool Game::m_gameInstanceExists = false;
+	bool Engine::m_engineInstanceExists = false;
 
-	Game::Game(const std::string &title, unsigned int width, unsigned int height, Window::WindowModes windowMode)
+	Engine::Engine(const std::string &title, unsigned int width, unsigned int height, Window::WindowModes windowMode)
 		:
 		m_entityPool(this),
 		m_systemPool(this),
@@ -29,10 +29,10 @@ namespace Saurobyte
 		m_luaConfig(m_luaEnvironment),
 		m_messageCentral()
 	{
-		if(m_gameInstanceExists)
-			SAUROBYTE_FATAL_LOG("Only one Game instance may exist!");
+		if(m_engineInstanceExists)
+			SAUROBYTE_FATAL_LOG("Only one Engine instance may exist!");
 		else
-			m_gameInstanceExists = true;
+			m_engineInstanceExists = true;
 
 
 		// Initialize libraries
@@ -58,7 +58,7 @@ namespace Saurobyte
 		m_systemPool.addSystem(new LuaSystem(this));
 		
 		// Expose Lua API
-		LuaEnv_Game::exposeToLua(this);
+		LuaEnv_Engine::exposeToLua(this);
 		LuaEnv_Entity::exposeToLua(this);
 		LuaEnv_Input::exposeToLua(this);
 		LuaEnv_Component::exposeToLua(this);
@@ -66,12 +66,12 @@ namespace Saurobyte
 		LuaEnv_Audio::exposeToLua(this);
 	}
 
-	Game::~Game()
+	Engine::~Engine()
 	{
 		SDL_Quit();
 	}
 
-	bool Game::handleEvents()
+	bool Engine::handleEvents()
 	{
 		SDL_Event event;
 		while(SDL_PollEvent(&event))
@@ -171,7 +171,7 @@ namespace Saurobyte
 		return true;
 	}
 
-	void Game::start()
+	void Engine::start()
 	{
 	
 		// Engine has been started, so lets show the Window
@@ -195,89 +195,89 @@ namespace Saurobyte
 			getWindow().swapBuffers();
 		}
 	}
-	void Game::stop()
+	void Engine::stop()
 	{
 		SDL_Event event;
 		event.type = SDL_QUIT;
 		SDL_PushEvent(&event);
 	}
 
-	void Game::setFps(unsigned int fps)
+	void Engine::setFps(unsigned int fps)
 	{
 		m_frameCounter.limitFps(fps);
 	}
 
-	Entity& Game::createEntity()
+	Entity& Engine::createEntity()
 	{
 		return m_entityPool.createEntity();
 	}
-	Entity& Game::createEntity(const std::string &templateName)
+	Entity& Engine::createEntity(const std::string &templateName)
 	{
 		return m_entityPool.createEntity(templateName);
 	}
-	Scene& Game::createScene(const std::string &name)
+	Scene& Engine::createScene(const std::string &name)
 	{
 		return m_scenePool.createScene(name);
 	}
 
-	Scene* Game::getActiveScene()
+	Scene* Engine::getActiveScene()
 	{
 		return m_scenePool.getActiveScene();
 	}
-	void Game::changeScene(const std::string &sceneName)
+	void Engine::changeScene(const std::string &sceneName)
 	{
 		m_scenePool.changeScene(sceneName);
 	}
 
-	void Game::sendMessage(const Message &message)
+	void Engine::sendMessage(const Message &message)
 	{
 		m_messageCentral.sendMessage(message);
 	}
-	void Game::sendMessage(const std::string &messageName, Entity *entity)
+	void Engine::sendMessage(const std::string &messageName, Entity *entity)
 	{
 		m_messageCentral.sendMessage(Message(messageName, entity));
 	}
 
-	bool Game::runScript(const std::string &filePath)
+	bool Engine::runScript(const std::string &filePath)
 	{
 		return m_luaEnvironment.runScript(filePath);
 	}
 
-	unsigned int Game::getFps() const
+	unsigned int Engine::getFps() const
 	{
 		return m_frameCounter.getFps();
 	}
-	float Game::getDelta() const
+	float Engine::getDelta() const
 	{
 		return m_frameCounter.getDelta();
 	}
 
-	EntityPool& Game::getEntityPool()
+	EntityPool& Engine::getEntityPool()
 	{
 		return m_entityPool;
 	}
-	SystemPool& Game::getSystemPool()
+	SystemPool& Engine::getSystemPool()
 	{
 		return m_systemPool;
 	}
-	ScenePool& Game::getScenePool()
+	ScenePool& Engine::getScenePool()
 	{
 		return m_scenePool;
 	}
-	MessageCentral& Game::getMessageCentral()
+	MessageCentral& Engine::getMessageCentral()
 	{
 		return m_messageCentral;
 	}
-	Window& Game::getWindow()
+	Window& Engine::getWindow()
 	{
 		return m_videoDevice->getWindow();
 	}
 
-	LuaEnvironment& Game::getLua()
+	LuaEnvironment& Engine::getLua()
 	{
 		return m_luaEnvironment;
 	}
-	LuaConfig& Game::getConfig()
+	LuaConfig& Engine::getConfig()
 	{
 		return m_luaConfig;
 	}

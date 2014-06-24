@@ -1,13 +1,13 @@
 #include <Saurobyte/Entity.hpp>
-#include <Saurobyte/Game.hpp>
+#include <Saurobyte/Engine.hpp>
 
 namespace Saurobyte
 {
-	Entity::Entity(EntityID id, Game *game)
+	Entity::Entity(EntityID id, Engine *engine)
 		:
 		m_isActive(true),
 		m_id(id),
-		m_game(game),
+		m_engine(engine),
 		m_scene(nullptr)
 	{
 
@@ -81,19 +81,19 @@ namespace Saurobyte
 
 	void Entity::refresh()
 	{
-		m_game->getEntityPool().refreshEntity(*this);
+		m_engine->getEntityPool().refreshEntity(*this);
 	}
 	void Entity::kill()
 	{
-		m_game->getEntityPool().killEntity(*this);
+		m_engine->getEntityPool().killEntity(*this);
 	}
 	void Entity::detach()
 	{
-		m_game->getEntityPool().detachEntity(*this);
+		m_engine->getEntityPool().detachEntity(*this);
 	}
 	void Entity::save(const std::string &templateName)
 	{
-		m_game->getEntityPool().saveEntity(templateName, *this);
+		m_engine->getEntityPool().saveEntity(templateName, *this);
 	}
 	void Entity::setActive(bool active)
 	{

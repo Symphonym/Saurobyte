@@ -28,7 +28,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <Saurobyte/Systems/LuaSystem.hpp>
 #include <Saurobyte/Components/LuaComponent.hpp>
 #include <Saurobyte/LuaEnvironment.hpp>
-#include <Saurobyte/Game.hpp>
+#include <Saurobyte/Engine.hpp>
 #include <Saurobyte/Logger.hpp>
 
 
@@ -208,7 +208,7 @@ namespace Saurobyte
 	}
 
 
-	void LuaEnv_Entity::exposeToLua(Game *game)
+	void LuaEnv_Entity::exposeToLua(Engine *engine)
 	{
 		/*const luaL_Reg entityFuncs[] = 
 		{
@@ -222,9 +222,9 @@ namespace Saurobyte
 			{ "GetID", GetID },
 			{ NULL, NULL }
 		};*/
-		//game->getLua().createClass("Saurobyte_Entity", entityFuncs);
+		//engine->getLua().createClass("Saurobyte_Entity", entityFuncs);
 
-		LuaEnvironment &env = game->getLua();
+		LuaEnvironment &env = engine->getLua();
 
 		env.createClass("Saurobyte_Entity",
 		{
@@ -239,17 +239,17 @@ namespace Saurobyte
 		});
 
 		// Event subscribing requires LuaSystem so we make them into C closures
-	//	LuaEnvironment &env = game->getLua().getRaw();
+	//	LuaEnvironment &env = engine->getLua().getRaw();
 
 		// Grab entity metatable
 		//luaL_getmetatable(state, "Saurobyte_Entity");
 		//int metaTable = lua_gettop(state);
 
-		//lua_pushlightuserdata(state, game->getSystemPool().getSystem<LuaSystem>());
+		//lua_pushlightuserdata(state, engine->getSystemPool().getSystem<LuaSystem>());
 		//lua_pushcclosure(state, SubscribeEvent, 1);
 		//lua_setfield(state, metaTable, "SubscribeEvent");
 
-	//	lua_pushlightuserdata(state, game->getSystemPool().getSystem<LuaSystem>());
+	//	lua_pushlightuserdata(state, engine->getSystemPool().getSystem<LuaSystem>());
 		//lua_pushcclosure(state, UnsubscribeEvent, 1);
 		//lua_setfield(state, metaTable, "UnsubscribeEvent");
 

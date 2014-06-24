@@ -108,7 +108,7 @@ namespace Saurobyte
 
 	public:
 
-		LuaSystem(Game *game);
+		LuaSystem(Engine *engine);
 		~LuaSystem();
 
 		// Subscribes the entity to the specified event, so its scripts receives them

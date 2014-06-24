@@ -25,13 +25,13 @@
 
 
 #include <Saurobyte/Util.hpp>
-#include <SDL2/SDL_timer.h>
+#include <thread>
 
 namespace Saurobyte
 {
-	void sleep(unsigned int sleepInMs)
+	void sleep(const Time &sleepTime)
 	{
-		SDL_Delay(sleepInMs);
+		std::this_thread::sleep_for(std::chrono::nanoseconds(sleepTime.asNanoseconds()));
 	};
 
 	std::vector<std::string> splitStr(const std::string &strToSplit, char delimiter)

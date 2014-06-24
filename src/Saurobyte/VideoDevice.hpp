@@ -33,7 +33,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 namespace Saurobyte
 {
-	class Game;
+	class Engine;
 	class SAUROBYTE_API VideoDevice
 	{
 	public:
@@ -69,17 +69,17 @@ namespace Saurobyte
 
 	private:
 
-		// Only the game class can create a VideoDevice
-		friend class Game;
+		// Only the engine class can create a VideoDevice
+		friend class Engine;
 
 		VideoDevice(
-			Game &game,
+			Engine &engine,
 			const std::string &windowTitle,
 			unsigned int windowWidth,
 			unsigned int windowHeight,
 			Window::WindowModes windowMode = Window::Normal);
 
-		Game &m_game;
+		Engine &m_engine;
 
 		std::unique_ptr<Window> m_window;
 	};

@@ -26,7 +26,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <Saurobyte/Lua/LuaEnv_Component.hpp>
 #include <Saurobyte/LuaEnvironment.hpp>
-#include <Saurobyte/Game.hpp>
+#include <Saurobyte/Engine.hpp>
 
 namespace Saurobyte
 {		
@@ -73,9 +73,9 @@ namespace Saurobyte
 		return 1;
 	}
 
-	 void LuaEnv_Component::exposeToLua(Game *game)
+	 void LuaEnv_Component::exposeToLua(Engine *engine)
 	 {
-	 	LuaEnvironment &env = game->getLua();
+	 	LuaEnvironment &env = engine->getLua();
 	 	env.createClass("Saurobyte_Component",
 	 	{
 			{ "GetValue", GetComponentValue },
@@ -89,6 +89,6 @@ namespace Saurobyte
 			{ "GetName", GetComponentName },
 			{ NULL, NULL }
 		};*/
-		//game->getLua().createClass("Saurobyte_Component", componentFuncs);
+		//engine->getLua().createClass("Saurobyte_Component", componentFuncs);
 	}
 };

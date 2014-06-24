@@ -97,7 +97,7 @@ extern DECLSPEC char *SDLCALL SDL_GetBasePath(void);
  *      changes for an app once you've decided on it.
  *    - Unicode characters are legal, as long as it's UTF-8 encoded, but...
  *    - ...only use letters, numbers, and spaces. Avoid punctuation like
- *      "Game Name 2: Bad Guy's Revenge!" ... "Game Name 2" is sufficient.
+ *      "Engine Name 2: Bad Guy's Revenge!" ... "Engine Name 2" is sufficient.
  *
  * This returns an absolute path in UTF-8 encoding, and is guaranteed to
  *  end with a path separator ('\\' on Windows, '/' most other places).

@@ -17,7 +17,7 @@ DELETED	* Re-use sounds be swapping buffers and files intead of sources, use spa
 CHECK	* Optimize sound/stream reusage
 		* Document function prototypes, cause I just installed DocBlockr, best shit 2014
 		* Rewrite everything with new name and convert into library
-		* Cleanup Game class and tidy up logging functionality
+		* Cleanup Engine class and tidy up logging functionality
 		* Write own math library to remove dependencies
 		* Heap allocation might not be needed for messaging
 		* Create serializable class that has switch for stream/lua and simply uses different functions when serializing data. Hide Lua dependencies and use lua environment class.
@@ -36,3 +36,33 @@ CHECK	* Optimize sound/stream reusage
 		* Create components in Lua idea, LuaEnvironment constructor for components
 		and registering functors using that constructor. Or have default constructor for
 		all components.
+		* Check differences of different read sizes with sndfile (Temporary change of sizeof to ALint instead of ALuint, though sndfile doesn't use AL types)
+		* Check how other libs stop audio streams
+		* Check how other libs store dependency include files (<SndFile/sndfile.h>)
+		* Replace "TypeIdGrabber" with C++11 typeid since it's up to 10 times faster
+
+		ENGINE REDESIGN
+		* Redesign Engine class to make it smaller and simpler, hide things the user doesn't need
+		* Make logger class that caches logs on a frame-to-frame basis and handles the log messages per frame
+		* Make settings (LuaConfig) have a functor mapped to the string setting that actually sets the setting, which
+		makes so that things such as the Window can be entirely configured through settings, both in C++ and Lua code.
+		* Hide lots of things, AudioDevice, VideoDevice etc and make default menu (like Source engine) that can be
+		configured and what not. Have everything relevant accessible through the Engine class and simplify things.
+		* Give entities non-unique string names, so they can be identifiable by a human as well, like "Village_Soldier"
+		* Components with some sort of customizable "Trigger" behaviour will link to Lua scripts and non function pointers
+		since function pointers can't be parsed to a file very easily.
+		* Lua component creation functors will be used by scene loading functions as well.
+		* Things such as Light and whatnot will be components
+		* Possible data accessor class that can (through functors) modify or read pretty much any value in the engine
+		, using templates to handle enums and whatnot.
+		* Through data-driven the design the engine is basically a Lua engine now, so focus on extensibility through
+		components and Lua code.
+		* LuaComponent should attach a Lua script to an entity. Which will be run in a sandboxed environment with the
+		entity as a global variable.
+		* TriggerEvents in certain areas and whatnot which were initially thought to be in some sort of "TriggerComponent"
+		should instead be handle entirely in Lua scripts. With Lua functions such as "getNearbyEntities" in a certain radius.
+		* System messages (if any), window resizing and whatnot should all be handled in the engine and not exposed to Lua scripts. 
+		* getName on components should be constexpr if possible
+		* Messaging doesn't need to be in the engine, might be useful having some sort of system for Lua scripts to broadcast
+		events.
+		* Messaging is replaced by a Lua exclusive event system which allows data to be broadcasted, globally or to a region (nearby or specific region) with any kind of data (as Lua is awesome). With a subscriber-listener type design where Lua scripts can subscribe to certain events in order to receive them.

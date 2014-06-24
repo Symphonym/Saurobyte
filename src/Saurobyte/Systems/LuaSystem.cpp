@@ -28,15 +28,15 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <Saurobyte/Components/LuaComponent.hpp>
 #include <Saurobyte/Entity.hpp>
 #include <Saurobyte/Message.hpp>
-#include <Saurobyte/Game.hpp>
+#include <Saurobyte/Engine.hpp>
 
 namespace Saurobyte
 {
 
 
-	LuaSystem::LuaSystem(Game *game)
+	LuaSystem::LuaSystem(Engine *engine)
 		:
-		System<LuaSystem>(game)
+		System<LuaSystem>(engine)
 	{
 		// Specify we want LuaComponents
 		addRequirement({TypeIdGrabber::getUniqueTypeID<LuaComponent>()});
@@ -44,7 +44,7 @@ namespace Saurobyte
 		// Subscribe to reload messages
 		subscribe("ReloadLua");
 
-		LuaEnvironment &env = game->getLua();
+		LuaEnvironment &env = engine->getLua();
 
 		env.pushObject(this, "Saurobyte_LuaSystem");
 		env.writeGlobal("SAUROBYTE_LUA_SYSTEM");
@@ -67,7 +67,7 @@ namespace Saurobyte
 	}
 	LuaSystem::~LuaSystem()
 	{
-		//LuaEnvironment &env = game->getLua();
+		//LuaEnvironment &env = engine->getLua();
 		//env.pushNil();
 		//env.writeGlobal("SAUROBYTE_LUA_SYSTEM");
 	}
@@ -140,9 +140,9 @@ namespace Saurobyte
 	{
 		LuaComponent *luaComp = entity.getComponent<LuaComponent>();
 
-		LuaEnvironment &env = game->getLua();
+		LuaEnvironment &env = engine->getLua();
 
-		//env.pushArgs(game->getWindow().getDelta());
+		//env.pushArgs(engine->getWindow().getDelta());
 		//env.callFunction("entity.update", 1, luaComp->sandBox);
 
 		// Call lua script as usual
@@ -158,7 +158,7 @@ namespace Saurobyte
 			LuaEnvironment::pushObject<Entity>(state, &entity, "jl.Entity");
 
 			// Push delta time as argument TODO
-			// TODO lua_pushnumber(state, game->getWindow().getDelta());
+			// TODO lua_pushnumber(state, engine->getWindow().getDelta());
 
 			if(!lua_isnil(state, -2))
 			{
@@ -177,7 +177,7 @@ namespace Saurobyte
 	}
 	void LuaSystem::onAttach(Entity &entity)
 	{
-		LuaEnvironment &env = game->getLua();
+		LuaEnvironment &env = engine->getLua();
 
 		LuaComponent *luaComp = entity.getComponent<LuaComponent>();
 		luaComp->sandBox = env.createSandbox(

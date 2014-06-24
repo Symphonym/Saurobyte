@@ -14,9 +14,6 @@
 #include <limits>
 #include <sstream>
 #include <algorithm>
-#include <SDL2/SDL_thread.h>
-#include <SDL2/SDL_timer.h>
-#include <SndFile/sndfile.h>
 
 namespace Saurobyte
 {

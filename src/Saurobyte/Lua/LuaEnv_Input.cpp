@@ -26,7 +26,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <Saurobyte/Lua/LuaEnv_Input.hpp>
 #include <Saurobyte/LuaEnvironment.hpp>
-#include <Saurobyte/Game.hpp>
+#include <Saurobyte/Engine.hpp>
 #include <SDL2/SDL.h>
 
 namespace Saurobyte
@@ -84,9 +84,9 @@ namespace Saurobyte
 	}
 
 
-	 void LuaEnv_Input::exposeToLua(Game *game)
+	 void LuaEnv_Input::exposeToLua(Engine *engine)
 	 {
-	 	LuaEnvironment &env = game->getLua();
+	 	LuaEnvironment &env = engine->getLua();
 	 	env.registerFunction({"GetMousePos", GetMousePos });
 		env.registerFunction({"IsMousePressed", IsMousePressed });
 		env.registerFunction({"IsKeyPressed", IsKeyPressed });
@@ -98,7 +98,7 @@ namespace Saurobyte
 			{ NULL, NULL }
 		};
 
-		LuaEnvironment &env = game->getLua().getRaw();
+		LuaEnvironment &env = engine->getLua().getRaw();
 
 		// Register input functions to global environment
 		lua_pushglobaltable(state);

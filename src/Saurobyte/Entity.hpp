@@ -13,7 +13,7 @@ namespace Saurobyte
 	typedef std::unordered_map<TypeID, ComponentPtr> ComponentBag;
 	typedef std::unordered_map<std::string, BaseComponent*> LuaComponentBag;
 
-	class Game;
+	class Engine;
 	class Scene;
 	class Entity
 	{
@@ -26,7 +26,7 @@ namespace Saurobyte
 		bool m_isActive;
 
 		const EntityID m_id;
-		Game *const m_game;
+		Engine *const m_engine;
 
 		// The scene that the entity is in
 		Scene *m_scene;
@@ -34,7 +34,7 @@ namespace Saurobyte
 
 	public:
 
-		explicit Entity(EntityID id, Game *game);
+		explicit Entity(EntityID id, Engine *engine);
 		~Entity();
 		
 		// Entities may not be copied, their components can be cloned though

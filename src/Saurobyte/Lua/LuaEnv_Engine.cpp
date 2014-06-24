@@ -23,41 +23,41 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
 IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include <Saurobyte/Lua/LuaEnv_Game.hpp>
+#include <Saurobyte/Lua/LuaEnv_Engine.hpp>
 #include <Saurobyte/LuaEnvironment.hpp>
-#include <Saurobyte/Game.hpp>
+#include <Saurobyte/Engine.hpp>
 
 namespace Saurobyte
 {
-	int LuaEnv_Game::ChangeScene(LuaEnvironment &env)
+	int LuaEnv_Engine::ChangeScene(LuaEnvironment &env)
 	{
 
 		// First arg is self
 		if(env.readGlobal("SAUROBYTE_GAME"))
 		{
-			Game *game = env.readStack<Game*>("Saurobyte_Game");
+			Engine *engine = env.readStack<Engine*>("Saurobyte_Engine");
 			std::string sceneName = env.readArg<std::string>();
-			game->changeScene(sceneName.c_str());
+			engine->changeScene(sceneName.c_str());
 
 		}
-		//Game* game = env.toObject<Game*>(state, 1, "jl.Game");
+		//Engine* engine = env.toObject<Engine*>(state, 1, "jl.Engine");
 
 		// Second argument is scene name
 		//std::string sceneName = luaL_checkstring(state, 2);
 
 		return 0;
 	}
-	int LuaEnv_Game::DeleteScene(LuaEnvironment &env)
+	int LuaEnv_Engine::DeleteScene(LuaEnvironment &env)
 	{
 
  		// First arg is self
  		if(env.readGlobal("SAUROBYTE_GAME"))
 		{
-			Game *game = env.readStack<Game*>("Saurobyte_Game");
+			Engine *engine = env.readStack<Engine*>("Saurobyte_Engine");
 			std::string sceneName = env.readArg<std::string>();
-			game->getScenePool().deleteScene(sceneName.c_str());
+			engine->getScenePool().deleteScene(sceneName.c_str());
 		}
-		//Game* game = LuaEnvironment::convertUserdata<Game>(state, 1, "jl.Game");
+		//Engine* engine = LuaEnvironment::convertUserdata<Engine>(state, 1, "jl.Engine");
 
 		/// Second argument is scene name
 		//std::string sceneName = luaL_checkstring(state, 2);
@@ -67,14 +67,14 @@ namespace Saurobyte
 
 		return 0;
 	}
-	int LuaEnv_Game::GetActiveScene(LuaEnvironment &env)
+	int LuaEnv_Engine::GetActiveScene(LuaEnvironment &env)
 	{
 		// First arg is self
 		if(env.readGlobal("SAUROBYTE_GAME"))
 		{
-			Game *game = env.readStack<Game*>("Saurobyte_Game");
+			Engine *engine = env.readStack<Engine*>("Saurobyte_Engine");
 
-			Scene *activeScene = game->getScenePool().getActiveScene();
+			Scene *activeScene = engine->getScenePool().getActiveScene();
 			
 			if(activeScene == nullptr)
 				env.pushNil();
@@ -82,35 +82,35 @@ namespace Saurobyte
 				env.pushObject<Scene*>(activeScene, "Saurobyte_Scene");
 		}
 
-		//Game* game = LuaEnvironment::convertUserdata<Game>(state, 1, "jl.Game");
+		//Engine* engine = LuaEnvironment::convertUserdata<Engine>(state, 1, "jl.Engine");
 
-		//Scene *activeScene = game->getScenePool().getActiveScene();
+		//Scene *activeScene = engine->getScenePool().getActiveScene();
 
 
 
 		return 1;
 	}
-	int LuaEnv_Game::GetTotalEntityCount(LuaEnvironment &env)
+	int LuaEnv_Engine::GetTotalEntityCount(LuaEnvironment &env)
 	{
 		// First arg is self
-		//Game* game = LuaEnvironment::convertUserdata<Game>(state, 1, "jl.Game");
+		//Engine* engine = LuaEnvironment::convertUserdata<Engine>(state, 1, "jl.Engine");
 		if(env.readGlobal("SAUROBYTE_GAME"))
 		{
-			Game *game = env.readStack<Game*>("Saurobyte_Game");
-			env.pushArgs(game->getEntityPool().getEntityCount());
+			Engine *engine = env.readStack<Engine*>("Saurobyte_Engine");
+			env.pushArgs(engine->getEntityPool().getEntityCount());
 		}
 
-		//lua_pushnumber(state, game->getEntityPool().getEntityCount());
+		//lua_pushnumber(state, engine->getEntityPool().getEntityCount());
 
 		return 1;
 	}
-	int LuaEnv_Game::MoveCamera(LuaEnvironment &env)
+	int LuaEnv_Engine::MoveCamera(LuaEnvironment &env)
 	{
 		// First arg is self
-		//Game* game = LuaEnvironment::convertUserdata<Game>(state, 1, "jl.Game");
+		//Engine* engine = LuaEnvironment::convertUserdata<Engine>(state, 1, "jl.Engine");
 		if(env.readGlobal("SAUROBYTE_GAME"))
 		{
-			Game *game = env.readStack<Game*>("Saurobyte_Game");
+			Engine *engine = env.readStack<Engine*>("Saurobyte_Engine");
 
 			// 2nd arg is X offset, 3rd arg is Y offset, 4th arg is Z offset
 			float xOff = env.readArg<float>();
@@ -120,46 +120,46 @@ namespace Saurobyte
 
 		
 
-		//game->getScenePool().getActiveScene()->getCamera().move(glm::vec3(xOff, yOff, zOff));
+		//engine->getScenePool().getActiveScene()->getCamera().move(glm::vec3(xOff, yOff, zOff));
 
 		return 0;
 	}
- 	int LuaEnv_Game::GetWindowWidth(LuaEnvironment &env)
+ 	int LuaEnv_Engine::GetWindowWidth(LuaEnvironment &env)
  	{
  		// First arg is self
-		//Game* game = LuaEnvironment::convertUserdata<Game>(state, 1, "jl.Game");
+		//Engine* engine = LuaEnvironment::convertUserdata<Engine>(state, 1, "jl.Engine");
 		if(env.readGlobal("SAUROBYTE_GAME"))
 		{
-			Game *game = env.readStack<Game*>("Saurobyte_Game");
-			env.pushArgs(game->getWindow().getSize().x);
+			Engine *engine = env.readStack<Engine*>("Saurobyte_Engine");
+			env.pushArgs(engine->getWindow().getSize().x);
 		}
 
 
-		//lua_pushnumber(state, game->getWindow().getSize().x);
+		//lua_pushnumber(state, engine->getWindow().getSize().x);
 
 		return 1;
  	}
-	int LuaEnv_Game::GetWindowHeight(LuaEnvironment &env)
+	int LuaEnv_Engine::GetWindowHeight(LuaEnvironment &env)
 	{
 		// First arg is self
 		if(env.readGlobal("SAUROBYTE_GAME"))
 		{
-			Game *game = env.readStack<Game*>("Saurobyte_Game");
-			env.pushArgs(game->getWindow().getSize().y);
+			Engine *engine = env.readStack<Engine*>("Saurobyte_Engine");
+			env.pushArgs(engine->getWindow().getSize().y);
 		}
-		//Game* game = LuaEnvironment::convertUserdata<Game>(state, 1, "jl.Game");
+		//Engine* engine = LuaEnvironment::convertUserdata<Engine>(state, 1, "jl.Engine");
 
 		//lua_settop(state, 0);
 
-		//lua_pushnumber(state, game->getWindow().getSize().y);
+		//lua_pushnumber(state, engine->getWindow().getSize().y);
 
 		return 1;
 	}
 
 
-	void LuaEnv_Game::exposeToLua(Game *game)
+	void LuaEnv_Engine::exposeToLua(Engine *engine)
 	{
-		/*const luaL_Reg gameFuncs[] = 
+		/*const luaL_Reg engineFuncs[] = 
 		{
 			{ "ChangeScene", ChangeScene },
 			{ "DeleteScene", DeleteScene },
@@ -170,9 +170,9 @@ namespace Saurobyte
 			{ "GetWindowHeight", GetWindowHeight },
 			{ NULL, NULL }
 		};*/
-		//game->getLua().createClass("jl.Game", gameFuncs);
+		//engine->getLua().createClass("jl.Engine", engineFuncs);
 		//
-		LuaEnvironment &env = game->getLua();
+		LuaEnvironment &env = engine->getLua();
 		env.registerFunction({ "ChangeScene", ChangeScene });
 		env.registerFunction({ "DeleteScene", DeleteScene });
 		env.registerFunction({ "GetActiveScene", GetActiveScene });
@@ -181,11 +181,11 @@ namespace Saurobyte
 		env.registerFunction({ "GetWindowWidth", GetWindowWidth });
 		env.registerFunction({ "GetWindowHeight", GetWindowHeight });
 
-		env.pushObject<Game*>(game, "Saurobyte_Game");
+		env.pushObject<Engine*>(engine, "Saurobyte_Engine");
 		env.writeGlobal("SAUROBYTE_GAME");
-		// Create global game object in Lua environment
-		//LuaEnvironment &env = game->getLua().getRaw();
-		//LuaEnvironment::pushObject<Game>(state, game, "jl.Game");
-		//lua_setglobal(state, "game");
+		// Create global engine object in Lua environment
+		//LuaEnvironment &env = engine->getLua().getRaw();
+		//LuaEnvironment::pushObject<Engine>(state, engine, "jl.Engine");
+		//lua_setglobal(state, "engine");
 	}
 };

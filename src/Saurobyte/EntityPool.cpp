@@ -1,12 +1,12 @@
 #include <Saurobyte/EntityPool.hpp>
-#include <Saurobyte/Game.hpp>
+#include <Saurobyte/Engine.hpp>
 
 namespace Saurobyte
 {
 
-	EntityPool::EntityPool(Game *game)
+	EntityPool::EntityPool(Engine *engine)
 		:
-		m_game(game)
+		m_engine(engine)
 	{
 
 	}
@@ -30,7 +30,7 @@ namespace Saurobyte
 			m_sparePool.pop_back();
 		}
 		else
-			newEntity = new Entity(m_entityPool.size(), m_game);
+			newEntity = new Entity(m_entityPool.size(), m_engine);
 
 		m_entityPool.push_back(EntityPtr(newEntity));
 		return *newEntity;
@@ -87,8 +87,8 @@ namespace Saurobyte
 			{
 					// Detach entity from other systems first since we might
 					// want to do use data from the components just before they are removed.
-					m_game->getSystemPool().removeEntityFromSystems(*entity, true);
-					m_game->getScenePool().detachFromAllScenes(*entity);
+					m_engine->getSystemPool().removeEntityFromSystems(*entity, true);
+					m_engine->getScenePool().detachFromAllScenes(*entity);
 
 					// Strip entity of components, deactivate it and push
 					// it into spare pool
@@ -100,16 +100,16 @@ namespace Saurobyte
 			}
 			else if(action == EntityActions::Refresh)
 			{
-				Scene* activeScene = m_game->getScenePool().getActiveScene();
+				Scene* activeScene = m_engine->getScenePool().getActiveScene();
 
 				// Refresh entity monitoring status if it's in the active scene
 				if(activeScene != nullptr && activeScene->contains(*entity))
-					m_game->getSystemPool().refreshEntity(*entity);
+					m_engine->getSystemPool().refreshEntity(*entity);
 			}
 			else if(action == EntityActions::Detach)
 			{
 				// Detach entity from all systems
-				m_game->getSystemPool().removeEntityFromSystems(*entity, false);
+				m_engine->getSystemPool().removeEntityFromSystems(*entity, false);
 			}
 
 

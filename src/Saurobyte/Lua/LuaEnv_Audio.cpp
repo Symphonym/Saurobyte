@@ -26,7 +26,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <Saurobyte/Lua/LuaEnv_Audio.hpp>
 #include <Saurobyte/LuaEnvironment.hpp>
 #include <Saurobyte/AudioDevice.hpp>
-#include <Saurobyte/Game.hpp>
+#include <Saurobyte/Engine.hpp>
 
 namespace Saurobyte
 {
@@ -69,9 +69,9 @@ namespace Saurobyte
 		AudioDevice::registerAudio(filePath, soundName);
 	}
 
-	void LuaEnv_Audio::exposeToLua(Game *game)
+	void LuaEnv_Audio::exposeToLua(Engine *engine)
 	{
-		LuaEnvironment &env = game->getLua();
+		LuaEnvironment &env = engine->getLua();
 		env.registerFunction({"PlaySound", PlaySound});
 		env.registerFunction({"PlayStream", PlayStream});
 		env.registerFunction({"RegisterAudio", RegisterAudio});
@@ -85,7 +85,7 @@ namespace Saurobyte
 		};
 
 		// Register sound functions at global scope
-		LuaEnvironment &env = game->getLua().getRaw();
+		LuaEnvironment &env = engine->getLua().getRaw();
 		lua_pushglobaltable(state);
 		luaL_setfuncs (state, audioFuncs, 0);*/
 	}

@@ -25,7 +25,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <Saurobyte/VideoDevice.hpp>
 #include <Saurobyte/Logger.hpp>
-#include <Saurobyte/Game.hpp>
+#include <Saurobyte/Engine.hpp>
 #include <GL/glew.h>
 #include <SDL2/SDL_opengl.h>
 #include <SDL2/SDL_video.h>
@@ -33,13 +33,13 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 namespace Saurobyte
 {
 	VideoDevice::VideoDevice(
-		Game &game,
+		Engine &engine,
 		const std::string &windowTitle,
 		unsigned int windowWidth,
 		unsigned int windowHeight,
 		Window::WindowModes windowMode)
 		:
-		m_game(game),
+		m_engine(engine),
 		m_window(nullptr)
 	{
 
@@ -49,7 +49,7 @@ namespace Saurobyte
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 
 		// Read config data or use defaults
-		LuaConfig &conf = game.getConfig();
+		LuaConfig &conf = engine.getConfig();
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, conf.readBool("SauroConf.video.multisampling.on", false));
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, conf.readInt("SauroConf.video.multisampling.samples", 4));
 

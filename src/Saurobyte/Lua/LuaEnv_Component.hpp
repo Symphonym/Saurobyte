@@ -31,7 +31,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 namespace Saurobyte
 {
-	class Game;
+	class Engine;
 	class LuaEnvironment;
 	class LuaEnv_Component
 	{
@@ -50,7 +50,7 @@ namespace Saurobyte
 
 	public:
 
-		static void exposeToLua(Game *game);
+		static void exposeToLua(Engine *engine);
 	};
 };
 

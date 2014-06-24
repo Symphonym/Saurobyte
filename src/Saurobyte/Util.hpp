@@ -30,6 +30,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <Saurobyte/Time.hpp>
 
 namespace Saurobyte
 {
@@ -54,7 +55,11 @@ namespace Saurobyte
 		return ss.str();
 	}
 
-	void sleep(unsigned int sleepInMs);
+	/**
+	 * Halts execution of the current thread for the duration of the specified time
+	 * @param sleepTime Sleep time
+	 */
+	void sleep(const Time &sleepTime);
 
 	std::vector<std::string> splitStr(const std::string &strToSplit, char delimiter);
 };

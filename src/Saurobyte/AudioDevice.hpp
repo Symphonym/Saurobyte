@@ -38,9 +38,6 @@ namespace Saurobyte
 {
 	// Handles to audio data
 	typedef std::shared_ptr<AudioSource> AudioHandle;
-	typedef std::shared_ptr<AudioChunk> SoundHandle;
-	typedef std::shared_ptr<AudioStream> StreamHandle;
-
 
 	namespace internal
 	{
@@ -58,6 +55,11 @@ namespace Saurobyte
 		// store audio etc values by mapped channel names
 		// set these values to audios put in that channel TODO
 
+		/**
+		 * Register an audio file to a unique string identifier
+		 * @param fileName Audio file path
+		 * @param name     Audio file identifier
+		 */
 		static void registerAudio(const std::string &fileName, const std::string &name);
 
 		static AudioHandle createStream(const std::string &name, PriorityType priority = Priority::Medium);
@@ -66,14 +68,26 @@ namespace Saurobyte
 		static AudioHandle createSound(const std::string &name, PriorityType priority = Priority::Medium);
 		static AudioHandle playSound(const std::string &name, PriorityType priority = Priority::Medium);
 
-
+		/**
+		 * Set the playback device to be used for audio output
+		 * @param playbackDevice Name of the playback device
+		 */
 		void setPlaybackDevice(const std::string &playbackDevice);
+		/**
+		 * Set the capture device used for audio input
+		 * @param captureDevice Name of the capture device
+		 */
 		void setCaptureDevice(const std::string &captureDevice);
 
-		// Stops all running sounds
+		/**
+		 * Stops all audio playback
+		 */
 		static void stopAllAudio();
 
-		// Get size of sound pools
+		/**
+		 * Gets the total amount of sounds/streams stored in memory 
+		 * @return The total amount of sounds
+		 */
 		static std::size_t getTotalSoundCount();
 
 		static std::vector<std::string> getPlaybackDevices();
@@ -81,8 +95,8 @@ namespace Saurobyte
 
 	private:
 
-		// Only the Game can create an AudioDevice
-		friend class Game;
+		// Only the Engine can create an AudioDevice
+		friend class Engine;
 
 		std::unique_ptr<internal::OpenALImpl> m_openAL;
 

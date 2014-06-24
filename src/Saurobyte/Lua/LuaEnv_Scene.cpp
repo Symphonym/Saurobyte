@@ -25,7 +25,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <Saurobyte/Lua/LuaEnv_Scene.hpp>
 #include <Saurobyte/LuaEnvironment.hpp>
-#include <Saurobyte/Game.hpp>
+#include <Saurobyte/Engine.hpp>
 
 namespace Saurobyte
 {
@@ -94,7 +94,7 @@ namespace Saurobyte
 
 		return 1;
 	}
-	void LuaEnv_Scene::exposeToLua(Game *game)
+	void LuaEnv_Scene::exposeToLua(Engine *engine)
 	{
 		/*const luaL_Reg sceneFuncs[] = 
 		{
@@ -106,7 +106,7 @@ namespace Saurobyte
 			{ NULL, NULL }
 		};*/
 
-		LuaEnvironment &env = game->getLua();
+		LuaEnvironment &env = engine->getLua();
 		env.createClass("Saurobyte_Scene",
 		{
 			{ "GetEntities", GetEntities },
@@ -115,6 +115,6 @@ namespace Saurobyte
 			{ "Attach", Attach },
 			{ "Contains", Contains }
 		});
-		//game->getLua().createClass("Saurobyte_Scene", sceneFuncs);
+		//engine->getLua().createClass("Saurobyte_Scene", sceneFuncs);
 	}
 };

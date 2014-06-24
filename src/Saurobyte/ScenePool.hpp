@@ -9,7 +9,7 @@
 
 namespace Saurobyte
 {
-	class Game;
+	class Engine;
 	class ScenePool
 	{
 	private:
@@ -31,11 +31,11 @@ namespace Saurobyte
 		};
 		std::vector<SceneAction> m_pendingActions;
 
-		Game *m_game;
+		Engine *m_engine;
 
 	public:
 
-		ScenePool(Game *game);
+		ScenePool(Engine *engine);
 		~ScenePool();
 
 		Scene& createScene(const std::string &name);

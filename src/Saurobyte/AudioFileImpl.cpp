@@ -106,7 +106,7 @@ namespace Saurobyte
 					buffer,
 					AudioFileImpl::getFormatFromChannels(m_fileInfo.channels),
 					&fileData[0],
-					sampleSecondCount*sizeof(ALushort),
+					sampleSecondCount*sizeof(ALshort),
 					m_fileInfo.samplerate);
 				return true;
 			}

@@ -46,7 +46,15 @@ namespace Saurobyte
 			OpenALImpl();
 			~OpenALImpl();
 
+			/**
+			 * Change the internal OpenAL playback device
+			 * @param deviceName Name of the OpenAL device
+			 */
 			void changePlaybackDevice(const ALchar *deviceName);
+			/**
+			 * Change the internal OpenAL capture (recording) device
+			 * @param deviceName Name of the OpenAL device
+			 */
 			void changeCaptureDevice(const ALchar *deviceName);
 		};
 	}

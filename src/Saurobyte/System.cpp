@@ -1,16 +1,16 @@
 #include <Saurobyte/System.hpp>
 #include <Saurobyte/Entity.hpp>
-#include <Saurobyte/Game.hpp>
+#include <Saurobyte/Engine.hpp>
 
 namespace Saurobyte
 {
 
-	BaseSystem::BaseSystem(Game *gameInstance, TypeID typeID)
+	BaseSystem::BaseSystem(Engine *engineInstance, TypeID typeID)
 		:
-		MessageHandler(&gameInstance->getMessageCentral()),
+		MessageHandler(&engineInstance->getMessageCentral()),
 		m_systemType(typeID),
 		m_isActive(true),
-		game(gameInstance)
+		engine(engineInstance)
 	{
 
 	}

@@ -4,9 +4,9 @@
 
 namespace Saurobyte
 {
-	SystemPool::SystemPool(Game *game)
+	SystemPool::SystemPool(Engine *engine)
 		:
-		m_game(game)
+		m_engine(engine)
 	{
 	}
 	SystemPool::~SystemPool()

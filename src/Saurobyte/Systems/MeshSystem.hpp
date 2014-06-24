@@ -20,7 +20,7 @@ namespace Saurobyte
 
 	public:
 
-		MeshSystem(Game *game);
+		MeshSystem(Engine *engine);
 		~MeshSystem();
 
 		virtual void onMessage(Message *message);

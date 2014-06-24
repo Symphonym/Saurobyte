@@ -10,7 +10,7 @@
 namespace Saurobyte
 {
 
-	class Game;
+	class Engine;
 	class Entity;
 	class BaseSystem : public MessageHandler
 	{
@@ -29,9 +29,9 @@ namespace Saurobyte
 
 	protected:
 
-		Game *game;
+		Engine *engine;
 		
-		BaseSystem(Game *game, TypeID typeID);
+		BaseSystem(Engine *engine, TypeID typeID);
 
 	public:
 
@@ -124,9 +124,9 @@ namespace Saurobyte
 	{
 	public:
 		
-		System(Game *game)
+		System(Engine *engine)
 			:
-			BaseSystem(game, TypeIdGrabber::getUniqueTypeID<TType>())
+			BaseSystem(engine, TypeIdGrabber::getUniqueTypeID<TType>())
 		{}
 		virtual ~System() {};
 	};

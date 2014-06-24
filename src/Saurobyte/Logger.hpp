@@ -73,33 +73,13 @@ namespace Saurobyte
 		 */
 		void log(LogTypes logType, unsigned int line, const std::string &file, const std::string &logMessage);
 
+		/**
+		 * Set logging status
+		 * @param status Logging status
+		 */
 		void setLogStatus(LogStatus status);
 	};
 
 };
-
-/**
- * Throws an error and shows (if possible) an OS dependent message box with the error message as well as file and line number
- * @param  logMessage The message string to log
- */
-//#define SAUROBYTE_THROW_ERROR(logMessage)  Saurobyte::displayAndThrowError(__LINE__, __FILE__, logMessage)
-
-/**
- * Logs a message to the console
- * @param  formatMsg   [description]
- * @param  ... [description]
- */
-//#define SAUROBYTE_DEBUG_LOG(formatMsg, ...) Saurobyte::debugLog(SAUROBYTE_LOG_LOCATION formatMsg, ##__VA_ARGS__)
-
-// Log info, messages will display unless info logs are disabled
-
-//#define SAUROBYTE_INFO_LOG(formatMsg, ...) Saurobyte::infoLog(formatMsg, ##__VA_ARGS__)
-
-// Log warnings, messages will only display if warning logs are enabled
-//#define SAUROBYTE_WARNING_LOG(formatMsg, ...) Saurobyte::warningLog(SAUROBYTE_LOG_LOCATION formatMsg, ##__VA_ARGS__)
-
-// Log errors, messages will display unless error logs are disabled
-//#define SAUROBYTE_ERROR_LOG(formatMsg, ...) Saurobyte::errorLog(SAUROBYTE_LOG_LOCATION formatMsg, ##__VA_ARGS__)
-
 
 #endif
