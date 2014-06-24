@@ -265,7 +265,7 @@ extern "C" {
  *  The variable should be newline delimited rows of gamecontroller config data, see SDL_gamecontroller.h
  *
  *  This hint must be set before calling SDL_Init(SDL_INIT_GAMECONTROLLER)
- *  You can update mappings after the system is initialized with SDL_EngineControllerMappingForGUID() and SDL_EngineControllerAddMapping()
+ *  You can update mappings after the system is initialized with SDL_GameControllerMappingForGUID() and SDL_GameControllerAddMapping()
  */
 #define SDL_HINT_GAMECONTROLLERCONFIG "SDL_GAMECONTROLLERCONFIG"
 
