@@ -1,7 +1,7 @@
 #include <Saurobyte/AudioChunk.hpp>
 #include <Saurobyte/AudioFileImpl.hpp>
 #include <Saurobyte/Util.hpp>
-#include <AL/al.h>
+#include <al.h>
 
 namespace Saurobyte
 {

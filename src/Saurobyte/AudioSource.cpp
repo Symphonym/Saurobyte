@@ -26,7 +26,7 @@
 
 #include <Saurobyte/AudioSource.hpp>
 #include <Saurobyte/AudioFileImpl.hpp>
-#include <AL/al.h>
+#include <al.h>
 
 namespace Saurobyte
 {

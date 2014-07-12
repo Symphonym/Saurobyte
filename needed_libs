@@ -1,0 +1,22 @@
+
+
+Just a little list I use to personally get an overview of current
+and planned dependencies:
+
+* SDL2 			(DYNAMIC)												Current
+* OpenAL Soft 	(DYNAMIC)												Current
+* OpenGL 4.3 	(DYNAMIC, though should be on ~all systems)				Current
+* GLEW			(DYNAMIC, though should be on ~all systems)				Current
+* Lua 5.2		(STATIC, custom compiled without dlopen or readline)	Current
+* stb_image		(~STATC, in source)										Planned
+* stb_vorbis 	(~STATIC, in source)									Planned
+* stb_truetype	(~STATIC, in source)									Planned
+* Bullet physics(STATIC)												Planned
+* RakNet/Enet	(STATIC, not decided entirely yet)						Planned
+
+Making it a total of 2 dependencies of the system, assuming all works well:
+
+* SDL2
+* OpenAL soft
+
+Both of which can be provided with the engine as .dll/.so

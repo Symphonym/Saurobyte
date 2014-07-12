@@ -28,8 +28,9 @@
 #define SAUROBYTE_OPENAL_IMPL_HPP
 
 #include <Saurobyte/ApiDefines.hpp>
-#include <AL/alc.h>
-#include <AL/al.h>
+#include <alc.h>
+#include <al.h>
+#include <stb_vorbis.h>
 
 namespace Saurobyte
 {

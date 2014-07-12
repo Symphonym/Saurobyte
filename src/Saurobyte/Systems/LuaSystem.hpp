@@ -28,7 +28,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define SAUROBYTE_LUASYSTEM_HPP
 
 #include <string>
-#include <Lua/lua.hpp>
+#include <lua.hpp>
 #include <SDL2/SDL.h>
 #include <Saurobyte/System.hpp>
 #include <Saurobyte/IdentifierTypes.hpp>

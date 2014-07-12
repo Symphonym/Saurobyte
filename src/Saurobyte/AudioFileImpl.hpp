@@ -28,8 +28,8 @@
 #define SAUROBYTE_AUDIO_IMPL_HPP
 
 #include <Saurobyte/ApiDefines.hpp>
-#include <SndFile/sndfile.h>
-#include <AL/al.h>
+#include <sndfile.h>
+#include <al.h>
 #include <string>
 
 namespace Saurobyte

@@ -2,30 +2,39 @@
 -- Grab a utility function for file copying
 dofile("./luautil.lua")
 
+
 -----------------------------------------------------------------------------------------------
 --  Declaring global variables
 -----------------------------------------------------------------------------------------------
 
 Saurobyte_OperatingSystem = os.get()
+-- TODO need premake 4.4 to make arch dirs for libs Saurobyte_OSArch = "32bit"
 
-Saurobyte_BuildDir = "build/"
-Saurobyte_OutputDir = Saurobyte_BuildDir.."lib/"
-Saurobyte_OutputIncDir = Saurobyte_BuildDir.."inc/"
+-- Various output directories
+Saurobyte_OutputDir = "build/template/"
+Saurobyte_Premake_BuildDir = "build/premake"
 Saurobyte_ExampleDir = "examples/"
+
+-- Linking & including dependencies
 Saurobyte_Dep_LibDir = "dependencies/lib/"..Saurobyte_OperatingSystem.."/"
 Saurobyte_Dep_IncDir = "dependencies/inc/"
-Saurobyte_BaseSourceDir = "src/"
-Saurobyte_SourceDir = Saurobyte_BaseSourceDir.."Saurobyte/"
+Saurobyte_Dep_IncDirs = 
+{
+	Saurobyte_Dep_IncDir.."common/*", -- Common headers
+	Saurobyte_Dep_IncDir..Saurobyte_OperatingSystem.."/*"-- Platform specific headers
+}
+Saurobyte_Dep_SourceDir = "dependencies/src/"
 
-Saurobyte_Premake_BuildDir = Saurobyte_BuildDir.."premake"
-
-Saurobyte_Solution_Name = "Saurobyte_Solution"
-Saurobyte_Project_Name = "Saurobyte"
-
+-- Libraries to link against
 Saurobyte_Linux_Links =
 {
-	"GL", "GLEW", "SDL2", "SDL2_image", "lua5.2", "openal", "sndfile"
+	"GL", "GLEW", "SDL2", "SDL2_image", "lua", "openal", "sndfile"
 }
+Saurobyte_Linux_Static_Links =
+{
+	--"vorbis.a", "vorbisfile.a", "ogg.a"
+}
+
 Saurobyte_Mac_Links =
 {
 	"Don't even know cause not supported yet"
@@ -35,32 +44,33 @@ Saurobyte_Window_Links =
 	"Don't even know cause not supported yet"
 }
 
------------------------------------------------------------------------------------------------
---  Print some system specific info
------------------------------------------------------------------------------------------------
+-- Source related directories
+Saurobyte_BaseSourceDir = "src/"
+Saurobyte_SourceDir = Saurobyte_BaseSourceDir.."Saurobyte/"
 
-if(Saurobyte_OperatingSystem == "linux") then
-	print("Linux based operating systems requires development packages of the following to be installed on your system:")
-	
-	for _, val in pairs(Saurobyte_Linux_Links) do
-		print("* " .. val)
-	end
-end
-
+-- Project names
+Saurobyte_Solution_Name = "Saurobyte_Solution"
+Saurobyte_Project_Name = "Saurobyte"
 
 -----------------------------------------------------------------------------------------------
 --  Prepare output
 -----------------------------------------------------------------------------------------------
 
--- Remove and recreate output directories
-os.rmdir(path.getdirectory(Saurobyte_OutputDir))
-os.mkdir(path.getdirectory(Saurobyte_OutputDir))
+-- Clean lib directory
+os.rmdir(path.getdirectory(Saurobyte_OutputDir.."lib/"))
+os.mkdir(path.getdirectory(Saurobyte_OutputDir.."lib/"))
 
-os.rmdir(path.getdirectory(Saurobyte_OutputIncDir))
-os.mkdir(path.getdirectory(Saurobyte_OutputIncDir))
+-- Clean away .dll files
+for _, dllFileName in pairs(os.matchfiles(Saurobyte_OutputDir.."*.dll")) do
+	os.remove(dllFileName)
+end
 
--- Copy Saurobyte headers to output dir
-os.copydir(path.getdirectory(Saurobyte_BaseSourceDir), path.getdirectory(Saurobyte_OutputIncDir), "**.hpp")
+if (Saurobyte_OperatingSystem == "linux") then
+	os.copyfile(Saurobyte_Dep_LibDir.."libSDL2-2.0.so.0.2.0", Saurobyte_OutputDir.."lib/libSDL2-2.0.so.0.2.0")
+	os.copyfile(Saurobyte_Dep_LibDir.."libopenal.so.1.14.0", Saurobyte_OutputDir.."lib/libopenal.so.1.14.0")
+elseif (Saurobyte_OperatingSystem == "windows") then
+	os.copydir(Saurobyte_Dep_LibDir, Saurobyte_OutputDir, "*.dll")
+end
 
 -----------------------------------------------------------------------------------------------
 --  Saurobyte solution setup
@@ -82,33 +92,27 @@ solution(Saurobyte_Solution_Name)
 
 
 	-- Set C++11 for GCC
-	configuration({"linux", "gmake"})
+	configuration({"gmake"})
 		buildoptions({"-std=c++11"})
 
 
 -----------------------------------------------------------------------------------------------
 --  Saurobyte library project setup
 -----------------------------------------------------------------------------------------------
-	
+
 	project(Saurobyte_Project_Name)
-		kind("SharedLib")
+		kind("ConsoleApp")
 		language("C++")
-		includedirs(
-		{
-			Saurobyte_BaseSourceDir, -- Saurobyte headers
-			Saurobyte_Dep_IncDir -- Dependency headers
-		})
+		includedirs({Saurobyte_BaseSourceDir}) -- Saurobyte headers
+		includedirs({Saurobyte_Dep_IncDirs, Saurobyte_Dep_SourceDir.."*"}) -- Dependency headers
 		libdirs(Saurobyte_Dep_LibDir)
 		targetdir(Saurobyte_OutputDir)
 
-
 		-- Set source files
 		files({
-			Saurobyte_SourceDir.."*.hpp", Saurobyte_SourceDir.."*.cpp", -- Base files
-			Saurobyte_SourceDir.."Systems/*.hpp", Saurobyte_SourceDir.."Systems/*.cpp", -- Systems
-			Saurobyte_SourceDir.."Components/*.hpp", Saurobyte_SourceDir.."Components/*.cpp", -- Components
-			Saurobyte_SourceDir.."Math/*.hpp", Saurobyte_SourceDir.."Math/*.cpp", -- Math
-			Saurobyte_SourceDir.."Lua/*.hpp", Saurobyte_SourceDir.."Lua/*.cpp"}) -- Lua API
+			"src/**.hpp", "src/**.cpp", -- Saurobyte source
+			Saurobyte_Dep_SourceDir.."**.cpp", Saurobyte_Dep_SourceDir.."**.c" -- Dependencies provided in-source
+			})
 
 		-- Link libraries per platform
 		configuration("linux")
@@ -126,5 +130,5 @@ solution(Saurobyte_Solution_Name)
 
 
 -- Compile examples
-include(Saurobyte_ExampleDir)
+--include(Saurobyte_ExampleDir)
 

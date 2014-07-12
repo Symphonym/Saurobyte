@@ -66,3 +66,10 @@ CHECK	* Optimize sound/stream reusage
 		* Messaging doesn't need to be in the engine, might be useful having some sort of system for Lua scripts to broadcast
 		events.
 		* Messaging is replaced by a Lua exclusive event system which allows data to be broadcasted, globally or to a region (nearby or specific region) with any kind of data (as Lua is awesome). With a subscriber-listener type design where Lua scripts can subscribe to certain events in order to receive them.
+		* Fix inclusion files and add SDL libs from SDL website
+		* Remove component cloning and move entity templates as functions in Lua
+		* FIX DEPENDENCIES AND WHATNOT FOR LINUX
+		* LINK BULLET PHYSICS STATIC, MEBE LIBVORBIS TOO, rest dynamic
+		* USE LIBVORBIS INSTEAD OF SNDFILE
+		* LINK LUA STATIC WITH DLOPEN & READLINE DISABLED
+		* Make Saurobyte editor with Saurobyte engine, essentially a hardcoded scene in Lua

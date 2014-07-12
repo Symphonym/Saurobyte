@@ -27,7 +27,7 @@
 #ifndef SAUROBYTE_LUA_IMPL_HPP
 #define SAUROBYTE_LUA_IMPL_HPP
 
-#include <Lua/lua.hpp>
+#include <lua.hpp>
 
 namespace Saurobyte
 {

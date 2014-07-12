@@ -25,7 +25,7 @@
 
 
 #include <Saurobyte/AudioListener.hpp>
-#include <AL/al.h>
+#include <al.h>
 
 namespace Saurobyte
 {

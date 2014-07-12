@@ -1,6 +1,6 @@
 #include <Saurobyte/Components/TransformComponent.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <Lua/lua.hpp>
+#include <lua.hpp>
 
 namespace Saurobyte
 {

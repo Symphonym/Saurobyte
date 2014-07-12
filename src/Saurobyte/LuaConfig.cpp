@@ -26,7 +26,7 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <Saurobyte/LuaConfig.hpp>
 #include <Saurobyte/LuaEnvironment.hpp>
 #include <Saurobyte/Logger.hpp>
-#include <Lua/lua.hpp>
+#include <lua.hpp>
 #include <fstream>
 
 namespace Saurobyte
