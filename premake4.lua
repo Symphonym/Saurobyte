@@ -11,7 +11,8 @@ Saurobyte_OperatingSystem = os.get()
 -- TODO need premake 4.4 to make arch dirs for libs Saurobyte_OSArch = "32bit"
 
 -- Various output directories
-Saurobyte_OutputDir = "build/template/"
+Saurobyte_OutputDir = "build/bin/"
+Saurobyte_Dep_OutputDir = "build/dependencies/"
 Saurobyte_Premake_BuildDir = "build/premake"
 Saurobyte_ExampleDir = "examples/"
 
@@ -57,19 +58,19 @@ Saurobyte_Project_Name = "Saurobyte"
 -----------------------------------------------------------------------------------------------
 
 -- Clean lib directory
-os.rmdir(path.getdirectory(Saurobyte_OutputDir.."lib/"))
-os.mkdir(path.getdirectory(Saurobyte_OutputDir.."lib/"))
+os.rmdir(path.getdirectory(Saurobyte_Dep_OutputDir))
+os.mkdir(path.getdirectory(Saurobyte_Dep_OutputDir))
 
 -- Clean away .dll files
-for _, dllFileName in pairs(os.matchfiles(Saurobyte_OutputDir.."*.dll")) do
+for _, dllFileName in pairs(os.matchfiles(Saurobyte_Dep_OutputDir.."*.dll")) do
 	os.remove(dllFileName)
 end
 
 if (Saurobyte_OperatingSystem == "linux") then
-	os.copyfile(Saurobyte_Dep_LibDir.."libSDL2-2.0.so.0.2.0", Saurobyte_OutputDir.."lib/libSDL2-2.0.so.0.2.0")
-	os.copyfile(Saurobyte_Dep_LibDir.."libopenal.so.1.14.0", Saurobyte_OutputDir.."lib/libopenal.so.1.14.0")
+	os.copyfile(Saurobyte_Dep_LibDir.."libSDL2-2.0.so.0.2.0", Saurobyte_Dep_OutputDir.."libSDL2-2.0.so.0.2.0")
+	os.copyfile(Saurobyte_Dep_LibDir.."libopenal.so.1.14.0", Saurobyte_Dep_OutputDir.."libopenal.so.1.14.0")
 elseif (Saurobyte_OperatingSystem == "windows") then
-	os.copydir(Saurobyte_Dep_LibDir, Saurobyte_OutputDir, "*.dll")
+	os.copydir(Saurobyte_Dep_LibDir, Saurobyte_Dep_OutputDir, "*.dll")
 end
 
 -----------------------------------------------------------------------------------------------

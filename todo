@@ -73,3 +73,5 @@ CHECK	* Optimize sound/stream reusage
 		* USE LIBVORBIS INSTEAD OF SNDFILE
 		* LINK LUA STATIC WITH DLOPEN & READLINE DISABLED
 		* Make Saurobyte editor with Saurobyte engine, essentially a hardcoded scene in Lua
+
+		* Engine is started by running binary with initial file as argument, this file should do initial setup such as loading a config file and loading a scene.

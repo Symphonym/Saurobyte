@@ -1,6 +1,6 @@
 
 # Ignore build files
-build/
+build
 
 # Ignore sublime text files
 *.sublime-project
